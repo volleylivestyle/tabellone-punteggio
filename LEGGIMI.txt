@@ -1,0 +1,69 @@
+TABELLONE PUNTEGGIO — FIREBASE LIVE
+===================================
+
+STATO DEL PACCHETTO
+- La configurazione della tua app Web Firebase è già inserita in index.html.
+- Progetto: tabellone-punteggio
+- Realtime Database: https://tabellone-punteggio-default-rtdb.europe-west1.firebasedatabase.app
+- UID amministratore autorizzato: 0OX3K0LBPsRVIffqdAfg23qgr0N2
+- Non sono incluse password, token o chiavi private.
+- Il pacchetto non può pubblicare da solo le regole sul server Firebase: devi eseguire il passaggio 1 qui sotto.
+
+CONTENUTO
+- index.html: interfaccia responsive, login Email/Password, sincronizzazione realtime, segnapunti, set, finale e condivisione.
+- database.rules.json: lettura pubblica soltanto di /match; scrittura consentita solo all'UID amministratore.
+- firebase-config.example.js: copia di riferimento dei parametri web usati nell'app (non va caricato separatamente per far funzionare la pagina).
+
+1. PUBBLICARE LE REGOLE FIREBASE (OBBLIGATORIO)
+1) Apri https://console.firebase.google.com/ e seleziona tabellone-punteggio.
+2) Apri Realtime Database > Regole.
+3) Copia il contenuto completo di database.rules.json e sostituisci le regole attuali, quindi premi Pubblica.
+4) Controlla che non esistano altre regole più ampie alla radice che concedano lettura o scrittura. Le regole Firebase si applicano anche ai discendenti; una regola permissiva più in alto può annullare le restrizioni più specifiche.
+
+Le regole incluse concedono lettura pubblica solo sotto /match. Non concedono scrittura pubblica. La scrittura richiede una sessione Firebase Authentication con UID esattamente uguale a quello indicato. Tutti gli altri nodi rimangono negati per default.
+
+2. CONTROLLARE L'AUTENTICAZIONE
+1) Firebase Console > Authentication > Sign-in method: Email/Password deve essere abilitato (come già indicato).
+2) Authentication > Users: controlla che l'account amministratore esistente corrisponda all'UID indicato.
+3) Non inserire la password nell'HTML, nello ZIP, nel repository o nell'URL. L'app la chiede soltanto nel modulo di login.
+4) Quando avrai scelto il dominio di pubblicazione, apri Authentication > Settings > Authorized domains e verifica che il dominio sia autorizzato. Per GitHub Pages aggiungi l'host esatto del sito, se non già presente.
+
+3. TEST LOCALE PRIMA DELLA PUBBLICAZIONE
+Per i moduli JavaScript e Firebase usa un server locale; non aprire index.html con doppio clic.
+1) Installa Node.js da https://nodejs.org/ se non è già installato.
+2) Estrai lo ZIP in una cartella.
+3) Apri il terminale nella cartella che contiene index.html (cartella Tabellone_Punteggio_Firebase).
+4) Esegui: npx serve .
+5) Apri nel browser l'indirizzo locale mostrato dal comando.
+6) Accedi con l'email e la password dell'amministratore già esistente.
+7) In un altro browser/dispositivo apri lo stesso URL senza autenticarti: deve poter vedere il punteggio ma non deve poter modificarlo.
+8) Prova +1, annullamento ultima azione, vittoria set, prossimo set, finale, azzeramento e aggiornamento su un secondo dispositivo.
+
+Punteggio: set ordinari a 25 punti con almeno 2 di vantaggio. Il set decisivo è a 15 punti con almeno 2 di vantaggio (3° set nella formula al meglio di 3; 5° set nella formula al meglio di 5). Il set si registra automaticamente alla soglia; i pulsanti punto restano bloccati fino a “Conferma / prossimo set”.
+
+4. PUBBLICAZIONE CON GITHUB PAGES
+1) Crea un repository GitHub, ad esempio tabellone-punteggio.
+2) Carica index.html nella cartella radice del repository. Puoi caricare anche LEGGIMI.txt, database.rules.json e firebase-config.example.js; quest'ultimo è solo di riferimento. Le regole non vengono applicate da GitHub Pages: pubblicale prima nella console Firebase.
+3) Nel repository apri Settings > Pages.
+4) Seleziona “Deploy from a branch”, branch main e cartella /(root), poi salva.
+5) Apri l'URL HTTPS che GitHub Pages mostra dopo la pubblicazione.
+6) Se il login restituisce un errore di dominio non autorizzato, torna in Firebase Authentication > Settings > Authorized domains e aggiungi l'host del sito.
+7) Ripeti la prova amministratore/spettatore sull'URL pubblico. Solo dopo la verifica condividi il link ai tifosi.
+
+FUNZIONI E NOTE
+- +1 per ciascuna squadra e annullamento dell'ultima azione registrata.
+- Nome squadre, torneo/categoria e formula best-of-3 o best-of-5.
+- Set vinti, parziali, rilevamento della partita conclusa e indicazione della vincitrice.
+- Pulsante copia link spettatori e condivisione WhatsApp.
+- Gli spettatori non devono fare login: possono leggere il nodo /match, mentre i comandi amministrativi sono mostrati solo alla sessione autorizzata.
+- Usa un solo dispositivo amministratore alla volta per evitare che due modifiche simultanee sullo stesso punteggio si sovrascrivano. Gli spettatori possono essere numerosi.
+- La configurazione SDK Web, inclusa apiKey, è una configurazione client: non è una password. La sicurezza dipende dalle regole Realtime Database e dall'autenticazione.
+
+CHECKLIST PRE-PARTITA
+[ ] Regole Realtime Database pubblicate e ricontrollate.
+[ ] Login amministratore riuscito.
+[ ] Spettatore non autenticato riesce a leggere ma non a scrivere.
+[ ] +1 e annullamento verificati.
+[ ] Set decisivo a 15 verificato nella formula scelta.
+[ ] Aggiornamento in tempo reale provato su due dispositivi.
+[ ] URL HTTPS pubblico e condivisione WhatsApp provati.

@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "match": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === '0OX3K0LBPsRVIffqdAfg23qgr0N2'"
+    }
+  }
+}
