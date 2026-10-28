@@ -312,7 +312,7 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
 @media (max-height:690px) { .match-finale-overlay { align-items:flex-start; } .match-finale-card { gap:8px; padding-top:12px; padding-bottom:12px; } .finale-winner-mark { width:60px; height:60px; border-radius:13px; } .finale-title { font-size:clamp(2rem,6vh,3.5rem); } .finale-winner { gap:5px; } .finale-set-card { padding:7px 5px; } }
 @media (prefers-reduced-motion:reduce) { .match-finale-card::before { animation:none; } .match-finale-overlay:not(.hide) .match-finale-card,.match-finale-overlay:not(.hide) .finale-title { animation:none; } }
 
-</style><!-- Volley Live v10.0: schermata animata di fine partita per spettatori; conserva le funzioni verificate della v9.9. -->
+</style><!-- Volley Live v10.1: schermata finale corretta; compare a spettatori avviati e amministratore autenticato. -->
 </head>
 <body><div class="wrap">
 <header class="top"><div class="brandline"><div class="brandmark" aria-hidden="true">VL</div><div><div class="eyebrow">VOLLEY • LIVE SCORE</div><div class="brand">VOLLEY <span>LIVE</span></div></div></div><div class="header-actions"><div class="live" id="liveBadge"><span class="dot"></span>CONNESSIONE…</div><button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="Attiva o disattiva schermo intero"><span class="fullscreen-icon" aria-hidden="true">⛶</span><span class="fullscreen-label">SCHERMO INTERO</span></button></div></header>
@@ -482,8 +482,12 @@ function renderMatchFinale(){
  const overlay=$('matchFinaleOverlay');
  if(!overlay)return;
  const win=winnerSide();
- if(!state.finished||!win){finaleDismissed=false;overlay.classList.add('hide');return;}
- if(!SPECTATOR_VIEW||!spectatorStarted||finaleDismissed){overlay.classList.add('hide');return;}
+ // Il numero di set vinti è la fonte più affidabile per rilevare la conclusione:
+ // così la schermata appare anche se un vecchio stato Firebase ha finished=false.
+ if(!win){finaleDismissed=false;overlay.classList.add('hide');return;}
+ // Gli spettatori devono prima premere AVVIA TABELLONE; l'amministratore
+ // autenticato vede invece la schermata finale e può chiuderla per tornare ai comandi.
+ if((SPECTATOR_VIEW&&!spectatorStarted)||(!SPECTATOR_VIEW&&!isAdmin)||finaleDismissed){overlay.classList.add('hide');return;}
  const winningName=win==='home'?state.homeName:state.awayName;
  $('finaleEvent').textContent=(state.event||'VOLLEY • LIVE SCORE').trim().toUpperCase();
  $('finaleWinnerName').textContent=winningName||'SQUADRA VINCITRICE';
@@ -510,17 +514,19 @@ function renderMatchFinale(){
 }
 
 function render(){
+ const matchWon=!!winnerSide();
+ const matchComplete=!!state.finished||matchWon;
  renderSpectatorPreview();
  $('homeName').textContent=state.homeName;$('awayName').textContent=state.awayName;const homeLogoToShow=logoDraft.home!==undefined?logoDraft.home:state.homeLogo;const awayLogoToShow=logoDraft.away!==undefined?logoDraft.away:state.awayLogo;renderBadge('homeLogoImg','homeBadgeInitials',homeLogoToShow,initials(state.homeName,'CAS'));renderBadge('awayLogoImg','awayBadgeInitials',awayLogoToShow,initials(state.awayName,'OSP'));$('homeScore').textContent=state.homeScore;$('awayScore').textContent=state.awayScore;$('homeSets').textContent=state.homeSets;$('awaySets').textContent=state.awaySets;renderPointAlert('homePointAlert','home');renderPointAlert('awayPointAlert','away');pointAlertsInitialized=true;
  const homeRemaining=Math.max(0,2-state.homeTimeouts),awayRemaining=Math.max(0,2-state.awayTimeouts);
  [['homeTimeoutLamps',homeRemaining],['awayTimeoutLamps',awayRemaining]].forEach(([id,remaining])=>{const lamps=$(id);lamps.replaceChildren();for(let i=0;i<2;i++){const dot=document.createElement('span');dot.className='timeout-lamp'+(i<remaining?' available':'');lamps.append(dot);}});
  $('homeTimeoutBtn').disabled=!isAdmin||state.finished||state.homeTimeouts>=2||pending;$('awayTimeoutBtn').disabled=!isAdmin||state.finished||state.awayTimeouts>=2||pending;
  $('homeScore').classList.toggle('serving-score',state.serving==='home');$('awayScore').classList.toggle('serving-score',state.serving==='away');$('serveHomeBtn').classList.toggle('active',state.serving==='home');$('serveAwayBtn').classList.toggle('active',state.serving==='away');$('serveAwayBtn').classList.toggle('away-active',state.serving==='away');$('servingAdminState').textContent=state.serving==='home'?`Servizio: ${state.homeName}`:state.serving==='away'?`Servizio: ${state.awayName}`:'Servizio non indicato.';
- $('homeTeam').classList.toggle('leading',state.homeScore>state.awayScore&&!state.finished);$('awayTeam').classList.toggle('leading',state.awayScore>state.homeScore&&!state.finished);
- $('setTitle').textContent=state.finished?'PARTITA CONCLUSA':`${state.setIndex+1}° SET`;$('setStatus').textContent=state.finished?'Risultato finale':`Obiettivo ${target()} punti · vantaggio di 2`;
+ $('homeTeam').classList.toggle('leading',state.homeScore>state.awayScore&&!matchComplete);$('awayTeam').classList.toggle('leading',state.awayScore>state.homeScore&&!matchComplete);
+ $('setTitle').textContent=matchComplete?'PARTITA CONCLUSA':`${state.setIndex+1}° SET`;$('setStatus').textContent=matchComplete?'Risultato finale':`Obiettivo ${target()} punti · vantaggio di 2`;
  $('eventLabel').textContent=state.event||'Campionato / amichevole';$('matchMeta').textContent=state.event?state.event.toUpperCase():'PUNTEGGIO IN DIRETTA';$('updatedLabel').textContent=state.updatedAt?'AGGIORNATO '+new Date(state.updatedAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}):'IN ATTESA DEL PRIMO AGGIORNAMENTO';$('setStrip').style.gridTemplateColumns=`repeat(${state.format}, minmax(0, 1fr))`;
  $('setStrip').replaceChildren();for(let i=0;i<state.format;i++){const el=document.createElement('div');el.className='setbox'+(i===state.setIndex&&!state.finished?' current':'');const small=document.createElement('small');small.textContent=`SET ${i+1}`;const strong=document.createElement('strong');const sc=state.sets[i];if(sc&&typeof sc==='object'){const homeSetScore=Number(sc.home)||0,awaySetScore=Number(sc.away)||0;const homeSpan=document.createElement('span');homeSpan.textContent=String(homeSetScore);if(homeSetScore>awaySetScore)homeSpan.className='set-winning-score';const awaySpan=document.createElement('span');awaySpan.textContent=String(awaySetScore);if(awaySetScore>homeSetScore)awaySpan.className='set-winning-score';strong.append(homeSpan,document.createTextNode(' – '),awaySpan);}else{strong.textContent='—';}el.append(small,strong);$('setStrip').append(el);}
- const win=winnerSide();$('winner').textContent=win?`🏆 VINCE ${win==='home'?state.homeName:state.awayName}`:'';$('homePlus').disabled=!isAdmin||state.finished||!!state.sets[state.setIndex]||pending;$('awayPlus').disabled=!isAdmin||state.finished||!!state.sets[state.setIndex]||pending;$('nextSetBtn').disabled=!isAdmin||state.finished||!state.sets[state.setIndex]||pending;$('undoBtn').disabled=!isAdmin||!history.length||pending;
+ const win=winnerSide();$('winner').textContent=win?`🏆 VINCE ${win==='home'?state.homeName:state.awayName}`:'';$('homePlus').disabled=!isAdmin||matchComplete||!!state.sets[state.setIndex]||pending;$('awayPlus').disabled=!isAdmin||matchComplete||!!state.sets[state.setIndex]||pending;$('nextSetBtn').disabled=!isAdmin||matchComplete||!state.sets[state.setIndex]||pending;$('undoBtn').disabled=!isAdmin||!history.length||pending;
  $('liveBadge').innerHTML=state.finished?'<span class="dot"></span>FINALE':remoteReady?'<span class="dot"></span>LIVE':'<span class="dot"></span>OFFLINE';
  if(isAdmin){if(document.activeElement!==$('homeInput'))$('homeInput').value=state.homeName;if(document.activeElement!==$('awayInput'))$('awayInput').value=state.awayName;if(document.activeElement!==$('eventInput'))$('eventInput').value=state.event;if(document.activeElement!==$('formatInput'))$('formatInput').value=String(state.format);updateLogoStatuses();}
  renderMatchFinale();
