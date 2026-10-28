@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827">
-<meta name="description" content="Tabellone pallavolo live con punteggio sincronizzato in tempo reale."><title>Volley Live — Tabellone v9.4</title>
+<meta name="description" content="Tabellone pallavolo live con punteggio sincronizzato in tempo reale."><title>Volley Live — Tabellone v9.5</title>
 <style>
 :root {
   color-scheme: dark;
@@ -46,9 +46,19 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .fullscreen-btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; border:1px solid #2e4358; background:rgba(14,27,41,.9); color:#d4e2f1; border-radius:8px; padding:9px 11px; cursor:pointer; font-size:.7rem; font-weight:900; letter-spacing:.08em; white-space:nowrap; }
 .fullscreen-btn:hover { border-color:#56738f; background:#152639; }
 .fullscreen-icon { font-size:1rem; line-height:1; }
+.spectator-prompt { position:fixed; z-index:10001; left:50%; bottom:max(14px,env(safe-area-inset-bottom)); transform:translateX(-50%); width:min(92vw,430px); display:flex; align-items:center; gap:12px; padding:13px 15px; border:1px solid #43b9ff; border-radius:14px; background:rgba(10,20,32,.97); color:#f4f8ff; text-align:left; cursor:pointer; box-shadow:0 12px 45px rgba(0,0,0,.55),0 0 22px rgba(67,185,255,.22); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
+.spectator-prompt:hover { background:rgba(17,36,55,.98); border-color:#83d4ff; }
+.spectator-prompt-icon { display:grid; place-items:center; width:42px; height:42px; flex:none; border-radius:10px; background:rgba(67,185,255,.12); color:#67c8ff; font-size:1.55rem; line-height:1; }
+.spectator-prompt-copy { display:flex; min-width:0; flex:1; flex-direction:column; gap:4px; }
+.spectator-prompt-copy strong { font-size:.79rem; font-weight:1000; letter-spacing:.055em; }
+.spectator-prompt-copy small { color:#a9bed2; font-size:.68rem; line-height:1.35; font-weight:650; }
+.spectator-prompt-arrow { color:#67c8ff; font-size:1.3rem; font-weight:900; flex:none; }
+body.focus-mode .spectator-prompt { display:none!important; }
 .meta-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:18px 2px 20px; }
 .meta { min-width:0; margin:0; color:#e4effb; font-size:clamp(.9rem,2.4vw,1.1rem); font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
-.updated { color:#7189a0; font-size:.68rem; font-weight:750; text-align:right; font-variant-numeric:tabular-nums; letter-spacing:.055em; }
+.time-meta { display:flex; flex-direction:column; align-items:flex-end; justify-content:center; gap:4px; flex:none; max-width:56%; }
+.current-time { color:#b9d3e9; font-size:.72rem; font-weight:950; text-align:right; font-variant-numeric:tabular-nums; letter-spacing:.08em; white-space:nowrap; }
+.updated { color:#7189a0; font-size:.65rem; font-weight:750; text-align:right; font-variant-numeric:tabular-nums; letter-spacing:.045em; }
 .scoreboard { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; }
 .team { min-width:0; position:relative; overflow:hidden; isolation:isolate; padding:clamp(16px,2.9vw,30px) clamp(10px,2vw,24px) 20px; border:1px solid #2a4055; border-radius:16px; text-align:center; background:linear-gradient(155deg,rgba(19,34,49,.98),rgba(6,11,18,.99) 68%); box-shadow:0 20px 45px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.045); transition:border-color .2s,box-shadow .2s; }
 .team::before { content:""; position:absolute; inset:0; z-index:-1; opacity:.5; pointer-events:none; background:linear-gradient(130deg,rgba(72,241,138,.055),transparent 48%); }
@@ -191,7 +201,9 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
   .fullscreen-label { display:none; }
   .meta-row { margin:14px 2px 13px; align-items:flex-start; }
   .meta { font-size:.84rem; }
-  .updated { font-size:.59rem; max-width:45%; }
+  .time-meta { max-width:48%; gap:3px; }
+  .current-time { font-size:.62rem; letter-spacing:.045em; }
+  .updated { font-size:.54rem; max-width:100%; letter-spacing:.015em; }
   .scoreboard { gap:8px; }
   .team { padding:14px 7px 14px; border-radius:11px; }
   .team-head { gap:6px; min-height:42px; flex-direction:column; }
@@ -233,10 +245,11 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
   .teamname { font-size:.65rem; }
 }
 @media (prefers-reduced-motion:no-preference) { .dot { animation:pulse 1.8s infinite; } @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.45;} } }
-</style></head>
+</style><!-- Volley Live v9.5: orologio locale, tentativo fullscreen spettatori e Screen Wake Lock ove supportato. -->
+</head>
 <body><div class="wrap">
 <header class="top"><div class="brandline"><div class="brandmark" aria-hidden="true">VL</div><div><div class="eyebrow">VOLLEY • LIVE SCORE</div><div class="brand">VOLLEY <span>LIVE</span></div></div></div><div class="header-actions"><div class="live" id="liveBadge"><span class="dot"></span>CONNESSIONE…</div><button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="Attiva o disattiva schermo intero"><span class="fullscreen-icon" aria-hidden="true">⛶</span><span class="fullscreen-label">SCHERMO INTERO</span></button></div></header>
-<div class="meta-row"><p class="meta" id="matchMeta">PUNTEGGIO IN DIRETTA</p><span class="updated" id="updatedLabel">Connessione in corso…</span></div>
+<div class="meta-row"><p class="meta" id="matchMeta">PUNTEGGIO IN DIRETTA</p><div class="time-meta"><span class="current-time" id="currentTime">ORA --:--:--</span><span class="updated" id="updatedLabel">Connessione in corso…</span></div></div>
 <div id="notice" class="notice hide">Connessione a Firebase in corso…</div>
 <section class="panel auth-panel hide" id="authPanel"><h2>Accesso amministratore</h2><div class="authrow" id="authRow"><label class="field">Email<input id="emailInput" type="email" autocomplete="username" placeholder="Email amministratore"></label><label class="field">Password<input id="passwordInput" type="password" autocomplete="current-password" placeholder="Password" /></label><button class="btn primary" id="loginBtn" type="button">Accedi</button></div><div class="authstate" id="authState">Gli spettatori possono consultare il tabellone senza accedere.</div><div class="actions"><button class="btn hide" id="logoutBtn">Esci</button><button class="btn copy-public-btn hide" id="copyPublicBtn" type="button" aria-label="Copia link spettatori">
 <svg class="copy-public-icon copy-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/></svg>
@@ -247,7 +260,7 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
 <section class="team away" id="awayTeam"><div class="team-head"><div class="teammark" id="awayBadge" aria-hidden="true"><span id="awayBadgeInitials">OSP</span><img id="awayLogoImg" class="team-logo hide" alt=""></div><div class="team-info"><div class="teamname" id="awayName">SQUADRA OSPITE</div></div></div><div class="point-alert" id="awayPointAlert" aria-live="polite"></div><div class="points" id="awayScore">0</div><div class="sets-footer"><div class="setslabel">SET VINTI</div><div class="setsvalue"><div class="setwins" id="awaySets">0</div><small>SET</small></div></div><div class="timeout-panel" aria-label="Time-out squadra ospite"><span class="timeout-label">TIME-OUT</span><div class="timeout-lamps" id="awayTimeoutLamps" aria-hidden="true"><span class="timeout-lamp available"></span><span class="timeout-lamp available"></span></div></div><div class="scorecontrols admin-only"><button class="btn timeout-control" id="awayTimeoutBtn" type="button">+ TIME-OUT OSPITE</button></div><div class="scorecontrols admin-only" id="awayControls"><button class="btn orange" id="awayPlus">+1 PUNTO</button></div></section></div>
 <section class="panel"><div class="statusline"><strong id="setTitle">1° SET</strong><span id="setStatus">Partita in corso</span></div><div class="setstrip" id="setStrip"></div><div class="winner" id="winner"></div></section>
 <section class="panel admin-only" id="managePanel"><h2>Gestione partita</h2><div class="formgrid"><label class="field">Squadra di casa<input id="homeInput" maxlength="50" value="SQUADRA DI CASA"></label><label class="field">Squadra ospite<input id="awayInput" maxlength="50" value="SQUADRA OSPITE"></label><label class="field">Torneo / categoria<input id="eventInput" maxlength="80" placeholder="Es. Campionato U14"></label><label class="field">Formato partita<select id="formatInput"><option value="3">Al meglio dei 3 set (2 vinti)</option><option value="5" selected>Al meglio dei 5 set (3 vinti)</option></select></label><div class="field logo-field"><label for="homeLogoFile">Logo squadra di casa</label><input id="homeLogoFile" class="file-input" type="file" accept="image/png,image/jpeg,image/webp"><div class="logo-file-row"><span class="logo-status" id="homeLogoStatus">Nessun logo caricato.</span><button class="btn small-btn" id="clearHomeLogo" type="button">Rimuovi</button></div></div><div class="field logo-field"><label for="awayLogoFile">Logo squadra ospite</label><input id="awayLogoFile" class="file-input" type="file" accept="image/png,image/jpeg,image/webp"><div class="logo-file-row"><span class="logo-status" id="awayLogoStatus">Nessun logo caricato.</span><button class="btn small-btn" id="clearAwayLogo" type="button">Rimuovi</button></div></div></div><div class="service-admin"><h3>Squadra al servizio</h3><p class="note">Seleziona chi serve all’inizio del set: il riquadro del suo punteggio si ingrandisce e si illumina. Quando assegni un punto, l’evidenziazione segue la squadra che ha conquistato il punto. All’inizio del set successivo seleziona chi serve per primo.</p><div class="actions"><button class="btn" id="serveHomeBtn" type="button">● Servizio: casa</button><button class="btn" id="serveAwayBtn" type="button">● Servizio: ospite</button><button class="btn" id="serveNoneBtn" type="button">Nessuna selezione</button></div><div class="authstate" id="servingAdminState">Servizio non indicato.</div></div><div class="actions"><button class="btn primary" id="saveNames">Salva intestazione</button><button class="btn" id="undoBtn">↶ Annulla ultima azione</button><button class="btn" id="nextSetBtn">Conferma / prossimo set</button><button class="btn danger" id="resetBtn">Azzera partita</button></div><p class="logo-note">Scegli un logo in formato PNG, JPG o WebP dal dispositivo. L’immagine viene ridimensionata e salvata nel database per mostrarla a tutti gli spettatori. Dopo aver scelto o rimosso un logo, premi “Salva intestazione”.</p><p class="note">Regole: set normali a 25 punti e almeno 2 di vantaggio; il set decisivo (3° in best-of-3, 5° in best-of-5) si gioca a 15 punti e almeno 2 di vantaggio. Il conteggio dei time-out è preimpostato a 2 per squadra per set e si azzera al set successivo. Il set si registra automaticamente al raggiungimento della soglia. Dopo un set vinto premi “Conferma / prossimo set”.</p></section>
-<span id="eventLabel" class="event-hidden">Campionato / amichevole</span></main><div class="board-caption">Aggiornamento punteggio in tempo reale</div><div class="foot">VOLLEY LIVE • MATCH CENTER</div></div>
+<span id="eventLabel" class="event-hidden">Campionato / amichevole</span></main><div class="board-caption">Aggiornamento punteggio in tempo reale</div><div class="foot">VOLLEY LIVE • MATCH CENTER</div></div><button id="spectatorPrompt" class="spectator-prompt hide" type="button" aria-label="Attiva schermo intero e prova a mantenere acceso lo schermo"><span class="spectator-prompt-icon" aria-hidden="true">⛶</span><span class="spectator-prompt-copy"><strong>APRI A SCHERMO INTERO</strong><small>Un tocco per una vista più ampia e per provare a tenere acceso lo schermo.</small></span><span class="spectator-prompt-arrow" aria-hidden="true">↗</span></button>
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js';
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js';
@@ -268,6 +281,7 @@ const ADMIN_UID = '0OX3K0LBPsRVIffqdAfg23qgr0N2';
 const $ = id => document.getElementById(id);
 const blank = () => ({homeName:'SQUADRA DI CASA',awayName:'SQUADRA OSPITE',homeLogo:'',awayLogo:'',event:'',format:5,setIndex:0,homeScore:0,awayScore:0,homeSets:0,awaySets:0,homeTimeouts:0,awayTimeouts:0,sets:[],serving:'none',finished:false,updatedAt:null,history:[]});
 const ADMIN_MODE = new URLSearchParams(location.search).get('admin') === '1';
+const SPECTATOR_VIEW = !ADMIN_MODE;
 let state=blank(), app, auth, db, currentUser=null, isAdmin=false, remoteReady=false, pending=false, history=[];
 // Logo selezionati nel pannello admin: undefined = invariato, stringa = nuovo data URL, '' = rimuovere.
 let logoDraft={home:undefined,away:undefined};
@@ -275,6 +289,8 @@ const HISTORY_HOME_LOGO='__VOLLEY_HOME_LOGO_SAVED__';
 const HISTORY_AWAY_LOGO='__VOLLEY_AWAY_LOGO_SAVED__';
 const configReady = !!firebaseConfig.apiKey && !!firebaseConfig.authDomain && !!firebaseConfig.projectId && !!firebaseConfig.appId && firebaseConfig.projectId==='tabellone-punteggio' && firebaseConfig.databaseURL==='https://tabellone-punteggio-default-rtdb.europe-west1.firebasedatabase.app';
 function notice(message,type=''){const el=$('notice');el.textContent=message;el.className='notice'+(type?' '+type:'');el.classList.toggle('hide',!ADMIN_MODE&&type!=='error');}
+function updateCurrentTime(){const clock=$('currentTime');if(!clock)return;clock.textContent='ORA '+new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+updateCurrentTime();setInterval(updateCurrentTime,1000);
 function target(){return state.setIndex===state.format-1?15:25;}
 function winnerSide(){if(state.homeSets>=Math.ceil(state.format/2))return 'home';if(state.awaySets>=Math.ceil(state.format/2))return 'away';return null;}
 function canWin(a,b,limit){return a>=limit&&a-b>=2;}
@@ -401,9 +417,50 @@ $('copyPublicBtn').onclick=sharePublic;$('whatsappBtn').onclick=()=>{const msg=`
 $('loginBtn').onclick=async()=>{const email=$('emailInput').value.trim(),password=$('passwordInput').value;if(!email||!password){notice('Inserisci email e password dell’amministratore.','error');return;}try{await signInWithEmailAndPassword(auth,email,password);$('passwordInput').value='';}catch(e){notice('Accesso non riuscito. Controlla le credenziali e che l’utente sia abilitato in Firebase Authentication.','error');}};
 $('logoutBtn').onclick=()=>signOut(auth).catch(e=>notice('Errore durante l’uscita: '+e.message,'error'));
 const fullscreenButton=$('fullscreenBtn');
-function updateFullscreenButton(){const active=!!document.fullscreenElement||document.body.classList.contains('focus-mode');fullscreenButton.querySelector('.fullscreen-icon').textContent=active?'×':'⛶';fullscreenButton.querySelector('.fullscreen-label').textContent=active?'ESCI DA SCHERMO INTERO':'SCHERMO INTERO';fullscreenButton.setAttribute('aria-label',active?'Esci da schermo intero':'Attiva schermo intero');}
-fullscreenButton.addEventListener('click',async()=>{try{if(document.fullscreenElement){await document.exitFullscreen();document.body.classList.remove('focus-mode');}else if(document.body.classList.contains('focus-mode')){document.body.classList.remove('focus-mode');}else if(document.documentElement.requestFullscreen){await document.documentElement.requestFullscreen();}else{document.body.classList.add('focus-mode');}}catch{document.body.classList.toggle('focus-mode');}updateFullscreenButton();});
+const spectatorPrompt=$('spectatorPrompt');
+let screenWakeLock=null;
+let displayActivationRunning=false;
+function isImmersiveView(){return !!document.fullscreenElement||document.body.classList.contains('focus-mode');}
+function updateFullscreenButton(){const active=isImmersiveView();fullscreenButton.querySelector('.fullscreen-icon').textContent=active?'×':'⛶';fullscreenButton.querySelector('.fullscreen-label').textContent=active?'ESCI DA SCHERMO INTERO':'SCHERMO INTERO';fullscreenButton.setAttribute('aria-label',active?'Esci da schermo intero':'Attiva schermo intero');if(spectatorPrompt){spectatorPrompt.classList.toggle('hide',!SPECTATOR_VIEW||active);}}
+async function requestScreenWakeLock(){
+ if(!SPECTATOR_VIEW||!('wakeLock' in navigator)||document.visibilityState!=='visible')return false;
+ try{if(screenWakeLock&&!screenWakeLock.released)return true;screenWakeLock=await navigator.wakeLock.request('screen');screenWakeLock.addEventListener('release',()=>{screenWakeLock=null;});return true;}catch{return false;}
+}
+async function activateSpectatorDisplay(fromGesture=false){
+ if(!SPECTATOR_VIEW||displayActivationRunning)return false;
+ displayActivationRunning=true;
+ const wakeLockPromise=requestScreenWakeLock();
+ let active=isImmersiveView();
+ try{
+  if(!active&&document.documentElement.requestFullscreen){await document.documentElement.requestFullscreen();active=!!document.fullscreenElement;}
+ }catch{/* I browser generalmente rifiutano il fullscreen automatico senza un gesto dell'utente. */}
+ if(!active&&fromGesture){document.body.classList.add('focus-mode');active=true;}
+ await wakeLockPromise;
+ displayActivationRunning=false;
+ updateFullscreenButton();
+ return active;
+}
+fullscreenButton.addEventListener('click',async()=>{
+ if(document.fullscreenElement){try{await document.exitFullscreen();}catch{}document.body.classList.remove('focus-mode');}
+ else if(document.body.classList.contains('focus-mode')){document.body.classList.remove('focus-mode');}
+ else if(document.documentElement.requestFullscreen){try{await document.documentElement.requestFullscreen();}catch{if(SPECTATOR_VIEW)document.body.classList.add('focus-mode');}}
+ else{document.body.classList.add('focus-mode');}
+ if(SPECTATOR_VIEW)await requestScreenWakeLock();
+ updateFullscreenButton();
+});
+if(spectatorPrompt){spectatorPrompt.addEventListener('click',()=>{if(!isImmersiveView())void activateSpectatorDisplay(true);});}
+// Tenta l'apertura automatica; se il browser la blocca, il primo tocco sul sito riprova entro il gesto utente.
+if(SPECTATOR_VIEW){
+ function onFirstSpectatorPointerDown(event){if(event.target instanceof Element&&event.target.closest('#fullscreenBtn, #spectatorPrompt'))return;document.removeEventListener('pointerdown',onFirstSpectatorPointerDown,true);if(!isImmersiveView())void activateSpectatorDisplay(true);}
+ function onFirstSpectatorKeydown(event){if(event.target instanceof Element&&event.target.closest('#fullscreenBtn, #spectatorPrompt'))return;document.removeEventListener('keydown',onFirstSpectatorKeydown,true);if(!isImmersiveView())void activateSpectatorDisplay(true);}
+ document.addEventListener('pointerdown',onFirstSpectatorPointerDown,true);
+ document.addEventListener('keydown',onFirstSpectatorKeydown,true);
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')void requestScreenWakeLock();});
+ window.addEventListener('pageshow',()=>{if(document.visibilityState==='visible')void requestScreenWakeLock();});
+ setTimeout(()=>{void activateSpectatorDisplay(false);},150);
+}
 document.addEventListener('fullscreenchange',updateFullscreenButton);
+updateFullscreenButton();
 if(!configReady){notice('Configurazione Firebase incompleta. Controlla i parametri della tua app Web in index.html. Nessuna password va inserita nel codice.','error');$('liveBadge').innerHTML='<span class="dot"></span>DA CONFIGURARE';showAdmin();}
 else {try{app=initializeApp(firebaseConfig);auth=getAuth(app);db=getDatabase(app);onValue(ref(db,'match'),snap=>{if(snap.exists()){state=cleanState(snap.val());history=Array.isArray(snap.val().history)?snap.val().history:[];}else{state=blank();history=[];}remoteReady=true;render();if(!$('notice').classList.contains('error'))notice('Collegamento al tabellone attivo.','ok');},err=>{remoteReady=false;notice('Lettura Firebase non riuscita. Controlla le regole Realtime Database e la configurazione. '+err.message,'error');render();});onAuthStateChanged(auth,user=>{currentUser=user;const authorizedUser=!!user&&user.uid===ADMIN_UID;isAdmin=authorizedUser&&ADMIN_MODE;showAdmin();if(user&&!authorizedUser){signOut(auth).catch(()=>{});notice('Questo account non è autorizzato a gestire il tabellone.','error');}else if(isAdmin){notice('Accesso amministratore verificato.','ok');get(ref(db,'match')).then(snap=>{if(!snap.exists())return set(ref(db,'match'),{...blank(),history:[]});}).catch(e=>notice('Impossibile inizializzare/verificare il tabellone. Controlla che le regole Firebase siano pubblicate. '+e.message,'error'));}});}catch(e){notice('Errore inizializzazione Firebase: '+e.message,'error');}}
 </script></body></html>
