@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827">
-<meta name="description" content="Tabellone pallavolo live con punteggio sincronizzato in tempo reale e anteprima della partita."><title>Volley Live — Tabellone v9.9</title>
+<meta name="description" content="Tabellone pallavolo live con punteggio sincronizzato in tempo reale e anteprima della partita."><title>Volley Live — Tabellone v10.0</title>
 <style>
 :root {
   color-scheme: dark;
@@ -266,7 +266,53 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
   .teamname { font-size:.65rem; }
 }
 @media (prefers-reduced-motion:no-preference) { .dot { animation:pulse 1.8s infinite; } @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.45;} } }
-</style><!-- Volley Live v9.9: anteprima minimale; il vincitore di ogni set concluso è evidenziato in rosso. -->
+
+/* Schermata finale: vittoria, risultato complessivo e parziali dei set. */
+.match-finale-overlay {
+  position:fixed; inset:0; z-index:10020; display:flex; align-items:center; justify-content:center;
+  width:100%; min-height:100vh; min-height:100dvh; overflow-y:auto;
+  padding:max(16px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));
+  background:radial-gradient(ellipse at 50% 20%,rgba(31,89,63,.34),transparent 44%),radial-gradient(ellipse at 50% 65%,rgba(31,72,103,.45),transparent 60%),rgba(2,5,9,.96);
+  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+}
+.match-finale-card {
+  position:relative; isolation:isolate; width:min(96vw,900px); display:flex; flex-direction:column; align-items:center; gap:clamp(10px,2.2vh,18px);
+  padding:clamp(18px,3.3vw,34px); border:1px solid rgba(255,208,115,.48); border-radius:22px;
+  background:linear-gradient(150deg,rgba(17,31,43,.98),rgba(4,9,15,.98) 72%);
+  box-shadow:0 26px 90px rgba(0,0,0,.5),0 0 45px rgba(72,241,138,.09),inset 0 1px rgba(255,255,255,.07); overflow:hidden;
+}
+.match-finale-card::before { content:""; position:absolute; inset:-35%; z-index:-1; pointer-events:none; background:conic-gradient(from 0deg,transparent 0 10%,rgba(255,208,115,.055) 13%,transparent 18% 32%,rgba(72,241,138,.045) 36%,transparent 42% 63%,rgba(99,162,255,.05) 67%,transparent 73%); animation:finaleHalo 16s linear infinite; }
+.finale-event { max-width:100%; color:#a7c4d9; font-size:clamp(.62rem,1.8vw,.82rem); font-weight:950; letter-spacing:.2em; text-transform:uppercase; text-align:center; overflow-wrap:anywhere; }
+.finale-title { margin:0; color:#ffd073; font-size:clamp(2.3rem,8.5vw,5.6rem); line-height:.98; font-weight:1000; letter-spacing:.055em; text-align:center; text-shadow:0 0 10px rgba(255,208,115,.7),0 0 34px rgba(255,168,45,.32); }
+.finale-title .trophy { display:inline-block; margin-right:.16em; filter:drop-shadow(0 0 13px rgba(255,208,115,.32)); }
+.finale-subtitle { color:#d0e0ec; font-size:clamp(.68rem,2vw,.9rem); font-weight:950; letter-spacing:.24em; text-align:center; }
+.finale-winner { display:flex; flex-direction:column; align-items:center; gap:10px; max-width:100%; }
+.finale-winner-mark { position:relative; display:grid; place-items:center; width:clamp(78px,13vw,124px); height:clamp(78px,13vw,124px); flex:none; overflow:hidden; border:2px solid rgba(255,208,115,.78); border-radius:22px; background:linear-gradient(145deg,rgba(255,208,115,.22),rgba(15,23,27,.95)); color:#ffd073; font-size:clamp(1.1rem,3vw,1.7rem); font-weight:1000; box-shadow:0 0 28px rgba(255,208,115,.18),inset 0 0 20px rgba(255,208,115,.07); }
+.finale-winner-mark .team-logo { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; padding:4px; }
+.finale-winner-name { max-width:100%; color:#f6fbff; font-size:clamp(1.15rem,4.2vw,2.35rem); line-height:1.12; font-weight:1000; letter-spacing:.035em; text-align:center; text-transform:uppercase; overflow-wrap:anywhere; text-shadow:0 0 22px rgba(72,241,138,.12); }
+.finale-winner-caption { color:var(--green); font-size:.68rem; font-weight:950; letter-spacing:.2em; text-align:center; }
+.finale-result-label,.finale-sets-label { color:#8098ad; font-size:.64rem; font-weight:950; letter-spacing:.2em; text-align:center; }
+.finale-result { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:clamp(9px,2.8vw,26px); width:min(100%,650px); padding:clamp(12px,2.3vw,18px); border:1px solid #263d52; border-radius:14px; background:linear-gradient(180deg,rgba(4,10,16,.86),rgba(12,22,32,.9)); }
+.finale-result-side { display:flex; flex-direction:column; align-items:center; gap:6px; min-width:0; text-align:center; }
+.finale-result-name { width:100%; color:#c2d2df; font-size:clamp(.62rem,1.8vw,.87rem); font-weight:900; line-height:1.18; text-transform:uppercase; overflow-wrap:anywhere; }
+.finale-result-side strong { color:#e7f0f8; font-family:ui-monospace,"Roboto Mono",Consolas,monospace; font-size:clamp(2rem,6vw,3.65rem); line-height:1; font-weight:1000; font-variant-numeric:tabular-nums; }
+.finale-result-side.winner-side strong { color:var(--red); text-shadow:0 0 18px rgba(255,101,120,.28); }
+.finale-result-divider { color:#526b80; font-size:clamp(1.25rem,4vw,2rem); font-weight:800; }
+.finale-set-results { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; width:100%; }
+.finale-set-card { flex:1 1 92px; min-width:80px; max-width:145px; padding:10px 8px; border:1px solid #283c4f; border-radius:10px; background:linear-gradient(180deg,#0a121b,#05090e); text-align:center; }
+.finale-set-card small { display:block; color:#8198ad; font-size:.6rem; font-weight:950; letter-spacing:.14em; }
+.finale-set-card strong { display:block; margin-top:6px; color:#eaf2fa; font-family:ui-monospace,"Roboto Mono",Consolas,monospace; font-size:clamp(.95rem,2.7vw,1.3rem); font-variant-numeric:tabular-nums; white-space:nowrap; }
+.finale-set-card .finale-winning-score { color:var(--red); text-shadow:0 0 10px rgba(255,101,120,.2); }
+.finale-return-btn { display:inline-flex; justify-content:center; align-items:center; gap:8px; max-width:100%; margin-top:2px; padding:12px 20px; border:1px solid rgba(72,241,138,.72); border-radius:10px; background:linear-gradient(135deg,#14502f,#0d2a1b); color:#d9ffe2; font-size:.76rem; font-weight:1000; letter-spacing:.13em; cursor:pointer; box-shadow:0 0 20px rgba(72,241,138,.1),inset 0 1px rgba(255,255,255,.09); }
+.finale-return-btn:hover { background:linear-gradient(135deg,#1b7040,#104027); }
+@keyframes finaleCardIn { 0% { opacity:0; transform:translateY(28px) scale(.9); filter:blur(6px); } 70% { opacity:1; transform:translateY(-3px) scale(1.015); filter:blur(0); } 100% { opacity:1; transform:translateY(0) scale(1); filter:blur(0); } }
+@keyframes finaleHalo { to { transform:rotate(360deg); } }
+@media (prefers-reduced-motion:no-preference) { .match-finale-overlay:not(.hide) .match-finale-card { animation:finaleCardIn .8s cubic-bezier(.18,.8,.22,1) both; } .match-finale-overlay:not(.hide) .finale-title { animation:finaleTitlePulse 1.8s ease-in-out .75s 2; } @keyframes finaleTitlePulse { 0%,100% { text-shadow:0 0 10px rgba(255,208,115,.65),0 0 28px rgba(255,168,45,.28); } 50% { text-shadow:0 0 16px rgba(255,208,115,.95),0 0 48px rgba(255,168,45,.48); } } }
+@media (max-width:520px) { .match-finale-card { border-radius:17px; padding:16px 12px; gap:10px; } .finale-result { gap:8px; padding:11px 7px; } .finale-set-results { gap:6px; } .finale-set-card { min-width:calc(33.333% - 6px); padding:9px 4px; } .finale-winner-mark { border-radius:16px; } .finale-return-btn { width:100%; } }
+@media (max-height:690px) { .match-finale-overlay { align-items:flex-start; } .match-finale-card { gap:8px; padding-top:12px; padding-bottom:12px; } .finale-winner-mark { width:60px; height:60px; border-radius:13px; } .finale-title { font-size:clamp(2rem,6vh,3.5rem); } .finale-winner { gap:5px; } .finale-set-card { padding:7px 5px; } }
+@media (prefers-reduced-motion:reduce) { .match-finale-card::before { animation:none; } .match-finale-overlay:not(.hide) .match-finale-card,.match-finale-overlay:not(.hide) .finale-title { animation:none; } }
+
+</style><!-- Volley Live v10.0: schermata animata di fine partita per spettatori; conserva le funzioni verificate della v9.9. -->
 </head>
 <body><div class="wrap">
 <header class="top"><div class="brandline"><div class="brandmark" aria-hidden="true">VL</div><div><div class="eyebrow">VOLLEY • LIVE SCORE</div><div class="brand">VOLLEY <span>LIVE</span></div></div></div><div class="header-actions"><div class="live" id="liveBadge"><span class="dot"></span>CONNESSIONE…</div><button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="Attiva o disattiva schermo intero"><span class="fullscreen-icon" aria-hidden="true">⛶</span><span class="fullscreen-label">SCHERMO INTERO</span></button></div></header>
@@ -282,6 +328,28 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
 <section class="panel"><div class="statusline"><strong id="setTitle">1° SET</strong><span id="setStatus">Partita in corso</span></div><div class="setstrip" id="setStrip"></div><div class="winner" id="winner"></div></section>
 <section class="panel admin-only" id="managePanel"><h2>Gestione partita</h2><div class="formgrid"><label class="field">Squadra di casa<input id="homeInput" maxlength="50" value="SQUADRA DI CASA"></label><label class="field">Squadra ospite<input id="awayInput" maxlength="50" value="SQUADRA OSPITE"></label><label class="field">Torneo / categoria<input id="eventInput" maxlength="80" placeholder="Es. Campionato U14"></label><label class="field">Formato partita<select id="formatInput"><option value="3">Al meglio dei 3 set (2 vinti)</option><option value="5" selected>Al meglio dei 5 set (3 vinti)</option></select></label><div class="field logo-field"><label for="homeLogoFile">Logo squadra di casa</label><input id="homeLogoFile" class="file-input" type="file" accept="image/png,image/jpeg,image/webp"><div class="logo-file-row"><span class="logo-status" id="homeLogoStatus">Nessun logo caricato.</span><button class="btn small-btn" id="clearHomeLogo" type="button">Rimuovi</button></div></div><div class="field logo-field"><label for="awayLogoFile">Logo squadra ospite</label><input id="awayLogoFile" class="file-input" type="file" accept="image/png,image/jpeg,image/webp"><div class="logo-file-row"><span class="logo-status" id="awayLogoStatus">Nessun logo caricato.</span><button class="btn small-btn" id="clearAwayLogo" type="button">Rimuovi</button></div></div></div><div class="service-admin"><h3>Squadra al servizio</h3><p class="note">Seleziona chi serve all’inizio del set: il riquadro del suo punteggio si ingrandisce e si illumina. Quando assegni un punto, l’evidenziazione segue la squadra che ha conquistato il punto. All’inizio del set successivo seleziona chi serve per primo.</p><div class="actions"><button class="btn" id="serveHomeBtn" type="button">● Servizio: casa</button><button class="btn" id="serveAwayBtn" type="button">● Servizio: ospite</button><button class="btn" id="serveNoneBtn" type="button">Nessuna selezione</button></div><div class="authstate" id="servingAdminState">Servizio non indicato.</div></div><div class="actions"><button class="btn primary" id="saveNames">Salva intestazione</button><button class="btn" id="undoBtn">↶ Annulla ultima azione</button><button class="btn" id="nextSetBtn">Conferma / prossimo set</button><button class="btn danger" id="resetBtn">Azzera partita</button></div><p class="logo-note">Scegli un logo in formato PNG, JPG o WebP dal dispositivo. L’immagine viene ridimensionata e salvata nel database per mostrarla a tutti gli spettatori. Dopo aver scelto o rimosso un logo, premi “Salva intestazione”.</p><p class="note">Regole: set normali a 25 punti e almeno 2 di vantaggio; il set decisivo (3° in best-of-3, 5° in best-of-5) si gioca a 15 punti e almeno 2 di vantaggio. Il conteggio dei time-out è preimpostato a 2 per squadra per set e si azzera al set successivo. Il set si registra automaticamente al raggiungimento della soglia. Dopo un set vinto premi “Conferma / prossimo set”.</p></section>
 <span id="eventLabel" class="event-hidden">Campionato / amichevole</span></main><div class="board-caption">Aggiornamento punteggio in tempo reale</div><div class="foot">VOLLEY LIVE • MATCH CENTER</div></div><div id="spectatorPrompt" class="spectator-prompt hide" aria-label="Anteprima della partita e avvio del tabellone"><span class="spectator-prompt-copy"><span class="spectator-prompt-kicker">VOLLEY • LIVE SCORE</span></span><span class="spectator-preview" aria-label="Anteprima in tempo reale del tabellone"><span class="spectator-preview-heading"><span class="spectator-preview-caption">ANTEPRIMA DELLA PARTITA</span><span class="spectator-preview-event" id="spectatorEvent">CAMPIONATO / AMICHEVOLE</span></span><span class="spectator-preview-teams"><span class="spectator-preview-team home-preview"><span class="spectator-preview-mark"><span class="spectator-preview-initials" id="spectatorHomeInitials">CAS</span><img id="spectatorHomeLogo" class="team-logo hide" alt=""></span><span class="spectator-preview-name" id="spectatorHomeName">SQUADRA DI CASA</span></span><span class="spectator-preview-vs" aria-hidden="true">VS</span><span class="spectator-preview-team away-preview"><span class="spectator-preview-mark"><span class="spectator-preview-initials" id="spectatorAwayInitials">OSP</span><img id="spectatorAwayLogo" class="team-logo hide" alt=""></span><span class="spectator-preview-name" id="spectatorAwayName">SQUADRA OSPITE</span></span></span><span class="spectator-preview-footer">CAMPIONATO E SQUADRE • PRONTO PER LA PARTITA</span></span><button id="spectatorStartButton" class="spectator-prompt-arrow" type="button">AVVIA TABELLONE&nbsp; ↗</button></div>
+<div id="matchFinaleOverlay" class="match-finale-overlay hide" role="dialog" aria-modal="true" aria-labelledby="finaleTitle" aria-describedby="finaleWinnerName">
+  <section class="match-finale-card">
+    <div class="finale-event" id="finaleEvent">VOLLEY • LIVE SCORE</div>
+    <h1 class="finale-title" id="finaleTitle"><span class="trophy" aria-hidden="true">🏆</span>VITTORIA!</h1>
+    <div class="finale-subtitle">PARTITA CONCLUSA</div>
+    <div class="finale-winner">
+      <div class="finale-winner-mark" id="finaleWinnerBadge" aria-hidden="true"><span id="finaleWinnerInitials">CAS</span><img id="finaleWinnerLogo" class="team-logo hide" alt=""></div>
+      <div class="finale-winner-name" id="finaleWinnerName">SQUADRA VINCITRICE</div>
+      <div class="finale-winner-caption">VINCITRICE DELLA PARTITA</div>
+    </div>
+    <div class="finale-result-label">RISULTATO FINALE · SET VINTI</div>
+    <div class="finale-result" aria-label="Risultato finale della partita">
+      <div class="finale-result-side" id="finaleHomeSide"><span class="finale-result-name" id="finaleHomeName">SQUADRA DI CASA</span><strong id="finaleHomeSets">0</strong></div>
+      <span class="finale-result-divider" aria-hidden="true">–</span>
+      <div class="finale-result-side" id="finaleAwaySide"><span class="finale-result-name" id="finaleAwayName">SQUADRA OSPITE</span><strong id="finaleAwaySets">0</strong></div>
+    </div>
+    <div class="finale-sets-label">PARZIALI DI TUTTI I SET</div>
+    <div class="finale-set-results" id="finaleSetResults" aria-label="Parziali dei set"></div>
+    <button type="button" id="finaleCloseButton" class="finale-return-btn">TORNA AL TABELLONE</button>
+  </section>
+</div>
+
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js';
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js';
@@ -304,6 +372,7 @@ const blank = () => ({homeName:'SQUADRA DI CASA',awayName:'SQUADRA OSPITE',homeL
 const ADMIN_MODE = new URLSearchParams(location.search).get('admin') === '1';
 const SPECTATOR_VIEW = !ADMIN_MODE;
 let state=blank(), app, auth, db, currentUser=null, isAdmin=false, remoteReady=false, pending=false, history=[];
+let spectatorStarted=false, finaleDismissed=false;
 // Logo selezionati nel pannello admin: undefined = invariato, stringa = nuovo data URL, '' = rimuovere.
 let logoDraft={home:undefined,away:undefined};
 const HISTORY_HOME_LOGO='__VOLLEY_HOME_LOGO_SAVED__';
@@ -409,6 +478,37 @@ function renderSpectatorPreview(){
  renderBadge('spectatorHomeLogo','spectatorHomeInitials',state.homeLogo,initials(state.homeName,'CAS'));
  renderBadge('spectatorAwayLogo','spectatorAwayInitials',state.awayLogo,initials(state.awayName,'OSP'));
 }
+function renderMatchFinale(){
+ const overlay=$('matchFinaleOverlay');
+ if(!overlay)return;
+ const win=winnerSide();
+ if(!state.finished||!win){finaleDismissed=false;overlay.classList.add('hide');return;}
+ if(!SPECTATOR_VIEW||!spectatorStarted||finaleDismissed){overlay.classList.add('hide');return;}
+ const winningName=win==='home'?state.homeName:state.awayName;
+ $('finaleEvent').textContent=(state.event||'VOLLEY • LIVE SCORE').trim().toUpperCase();
+ $('finaleWinnerName').textContent=winningName||'SQUADRA VINCITRICE';
+ renderBadge('finaleWinnerLogo','finaleWinnerInitials',win==='home'?state.homeLogo:state.awayLogo,initials(winningName,win==='home'?'CAS':'OSP'));
+ $('finaleHomeName').textContent=state.homeName||'SQUADRA DI CASA';
+ $('finaleAwayName').textContent=state.awayName||'SQUADRA OSPITE';
+ $('finaleHomeSets').textContent=String(state.homeSets);
+ $('finaleAwaySets').textContent=String(state.awaySets);
+ $('finaleHomeSide').classList.toggle('winner-side',win==='home');
+ $('finaleAwaySide').classList.toggle('winner-side',win==='away');
+ const list=$('finaleSetResults');list.replaceChildren();
+ for(let i=0;i<state.format;i++){
+  const sc=state.sets[i];
+  if(!sc||typeof sc!=='object')continue;
+  const homeScore=Number(sc.home)||0,awayScore=Number(sc.away)||0;
+  const card=document.createElement('div');card.className='finale-set-card';
+  const label=document.createElement('small');label.textContent=`SET ${i+1}`;
+  const score=document.createElement('strong');
+  const homeSpan=document.createElement('span');homeSpan.textContent=String(homeScore);if(homeScore>awayScore)homeSpan.className='finale-winning-score';
+  const awaySpan=document.createElement('span');awaySpan.textContent=String(awayScore);if(awayScore>homeScore)awaySpan.className='finale-winning-score';
+  score.append(homeSpan,document.createTextNode(' – '),awaySpan);card.append(label,score);list.append(card);
+ }
+ overlay.classList.remove('hide');
+}
+
 function render(){
  renderSpectatorPreview();
  $('homeName').textContent=state.homeName;$('awayName').textContent=state.awayName;const homeLogoToShow=logoDraft.home!==undefined?logoDraft.home:state.homeLogo;const awayLogoToShow=logoDraft.away!==undefined?logoDraft.away:state.awayLogo;renderBadge('homeLogoImg','homeBadgeInitials',homeLogoToShow,initials(state.homeName,'CAS'));renderBadge('awayLogoImg','awayBadgeInitials',awayLogoToShow,initials(state.awayName,'OSP'));$('homeScore').textContent=state.homeScore;$('awayScore').textContent=state.awayScore;$('homeSets').textContent=state.homeSets;$('awaySets').textContent=state.awaySets;renderPointAlert('homePointAlert','home');renderPointAlert('awayPointAlert','away');pointAlertsInitialized=true;
@@ -423,6 +523,7 @@ function render(){
  const win=winnerSide();$('winner').textContent=win?`🏆 VINCE ${win==='home'?state.homeName:state.awayName}`:'';$('homePlus').disabled=!isAdmin||state.finished||!!state.sets[state.setIndex]||pending;$('awayPlus').disabled=!isAdmin||state.finished||!!state.sets[state.setIndex]||pending;$('nextSetBtn').disabled=!isAdmin||state.finished||!state.sets[state.setIndex]||pending;$('undoBtn').disabled=!isAdmin||!history.length||pending;
  $('liveBadge').innerHTML=state.finished?'<span class="dot"></span>FINALE':remoteReady?'<span class="dot"></span>LIVE':'<span class="dot"></span>OFFLINE';
  if(isAdmin){if(document.activeElement!==$('homeInput'))$('homeInput').value=state.homeName;if(document.activeElement!==$('awayInput'))$('awayInput').value=state.awayName;if(document.activeElement!==$('eventInput'))$('eventInput').value=state.event;if(document.activeElement!==$('formatInput'))$('formatInput').value=String(state.format);updateLogoStatuses();}
+ renderMatchFinale();
 }
 function showAdmin(){const canManage=ADMIN_MODE&&isAdmin;$('authPanel').classList.toggle('hide',!ADMIN_MODE);document.querySelectorAll('.admin-only').forEach(el=>el.classList.toggle('show',canManage));$('authRow').classList.toggle('hide',canManage);$('logoutBtn').classList.toggle('hide',!canManage);$('copyPublicBtn').classList.toggle('hide',!canManage);$('whatsappBtn').classList.toggle('hide',!canManage);$('emailInput').disabled=canManage;$('passwordInput').disabled=canManage;$('authState').textContent=canManage?'Accesso amministratore attivo. I comandi sono abilitati.':'Accedi con l’account amministratore autorizzato.';render();}
 async function persist(next){if(!isAdmin||!currentUser||currentUser.uid!==ADMIN_UID)throw new Error('Solo l’amministratore autorizzato può modificare la partita.');pending=true;render();try{next.updatedAt=Date.now();await set(ref(db,'match'),next);state=cleanState(next);history=next.history||history;notice('Punteggio salvato e sincronizzato.','ok');}catch(e){notice('Salvataggio non riuscito: '+(e.message||e),'error');throw e;}finally{pending=false;render();}}
@@ -444,6 +545,7 @@ let copyPublicResetTimer=null;
 function setCopyPublicButtonCopied(copied){const btn=$('copyPublicBtn');const label=btn.querySelector('.copy-public-label');btn.classList.toggle('copied',copied);btn.setAttribute('aria-label',copied?'Link copiato!':'Copia link spettatori');label.textContent=copied?'Link copiato!':'Copia link spettatori';}
 async function sharePublic(){const url=publicUrl();try{await navigator.clipboard.writeText(url);clearTimeout(copyPublicResetTimer);setCopyPublicButtonCopied(true);copyPublicResetTimer=setTimeout(()=>setCopyPublicButtonCopied(false),2500);notice('Link spettatori copiato negli appunti.','ok');}catch{prompt('Copia questo link spettatori:',url);}}
 $('copyPublicBtn').onclick=sharePublic;$('whatsappBtn').onclick=()=>{const msg=`Segui la partita in diretta: ${publicUrl()}`;window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank','noopener,noreferrer');};
+$('finaleCloseButton').onclick=()=>{finaleDismissed=true;$('matchFinaleOverlay').classList.add('hide');};
 $('loginBtn').onclick=async()=>{const email=$('emailInput').value.trim(),password=$('passwordInput').value;if(!email||!password){notice('Inserisci email e password dell’amministratore.','error');return;}try{await signInWithEmailAndPassword(auth,email,password);$('passwordInput').value='';}catch(e){notice('Accesso non riuscito. Controlla le credenziali e che l’utente sia abilitato in Firebase Authentication.','error');}};
 $('logoutBtn').onclick=()=>signOut(auth).catch(e=>notice('Errore durante l’uscita: '+e.message,'error'));
 const fullscreenButton=$('fullscreenBtn');
@@ -452,7 +554,7 @@ const spectatorStartButton=$('spectatorStartButton');
 let screenWakeLock=null;
 let displayActivationRunning=false;
 function isImmersiveView(){return !!document.fullscreenElement||document.body.classList.contains('focus-mode');}
-function updateFullscreenButton(){const active=isImmersiveView();fullscreenButton.querySelector('.fullscreen-icon').textContent=active?'×':'⛶';fullscreenButton.querySelector('.fullscreen-label').textContent=active?'ESCI DA SCHERMO INTERO':'SCHERMO INTERO';fullscreenButton.setAttribute('aria-label',active?'Esci da schermo intero':'Attiva schermo intero');if(spectatorPrompt){spectatorPrompt.classList.toggle('hide',!SPECTATOR_VIEW||active);}}
+function updateFullscreenButton(){const active=isImmersiveView();fullscreenButton.querySelector('.fullscreen-icon').textContent=active?'×':'⛶';fullscreenButton.querySelector('.fullscreen-label').textContent=active?'ESCI DA SCHERMO INTERO':'SCHERMO INTERO';fullscreenButton.setAttribute('aria-label',active?'Esci da schermo intero':'Attiva schermo intero');if(spectatorPrompt){spectatorPrompt.classList.toggle('hide',!SPECTATOR_VIEW||spectatorStarted||active);}renderMatchFinale();}
 async function requestScreenWakeLock(){
  if(!SPECTATOR_VIEW||!('wakeLock' in navigator)||document.visibilityState!=='visible')return false;
  try{if(screenWakeLock&&!screenWakeLock.released)return true;screenWakeLock=await navigator.wakeLock.request('screen');screenWakeLock.addEventListener('release',()=>{screenWakeLock=null;});return true;}catch{return false;}
@@ -483,7 +585,7 @@ fullscreenButton.addEventListener('click',async()=>{
  if(SPECTATOR_VIEW)await requestScreenWakeLock();
  updateFullscreenButton();
 });
-if(spectatorStartButton){spectatorStartButton.addEventListener('click',()=>{if(!isImmersiveView())void activateSpectatorDisplay(true);});}
+if(spectatorStartButton){spectatorStartButton.addEventListener('click',async()=>{spectatorStarted=true;if(!isImmersiveView())await activateSpectatorDisplay(true);updateFullscreenButton();});}
 // Nei browser moderni il fullscreen automatico senza gesto utente viene normalmente bloccato.
 // Per questo la schermata iniziale richiede un tocco esplicito: lo stesso tocco avvia
 // fullscreen e Screen Wake Lock. Il Wake Lock viene comunque ritentato quando si torna alla pagina.
