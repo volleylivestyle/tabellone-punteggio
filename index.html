@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827">
-<meta name="description" content="Tabellone pallavolo live con punteggio sincronizzato in tempo reale."><title>Volley Live — Tabellone v9.5</title>
+<meta name="description" content="Tabellone pallavolo live con punteggio sincronizzato in tempo reale e anteprima della partita."><title>Volley Live — Tabellone v9.7</title>
 <style>
 :root {
   color-scheme: dark;
@@ -46,14 +46,38 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .fullscreen-btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; border:1px solid #2e4358; background:rgba(14,27,41,.9); color:#d4e2f1; border-radius:8px; padding:9px 11px; cursor:pointer; font-size:.7rem; font-weight:900; letter-spacing:.08em; white-space:nowrap; }
 .fullscreen-btn:hover { border-color:#56738f; background:#152639; }
 .fullscreen-icon { font-size:1rem; line-height:1; }
-.spectator-prompt { position:fixed; z-index:10001; left:50%; bottom:max(14px,env(safe-area-inset-bottom)); transform:translateX(-50%); width:min(92vw,430px); display:flex; align-items:center; gap:12px; padding:13px 15px; border:1px solid #43b9ff; border-radius:14px; background:rgba(10,20,32,.97); color:#f4f8ff; text-align:left; cursor:pointer; box-shadow:0 12px 45px rgba(0,0,0,.55),0 0 22px rgba(67,185,255,.22); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
-.spectator-prompt:hover { background:rgba(17,36,55,.98); border-color:#83d4ff; }
-.spectator-prompt-icon { display:grid; place-items:center; width:42px; height:42px; flex:none; border-radius:10px; background:rgba(67,185,255,.12); color:#67c8ff; font-size:1.55rem; line-height:1; }
-.spectator-prompt-copy { display:flex; min-width:0; flex:1; flex-direction:column; gap:4px; }
-.spectator-prompt-copy strong { font-size:.79rem; font-weight:1000; letter-spacing:.055em; }
-.spectator-prompt-copy small { color:#a9bed2; font-size:.68rem; line-height:1.35; font-weight:650; }
-.spectator-prompt-arrow { color:#67c8ff; font-size:1.3rem; font-weight:900; flex:none; }
+.spectator-prompt { position:fixed; z-index:10001; inset:0; width:100%; min-height:100vh; min-height:100dvh; overflow-y:auto; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:15px; padding:max(20px,env(safe-area-inset-top)) max(15px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(15px,env(safe-area-inset-left)); border:0; border-radius:0; background:radial-gradient(ellipse at 50% 42%,rgba(22,57,82,.91),rgba(5,8,13,.99) 70%); color:#f4f8ff; text-align:center; cursor:default; box-shadow:none; transform:none; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+.spectator-prompt:hover { background:radial-gradient(ellipse at 50% 42%,rgba(27,72,103,.94),rgba(5,8,13,.995) 70%); }
+.spectator-prompt:focus-visible { outline:3px solid #83d4ff; outline-offset:-8px; }
+.spectator-prompt-icon { display:grid; place-items:center; width:clamp(48px,8vw,68px); height:clamp(48px,8vw,68px); flex:none; border:1px solid rgba(99,194,255,.52); border-radius:18px; background:linear-gradient(145deg,rgba(67,185,255,.24),rgba(13,34,51,.72)); color:#8bd8ff; font-size:clamp(1.8rem,5vw,2.7rem); line-height:1; box-shadow:0 0 45px rgba(67,185,255,.19),inset 0 1px rgba(255,255,255,.12); }
+.spectator-prompt-copy { display:flex; width:min(94vw,470px); min-width:0; flex-direction:column; align-items:center; gap:9px; }
+.spectator-prompt-kicker { color:#83d4ff; font-size:.7rem; font-weight:950; letter-spacing:.25em; }
+.spectator-prompt-copy > strong { font-size:clamp(1.45rem,4.8vw,2.15rem); line-height:1.12; font-weight:1000; letter-spacing:.035em; text-shadow:0 0 24px rgba(67,185,255,.22); }
+.spectator-prompt-copy small { max-width:390px; color:#b7cada; font-size:clamp(.78rem,2.15vw,.92rem); line-height:1.45; font-weight:600; }
+.spectator-prompt-arrow { display:inline-flex; align-items:center; justify-content:center; margin-top:1px; padding:13px 22px; border:1px solid #43b9ff; border-radius:12px; background:linear-gradient(135deg,#14618e,#0b3c5d); color:#fff; font-size:.8rem; font-weight:1000; letter-spacing:.14em; box-shadow:0 0 28px rgba(67,185,255,.17),inset 0 1px rgba(255,255,255,.16); cursor:pointer; }
+.spectator-prompt-arrow:hover { background:linear-gradient(135deg,#1b78ac,#104e73); box-shadow:0 0 34px rgba(67,185,255,.24),inset 0 1px rgba(255,255,255,.2); }
+.spectator-preview { display:flex; flex-direction:column; gap:13px; width:min(94vw,850px); flex:none; padding:clamp(12px,2.4vw,22px); border:1px solid rgba(99,162,255,.32); border-radius:20px; background:linear-gradient(145deg,rgba(12,26,40,.92),rgba(5,11,18,.93)); box-shadow:0 22px 65px rgba(0,0,0,.36),inset 0 1px rgba(255,255,255,.055),0 0 35px rgba(67,185,255,.075); cursor:default; }
+.spectator-preview-heading { display:flex; flex-direction:column; align-items:center; gap:7px; }
+.spectator-preview-caption { color:#7897b3; font-size:.62rem; font-weight:950; letter-spacing:.22em; }
+.spectator-preview-event { max-width:100%; color:#c9eeff; font-size:clamp(.8rem,2.2vw,1.12rem); line-height:1.25; font-weight:1000; letter-spacing:.075em; text-transform:uppercase; overflow-wrap:anywhere; }
+.spectator-preview-teams { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:clamp(6px,2vw,19px); width:100%; }
+.spectator-preview-team { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; min-width:0; padding:10px 6px; border:1px solid rgba(72,241,138,.2); border-radius:13px; background:linear-gradient(155deg,rgba(20,45,36,.58),rgba(5,12,15,.58)); }
+.spectator-preview-team.away-preview { border-color:rgba(255,208,115,.22); background:linear-gradient(155deg,rgba(54,39,18,.52),rgba(14,10,5,.58)); }
+.spectator-preview-mark { position:relative; display:grid; place-items:center; flex:none; width:clamp(44px,7.4vw,70px); height:clamp(44px,7.4vw,70px); overflow:hidden; border-radius:15px; border:1px solid rgba(72,241,138,.5); background:linear-gradient(145deg,rgba(72,241,138,.22),rgba(4,14,10,.92)); color:#b1ffbd; font-size:clamp(.72rem,2vw,1.05rem); font-weight:1000; letter-spacing:.05em; }
+.spectator-preview-team.away-preview .spectator-preview-mark { border-color:rgba(255,208,115,.5); background:linear-gradient(145deg,rgba(255,208,115,.2),rgba(22,14,4,.92)); color:#ffd073; }
+.spectator-preview-mark .team-logo { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; padding:3px; }
+.spectator-preview-initials { padding:2px; }
+.spectator-preview-name { width:100%; color:#f4f8ff; font-size:clamp(.68rem,2vw,1.1rem); font-weight:1000; letter-spacing:.035em; line-height:1.2; text-transform:uppercase; overflow-wrap:anywhere; }
+.spectator-preview-score { color:#b1ffbd; font-size:clamp(1.7rem,6.1vw,3.3rem); line-height:1; font-weight:1000; letter-spacing:-.065em; font-variant-numeric:tabular-nums; text-shadow:0 0 20px rgba(72,241,138,.25); }
+.spectator-preview-team.away-preview .spectator-preview-score { color:#ffd073; text-shadow:0 0 20px rgba(255,208,115,.2); }
+.spectator-preview-sets { display:flex; align-items:center; gap:6px; color:#8ea7bd; font-size:.64rem; font-weight:900; letter-spacing:.1em; }
+.spectator-preview-sets strong { color:#eff6ff; font-size:.85rem; }
+.spectator-preview-vs { color:#6886a2; font-size:clamp(.63rem,1.9vw,.85rem); font-weight:1000; letter-spacing:.13em; }
+.spectator-preview-footer { display:flex; align-items:center; justify-content:center; gap:8px; color:#7592a9; font-size:.59rem; font-weight:900; letter-spacing:.12em; line-height:1.3; }
+.spectator-preview-footer::before { content:""; width:6px; height:6px; flex:none; border-radius:50%; background:#48f18a; box-shadow:0 0 9px #48f18a; }
 body.focus-mode .spectator-prompt { display:none!important; }
+@media (max-width:480px) { .spectator-prompt { gap:12px; justify-content:center; padding-left:12px; padding-right:12px; } .spectator-prompt-copy { gap:7px; } .spectator-prompt-copy > strong { letter-spacing:.01em; } .spectator-preview { gap:9px; padding:10px; border-radius:15px; } .spectator-preview-teams { gap:5px; } .spectator-preview-team { padding:8px 4px; gap:6px; border-radius:10px; } .spectator-preview-mark { border-radius:11px; } .spectator-preview-name { letter-spacing:0; } .spectator-preview-footer { letter-spacing:.045em; font-size:.52rem; } }
+@media (max-height:720px) { .spectator-prompt { justify-content:flex-start; gap:10px; } .spectator-prompt-icon { width:44px; height:44px; border-radius:13px; font-size:1.6rem; } .spectator-preview { gap:8px; padding:10px; } .spectator-preview-team { padding:7px 5px; gap:5px; } .spectator-preview-mark { width:44px; height:44px; } .spectator-prompt-arrow { padding:10px 18px; } }
 .meta-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:18px 2px 20px; }
 .meta { min-width:0; margin:0; color:#e4effb; font-size:clamp(.9rem,2.4vw,1.1rem); font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
 .time-meta { display:flex; flex-direction:column; align-items:flex-end; justify-content:center; gap:4px; flex:none; max-width:56%; }
@@ -245,7 +269,7 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
   .teamname { font-size:.65rem; }
 }
 @media (prefers-reduced-motion:no-preference) { .dot { animation:pulse 1.8s infinite; } @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.45;} } }
-</style><!-- Volley Live v9.5: orologio locale, tentativo fullscreen spettatori e Screen Wake Lock ove supportato. -->
+</style><!-- Volley Live v9.7: anteprima iniziale live con campionato, squadre, loghi, punteggio e set. -->
 </head>
 <body><div class="wrap">
 <header class="top"><div class="brandline"><div class="brandmark" aria-hidden="true">VL</div><div><div class="eyebrow">VOLLEY • LIVE SCORE</div><div class="brand">VOLLEY <span>LIVE</span></div></div></div><div class="header-actions"><div class="live" id="liveBadge"><span class="dot"></span>CONNESSIONE…</div><button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="Attiva o disattiva schermo intero"><span class="fullscreen-icon" aria-hidden="true">⛶</span><span class="fullscreen-label">SCHERMO INTERO</span></button></div></header>
@@ -260,7 +284,7 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
 <section class="team away" id="awayTeam"><div class="team-head"><div class="teammark" id="awayBadge" aria-hidden="true"><span id="awayBadgeInitials">OSP</span><img id="awayLogoImg" class="team-logo hide" alt=""></div><div class="team-info"><div class="teamname" id="awayName">SQUADRA OSPITE</div></div></div><div class="point-alert" id="awayPointAlert" aria-live="polite"></div><div class="points" id="awayScore">0</div><div class="sets-footer"><div class="setslabel">SET VINTI</div><div class="setsvalue"><div class="setwins" id="awaySets">0</div><small>SET</small></div></div><div class="timeout-panel" aria-label="Time-out squadra ospite"><span class="timeout-label">TIME-OUT</span><div class="timeout-lamps" id="awayTimeoutLamps" aria-hidden="true"><span class="timeout-lamp available"></span><span class="timeout-lamp available"></span></div></div><div class="scorecontrols admin-only"><button class="btn timeout-control" id="awayTimeoutBtn" type="button">+ TIME-OUT OSPITE</button></div><div class="scorecontrols admin-only" id="awayControls"><button class="btn orange" id="awayPlus">+1 PUNTO</button></div></section></div>
 <section class="panel"><div class="statusline"><strong id="setTitle">1° SET</strong><span id="setStatus">Partita in corso</span></div><div class="setstrip" id="setStrip"></div><div class="winner" id="winner"></div></section>
 <section class="panel admin-only" id="managePanel"><h2>Gestione partita</h2><div class="formgrid"><label class="field">Squadra di casa<input id="homeInput" maxlength="50" value="SQUADRA DI CASA"></label><label class="field">Squadra ospite<input id="awayInput" maxlength="50" value="SQUADRA OSPITE"></label><label class="field">Torneo / categoria<input id="eventInput" maxlength="80" placeholder="Es. Campionato U14"></label><label class="field">Formato partita<select id="formatInput"><option value="3">Al meglio dei 3 set (2 vinti)</option><option value="5" selected>Al meglio dei 5 set (3 vinti)</option></select></label><div class="field logo-field"><label for="homeLogoFile">Logo squadra di casa</label><input id="homeLogoFile" class="file-input" type="file" accept="image/png,image/jpeg,image/webp"><div class="logo-file-row"><span class="logo-status" id="homeLogoStatus">Nessun logo caricato.</span><button class="btn small-btn" id="clearHomeLogo" type="button">Rimuovi</button></div></div><div class="field logo-field"><label for="awayLogoFile">Logo squadra ospite</label><input id="awayLogoFile" class="file-input" type="file" accept="image/png,image/jpeg,image/webp"><div class="logo-file-row"><span class="logo-status" id="awayLogoStatus">Nessun logo caricato.</span><button class="btn small-btn" id="clearAwayLogo" type="button">Rimuovi</button></div></div></div><div class="service-admin"><h3>Squadra al servizio</h3><p class="note">Seleziona chi serve all’inizio del set: il riquadro del suo punteggio si ingrandisce e si illumina. Quando assegni un punto, l’evidenziazione segue la squadra che ha conquistato il punto. All’inizio del set successivo seleziona chi serve per primo.</p><div class="actions"><button class="btn" id="serveHomeBtn" type="button">● Servizio: casa</button><button class="btn" id="serveAwayBtn" type="button">● Servizio: ospite</button><button class="btn" id="serveNoneBtn" type="button">Nessuna selezione</button></div><div class="authstate" id="servingAdminState">Servizio non indicato.</div></div><div class="actions"><button class="btn primary" id="saveNames">Salva intestazione</button><button class="btn" id="undoBtn">↶ Annulla ultima azione</button><button class="btn" id="nextSetBtn">Conferma / prossimo set</button><button class="btn danger" id="resetBtn">Azzera partita</button></div><p class="logo-note">Scegli un logo in formato PNG, JPG o WebP dal dispositivo. L’immagine viene ridimensionata e salvata nel database per mostrarla a tutti gli spettatori. Dopo aver scelto o rimosso un logo, premi “Salva intestazione”.</p><p class="note">Regole: set normali a 25 punti e almeno 2 di vantaggio; il set decisivo (3° in best-of-3, 5° in best-of-5) si gioca a 15 punti e almeno 2 di vantaggio. Il conteggio dei time-out è preimpostato a 2 per squadra per set e si azzera al set successivo. Il set si registra automaticamente al raggiungimento della soglia. Dopo un set vinto premi “Conferma / prossimo set”.</p></section>
-<span id="eventLabel" class="event-hidden">Campionato / amichevole</span></main><div class="board-caption">Aggiornamento punteggio in tempo reale</div><div class="foot">VOLLEY LIVE • MATCH CENTER</div></div><button id="spectatorPrompt" class="spectator-prompt hide" type="button" aria-label="Attiva schermo intero e prova a mantenere acceso lo schermo"><span class="spectator-prompt-icon" aria-hidden="true">⛶</span><span class="spectator-prompt-copy"><strong>APRI A SCHERMO INTERO</strong><small>Un tocco per una vista più ampia e per provare a tenere acceso lo schermo.</small></span><span class="spectator-prompt-arrow" aria-hidden="true">↗</span></button>
+<span id="eventLabel" class="event-hidden">Campionato / amichevole</span></main><div class="board-caption">Aggiornamento punteggio in tempo reale</div><div class="foot">VOLLEY LIVE • MATCH CENTER</div></div><div id="spectatorPrompt" class="spectator-prompt hide" aria-label="Anteprima della partita e avvio del tabellone"><span class="spectator-prompt-icon" aria-hidden="true">⛶</span><span class="spectator-prompt-copy"><span class="spectator-prompt-kicker">VOLLEY • LIVE SCORE</span><strong>LA PARTITA IN ANTEPRIMA</strong><small>Controlla campionato, squadre e punteggio; quando sei pronto, avvia il tabellone.</small></span><span class="spectator-preview" aria-label="Anteprima in tempo reale del tabellone"><span class="spectator-preview-heading"><span class="spectator-preview-caption">ANTEPRIMA DELLA PARTITA</span><span class="spectator-preview-event" id="spectatorEvent">CAMPIONATO / AMICHEVOLE</span></span><span class="spectator-preview-teams"><span class="spectator-preview-team home-preview"><span class="spectator-preview-mark"><span class="spectator-preview-initials" id="spectatorHomeInitials">CAS</span><img id="spectatorHomeLogo" class="team-logo hide" alt=""></span><span class="spectator-preview-name" id="spectatorHomeName">SQUADRA DI CASA</span><span class="spectator-preview-score" id="spectatorHomeScore">0</span><span class="spectator-preview-sets"><span>SET</span><strong id="spectatorHomeSets">0</strong></span></span><span class="spectator-preview-vs" aria-hidden="true">VS</span><span class="spectator-preview-team away-preview"><span class="spectator-preview-mark"><span class="spectator-preview-initials" id="spectatorAwayInitials">OSP</span><img id="spectatorAwayLogo" class="team-logo hide" alt=""></span><span class="spectator-preview-name" id="spectatorAwayName">SQUADRA OSPITE</span><span class="spectator-preview-score" id="spectatorAwayScore">0</span><span class="spectator-preview-sets"><span>SET</span><strong id="spectatorAwaySets">0</strong></span></span></span><span class="spectator-preview-footer">PUNTEGGIO SINCRONIZZATO IN TEMPO REALE</span></span><button id="spectatorStartButton" class="spectator-prompt-arrow" type="button">AVVIA TABELLONE&nbsp; ↗</button></div>
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js';
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js';
@@ -380,7 +404,20 @@ function renderPointAlert(id,side){
  lastPointAlertSignature[side]=signature;
  if(shouldAnimate)animatePointAlert(el,alert,side,signature);
 }
+function renderSpectatorPreview(){
+ // L’anteprima d’ingresso usa gli stessi dati della partita LIVE da Firebase.
+ $('spectatorEvent').textContent=(state.event||'CAMPIONATO / AMICHEVOLE').trim().toUpperCase();
+ $('spectatorHomeName').textContent=state.homeName||'SQUADRA DI CASA';
+ $('spectatorAwayName').textContent=state.awayName||'SQUADRA OSPITE';
+ $('spectatorHomeScore').textContent=state.homeScore;
+ $('spectatorAwayScore').textContent=state.awayScore;
+ $('spectatorHomeSets').textContent=state.homeSets;
+ $('spectatorAwaySets').textContent=state.awaySets;
+ renderBadge('spectatorHomeLogo','spectatorHomeInitials',state.homeLogo,initials(state.homeName,'CAS'));
+ renderBadge('spectatorAwayLogo','spectatorAwayInitials',state.awayLogo,initials(state.awayName,'OSP'));
+}
 function render(){
+ renderSpectatorPreview();
  $('homeName').textContent=state.homeName;$('awayName').textContent=state.awayName;const homeLogoToShow=logoDraft.home!==undefined?logoDraft.home:state.homeLogo;const awayLogoToShow=logoDraft.away!==undefined?logoDraft.away:state.awayLogo;renderBadge('homeLogoImg','homeBadgeInitials',homeLogoToShow,initials(state.homeName,'CAS'));renderBadge('awayLogoImg','awayBadgeInitials',awayLogoToShow,initials(state.awayName,'OSP'));$('homeScore').textContent=state.homeScore;$('awayScore').textContent=state.awayScore;$('homeSets').textContent=state.homeSets;$('awaySets').textContent=state.awaySets;renderPointAlert('homePointAlert','home');renderPointAlert('awayPointAlert','away');pointAlertsInitialized=true;
  const homeRemaining=Math.max(0,2-state.homeTimeouts),awayRemaining=Math.max(0,2-state.awayTimeouts);
  [['homeTimeoutLamps',homeRemaining],['awayTimeoutLamps',awayRemaining]].forEach(([id,remaining])=>{const lamps=$(id);lamps.replaceChildren();for(let i=0;i<2;i++){const dot=document.createElement('span');dot.className='timeout-lamp'+(i<remaining?' available':'');lamps.append(dot);}});
@@ -418,6 +455,7 @@ $('loginBtn').onclick=async()=>{const email=$('emailInput').value.trim(),passwor
 $('logoutBtn').onclick=()=>signOut(auth).catch(e=>notice('Errore durante l’uscita: '+e.message,'error'));
 const fullscreenButton=$('fullscreenBtn');
 const spectatorPrompt=$('spectatorPrompt');
+const spectatorStartButton=$('spectatorStartButton');
 let screenWakeLock=null;
 let displayActivationRunning=false;
 function isImmersiveView(){return !!document.fullscreenElement||document.body.classList.contains('focus-mode');}
@@ -429,11 +467,15 @@ async function requestScreenWakeLock(){
 async function activateSpectatorDisplay(fromGesture=false){
  if(!SPECTATOR_VIEW||displayActivationRunning)return false;
  displayActivationRunning=true;
+ // Avvia entrambe le richieste durante lo stesso gesto utente: molti browser
+ // richiedono un tocco/clic esplicito per consentire requestFullscreen().
  const wakeLockPromise=requestScreenWakeLock();
+ let fullscreenPromise=null;
+ if(!isImmersiveView()&&document.documentElement.requestFullscreen){
+  try{fullscreenPromise=document.documentElement.requestFullscreen();}catch{/* Il browser non consente il fullscreen in questo contesto. */}
+ }
+ if(fullscreenPromise){try{await fullscreenPromise;}catch{/* Fallback: modalità immersiva CSS, senza API fullscreen. */}}
  let active=isImmersiveView();
- try{
-  if(!active&&document.documentElement.requestFullscreen){await document.documentElement.requestFullscreen();active=!!document.fullscreenElement;}
- }catch{/* I browser generalmente rifiutano il fullscreen automatico senza un gesto dell'utente. */}
  if(!active&&fromGesture){document.body.classList.add('focus-mode');active=true;}
  await wakeLockPromise;
  displayActivationRunning=false;
@@ -448,16 +490,14 @@ fullscreenButton.addEventListener('click',async()=>{
  if(SPECTATOR_VIEW)await requestScreenWakeLock();
  updateFullscreenButton();
 });
-if(spectatorPrompt){spectatorPrompt.addEventListener('click',()=>{if(!isImmersiveView())void activateSpectatorDisplay(true);});}
-// Tenta l'apertura automatica; se il browser la blocca, il primo tocco sul sito riprova entro il gesto utente.
+if(spectatorStartButton){spectatorStartButton.addEventListener('click',()=>{if(!isImmersiveView())void activateSpectatorDisplay(true);});}
+// Nei browser moderni il fullscreen automatico senza gesto utente viene normalmente bloccato.
+// Per questo la schermata iniziale richiede un tocco esplicito: lo stesso tocco avvia
+// fullscreen e Screen Wake Lock. Il Wake Lock viene comunque ritentato quando si torna alla pagina.
 if(SPECTATOR_VIEW){
- function onFirstSpectatorPointerDown(event){if(event.target instanceof Element&&event.target.closest('#fullscreenBtn, #spectatorPrompt'))return;document.removeEventListener('pointerdown',onFirstSpectatorPointerDown,true);if(!isImmersiveView())void activateSpectatorDisplay(true);}
- function onFirstSpectatorKeydown(event){if(event.target instanceof Element&&event.target.closest('#fullscreenBtn, #spectatorPrompt'))return;document.removeEventListener('keydown',onFirstSpectatorKeydown,true);if(!isImmersiveView())void activateSpectatorDisplay(true);}
- document.addEventListener('pointerdown',onFirstSpectatorPointerDown,true);
- document.addEventListener('keydown',onFirstSpectatorKeydown,true);
  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')void requestScreenWakeLock();});
  window.addEventListener('pageshow',()=>{if(document.visibilityState==='visible')void requestScreenWakeLock();});
- setTimeout(()=>{void activateSpectatorDisplay(false);},150);
+ setTimeout(()=>{void requestScreenWakeLock();},150);
 }
 document.addEventListener('fullscreenchange',updateFullscreenButton);
 updateFullscreenButton();
