@@ -1,0 +1,29 @@
+VOLLEY LIVE — ATTRIBUZIONE E DICHIARAZIONE DI DIRITTI
+
+Titolare indicato del progetto: Fabio Marsico
+Progetto: Volley Live — tabellone elettronico per partite di pallavolo
+Data della dichiarazione: 29 ottobre 2026
+
+DICHIARAZIONE
+
+Il progetto Volley Live è stato ideato e diretto da Fabio Marsico, che ha definito e revisionato le specifiche funzionali, le scelte d'interazione, l'organizzazione delle schermate e le modifiche successive in base alle prove effettuate. L'implementazione del software è stata realizzata con il supporto di strumenti di intelligenza artificiale, sulla base delle specifiche, delle decisioni progettuali e delle verifiche curate da Fabio Marsico.
+
+Fabio Marsico rivendica i diritti sui contributi originali del progetto di cui è titolare, inclusi gli elementi creativi originali dell'interfaccia, la documentazione e gli eventuali contributi originali del codice, nei limiti riconosciuti dalla legge applicabile. Tutti i diritti riservati, nei limiti consentiti dalla legge. È richiesta autorizzazione preventiva per la riproduzione, la modifica o la redistribuzione dei contributi originali di titolarità di Fabio Marsico, salvo i casi consentiti dalla legge.
+
+LIMITI E DIRITTI DI TERZI
+
+Questa dichiarazione non rivendica la proprietà di Firebase, GitHub Pages, librerie o SDK di terzi, né di marchi, loghi, immagini o altri materiali caricati da utenti o appartenenti a terzi. Tali elementi restano soggetti ai diritti e alle condizioni dei rispettivi titolari. L'avviso di copyright è una dichiarazione di attribuzione, non una registrazione, un deposito o una decisione ufficiale sulla titolarità. La portata della tutela dipende dalla legge applicabile e dalle caratteristiche concrete dei singoli contributi.
+
+RIFERIMENTO NORMATIVO
+
+In Italia, la Legge 22 aprile 1941, n. 633 disciplina la protezione del diritto d'autore; l'articolo 1, nel testo vigente, include le opere create con ausilio di strumenti di intelligenza artificiale purché siano risultato del lavoro intellettuale dell'autore, e riconosce inoltre la protezione dei programmi per elaboratore come opere letterarie. La valutazione dell'applicazione concreta della tutela richiede di considerare i contributi effettivi e le circostanze del caso.
+Testo ufficiale aggiornato: https://www.normattiva.it/eli/id/1941/07/16/041U0633/CONSOLIDATED/20260612
+
+PROVE CONSIGLIATE DA CONSERVARE
+
+- Le versioni datate del codice e dei pacchetti ZIP.
+- La cronologia dei commit e le release del repository GitHub.
+- Le specifiche, le decisioni, le revisioni e i test effettuati durante lo sviluppo.
+- Eventuali copie di backup con data verificabile.
+
+La presente dichiarazione ha finalità informativa e documentale e non sostituisce una consulenza legale personalizzata.

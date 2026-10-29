@@ -1,69 +1,127 @@
-TABELLONE PUNTEGGIO — FIREBASE LIVE
-===================================
+VOLLEY LIVE — VERSIONE 10.7
+SCHERMATA ANIMATA DI FINE PARTITA
 
-STATO DEL PACCHETTO
-- La configurazione della tua app Web Firebase è già inserita in index.html.
-- Progetto: tabellone-punteggio
-- Realtime Database: https://tabellone-punteggio-default-rtdb.europe-west1.firebasedatabase.app
-- UID amministratore autorizzato: 0OX3K0LBPsRVIffqdAfg23qgr0N2
-- Non sono incluse password, token o chiavi private.
-- Il pacchetto non può pubblicare da solo le regole sul server Firebase: devi eseguire il passaggio 1 qui sotto.
+Nuove funzionalità rispetto alla versione 9.9
+- Quando una partita termina, gli spettatori che hanno avviato il tabellone vedono una schermata celebrativa animata.
+- La schermata mostra “VITTORIA!”, nome e logo della squadra vincitrice, il risultato finale in set e i parziali di tutti i set conclusi.
+- Il pulsante “TORNA AL TABELLONE” chiude la schermata celebrativa e lascia visibile il tabellone con il risultato finale.
+- La schermata finale è destinata alla visualizzazione pubblica; il pannello amministratore non viene bloccato.
+- La schermata si presenta anche se lo spettatore apre una partita già conclusa, dopo aver premuto “AVVIA TABELLONE”. Quando l'amministratore azzera la partita, la schermata finale viene disattivata per la nuova partita.
+- Restano invariate le funzioni Firebase, l'accesso amministratore, la sincronizzazione LIVE, i loghi caricati da file, l'indicatore del servizio, i time-out, le animazioni SET POINT/MATCH POINT, l'orologio, lo schermo intero e Screen Wake Lock.
 
-CONTENUTO
-- index.html: interfaccia responsive, login Email/Password, sincronizzazione realtime, segnapunti, set, finale e condivisione.
-- database.rules.json: lettura pubblica soltanto di /match; scrittura consentita solo all'UID amministratore.
-- firebase-config.example.js: copia di riferimento dei parametri web usati nell'app (non va caricato separatamente per far funzionare la pagina).
+Pubblicazione su GitHub Pages
+1. Scaricare index.html.
+2. Nel repository GitHub aprire Code > Add file > Upload files.
+3. Caricare e sostituire soltanto index.html nella cartella principale del repository.
+4. Inserire un messaggio di commit e premere Commit changes.
+5. Aprire il sito pubblico e ricaricare con Ctrl+F5.
 
-1. PUBBLICARE LE REGOLE FIREBASE (OBBLIGATORIO)
-1) Apri https://console.firebase.google.com/ e seleziona tabellone-punteggio.
-2) Apri Realtime Database > Regole.
-3) Copia il contenuto completo di database.rules.json e sostituisci le regole attuali, quindi premi Pubblica.
-4) Controlla che non esistano altre regole più ampie alla radice che concedano lettura o scrittura. Le regole Firebase si applicano anche ai discendenti; una regola permissiva più in alto può annullare le restrizioni più specifiche.
+Test consigliato
+- In ambiente di prova, completare una partita al meglio dei 3 o dei 5 set.
+- Verificare che la schermata finale appaia agli spettatori dopo la conclusione e l'avvio del tabellone.
+- Controllare nome e logo della vincitrice, risultato in set e parziali di ogni set.
+- Premere “TORNA AL TABELLONE” e verificare che il risultato rimanga visibile.
+- Controllare che il pannello amministratore resti disponibile e che “Azzera partita” faccia scomparire lo stato finale per la partita successiva.
 
-Le regole incluse concedono lettura pubblica solo sotto /match. Non concedono scrittura pubblica. La scrittura richiede una sessione Firebase Authentication con UID esattamente uguale a quello indicato. Tutti gli altri nodi rimangono negati per default.
+Sicurezza
+- Non modificare le regole Firebase già pubblicate.
+- Non inserire password nel codice.
+- database.rules.json è incluso come riferimento: per questo aggiornamento non serve ripubblicarlo.
 
-2. CONTROLLARE L'AUTENTICAZIONE
-1) Firebase Console > Authentication > Sign-in method: Email/Password deve essere abilitato (come già indicato).
-2) Authentication > Users: controlla che l'account amministratore esistente corrisponda all'UID indicato.
-3) Non inserire la password nell'HTML, nello ZIP, nel repository o nell'URL. L'app la chiede soltanto nel modulo di login.
-4) Quando avrai scelto il dominio di pubblicazione, apri Authentication > Settings > Authorized domains e verifica che il dominio sia autorizzato. Per GitHub Pages aggiungi l'host esatto del sito, se non già presente.
 
-3. TEST LOCALE PRIMA DELLA PUBBLICAZIONE
-Per i moduli JavaScript e Firebase usa un server locale; non aprire index.html con doppio clic.
-1) Installa Node.js da https://nodejs.org/ se non è già installato.
-2) Estrai lo ZIP in una cartella.
-3) Apri il terminale nella cartella che contiene index.html (cartella Tabellone_Punteggio_Firebase).
-4) Esegui: npx serve .
-5) Apri nel browser l'indirizzo locale mostrato dal comando.
-6) Accedi con l'email e la password dell'amministratore già esistente.
-7) In un altro browser/dispositivo apri lo stesso URL senza autenticarti: deve poter vedere il punteggio ma non deve poter modificarlo.
-8) Prova +1, annullamento ultima azione, vittoria set, prossimo set, finale, azzeramento e aggiornamento su un secondo dispositivo.
+Aggiornamento V10.3: aggiunto nella schermata celebrativa il pulsante Condividi risultato su WhatsApp. Il messaggio contiene campionato/categoria, nomi delle squadre, risultato finale in set, parziali dei set conclusi e link pubblico del tabellone. Non vengono condivisi URL amministrativi.
 
-Punteggio: set ordinari a 25 punti con almeno 2 di vantaggio. Il set decisivo è a 15 punti con almeno 2 di vantaggio (3° set nella formula al meglio di 3; 5° set nella formula al meglio di 5). Il set si registra automaticamente alla soglia; i pulsanti punto restano bloccati fino a “Conferma / prossimo set”.
 
-4. PUBBLICAZIONE CON GITHUB PAGES
-1) Crea un repository GitHub, ad esempio tabellone-punteggio.
-2) Carica index.html nella cartella radice del repository. Puoi caricare anche LEGGIMI.txt, database.rules.json e firebase-config.example.js; quest'ultimo è solo di riferimento. Le regole non vengono applicate da GitHub Pages: pubblicale prima nella console Firebase.
-3) Nel repository apri Settings > Pages.
-4) Seleziona “Deploy from a branch”, branch main e cartella /(root), poi salva.
-5) Apri l'URL HTTPS che GitHub Pages mostra dopo la pubblicazione.
-6) Se il login restituisce un errore di dominio non autorizzato, torna in Firebase Authentication > Settings > Authorized domains e aggiungi l'host del sito.
-7) Ripeti la prova amministratore/spettatore sull'URL pubblico. Solo dopo la verifica condividi il link ai tifosi.
+AGGIORNAMENTO V10.4 — CONDIVISIONE IMMAGINE SCHERMATA CELEBRATIVA
+- Il pulsante “Condividi immagine su WhatsApp” nella schermata finale è visibile soltanto nel pannello amministratore dopo autenticazione dell’UID autorizzato.
+- L’immagine PNG viene generata nel browser con campionato, VITTORIA, logo e nome della squadra vincitrice, risultato finale in set e parziali di tutti i set.
+- Su dispositivi/browser che supportano la condivisione di file, si apre il menu nativo: scegliere WhatsApp per inviare l’immagine con il testo del risultato.
+- Dove la condivisione diretta di file non è supportata, il sito scarica il PNG e prova a copiare il testo del risultato negli appunti; l’amministratore deve allegare il PNG manualmente in WhatsApp.
+- L’immagine viene creata localmente nel browser. Non viene aggiunto Firebase Storage e non è necessario modificare le regole Realtime Database.
 
-FUNZIONI E NOTE
-- +1 per ciascuna squadra e annullamento dell'ultima azione registrata.
-- Nome squadre, torneo/categoria e formula best-of-3 o best-of-5.
-- Set vinti, parziali, rilevamento della partita conclusa e indicazione della vincitrice.
-- Pulsante copia link spettatori e condivisione WhatsApp.
-- Gli spettatori non devono fare login: possono leggere il nodo /match, mentre i comandi amministrativi sono mostrati solo alla sessione autorizzata.
-- Usa un solo dispositivo amministratore alla volta per evitare che due modifiche simultanee sullo stesso punteggio si sovrascrivano. Gli spettatori possono essere numerosi.
-- La configurazione SDK Web, inclusa apiKey, è una configurazione client: non è una password. La sicurezza dipende dalle regole Realtime Database e dall'autenticazione.
+PUBBLICAZIONE V10.4
+1. Sostituire soltanto index.html nel repository GitHub Pages.
+2. Non modificare database.rules.json o le impostazioni Firebase.
+3. Dopo il commit, aprire il pannello amministratore con ?admin=1, autenticarsi e verificare la condivisione quando la schermata finale è attiva.
+4. Per verificare che gli spettatori non vedano il pulsante, aprire il link pubblico senza ?admin=1: la condivisione immagine non deve essere presente.
 
-CHECKLIST PRE-PARTITA
-[ ] Regole Realtime Database pubblicate e ricontrollate.
-[ ] Login amministratore riuscito.
-[ ] Spettatore non autenticato riesce a leggere ma non a scrivere.
-[ ] +1 e annullamento verificati.
-[ ] Set decisivo a 15 verificato nella formula scelta.
-[ ] Aggiornamento in tempo reale provato su due dispositivi.
-[ ] URL HTTPS pubblico e condivisione WhatsApp provati.
+
+AGGIORNAMENTO V10.4.1 — COMPATIBILITÀ TESTO WHATSAPP DA PC
+- Nella condivisione immagine dal cellulare viene conservata la didascalia con emoji, come verificato dall'utente.
+- Su PC il testo condiviso usa etichette testuali “VOLLEY LIVE |” e “RISULTATO FINALE” al posto delle emoji, per evitare che alcune combinazioni di browser e WhatsApp Desktop/Web le mostrino come caratteri sostitutivi.
+- Nei browser desktop senza condivisione di file, il PNG viene scaricato e la didascalia compatibile viene copiata negli appunti per l'invio manuale su WhatsApp.
+- Non sono necessarie modifiche alle regole Firebase.
+
+PUBBLICAZIONE V10.4.1
+1. Sostituire soltanto index.html nel repository GitHub Pages.
+2. Non modificare database.rules.json o le impostazioni Firebase.
+3. Su cellulare verificare che le emoji della didascalia siano ancora presenti; su PC controllare che il testo non contenga caratteri “�”.
+
+
+AGGIORNAMENTO V10.4.2 — SCELTA WHATSAPP WEB O APP DA PC
+- Su PC, cliccando “CONDIVIDI IMMAGINE SU WHATSAPP”, si apre un selettore con due modalità, quando supportate: WhatsApp Web oppure il menu di condivisione del dispositivo (per esempio WhatsApp Desktop).
+- La scelta WhatsApp Web scarica il PNG del tabellone celebrativo e apre https://web.whatsapp.com con la didascalia in testo semplice già compilata. Per limiti del browser e di WhatsApp Web, il PNG non può essere allegato automaticamente via URL: l’amministratore deve allegare manualmente il file scaricato prima di inviare il messaggio.
+- La scelta “App installata / menu di condivisione” usa la condivisione nativa del browser quando supporta file; da lì si può selezionare un’app compatibile, per esempio WhatsApp Desktop.
+- Su cellulare rimane la condivisione nativa del PNG con didascalia contenente emoji. Il testo da PC continua a non usare emoji, per evitare caratteri sostitutivi su alcune combinazioni browser/WhatsApp.
+- La funzione resta visibile e utilizzabile solo dall’amministratore autenticato. Firebase, database e regole non cambiano.
+
+PUBBLICAZIONE V10.4.2
+1. Sostituire soltanto index.html nel repository GitHub Pages.
+2. Non modificare database.rules.json o le impostazioni Firebase.
+3. Da PC, terminare una partita di prova, cliccare “CONDIVIDI IMMAGINE SU WHATSAPP” e scegliere “WhatsApp Web”. Verificare che il PNG venga scaricato, WhatsApp Web si apra con il testo semplice precompilato e allegare manualmente il PNG prima di inviare.
+4. Se si vuole inviare il file direttamente a un’app installata, scegliere “App installata / menu di condivisione” (disponibile se il browser supporta la condivisione di file).
+
+
+AGGIORNAMENTO V10.4.3 — DIDASCALIA BREVE E CONDIVISIONE MOBILE/TABLET
+- La didascalia WhatsApp contiene soltanto campionato/categoria, RISULTATO FINALE e il risultato complessivo in set. L'elenco testuale dei parziali e il link del tabellone LIVE non vengono aggiunti al testo della condivisione. I parziali restano visibili nell'immagine PNG celebrativa.
+- Su smartphone e tablet (dispositivi mobili o con touchscreen) il codice verifica il supporto alla condivisione file tramite navigator.canShare({files:[file]}), poi prova a condividere direttamente il PNG e la didascalia breve tramite navigator.share. La conversione del canvas in PNG avviene in modo sincrono prima della chiamata, per ridurre il rischio di perdere il gesto utente richiesto dal browser.
+- Se il browser del telefono/tablet non supporta la condivisione di file, il PNG viene scaricato e il codice prova a copiare la didascalia breve negli appunti; l'immagine va poi allegata manualmente in WhatsApp.
+- Su PC resta il selettore WhatsApp Web / menu nativo: WhatsApp Web apre il testo breve precompilato e richiede di allegare manualmente il PNG scaricato; il menu nativo può condividere direttamente il file con un'app compatibile.
+- Il percorso mobile/tablet è stato controllato nel codice, ma deve ancora essere provato sul dispositivo fisico dell'utente dopo la pubblicazione. Non sono necessarie modifiche alle regole Firebase.
+
+PUBBLICAZIONE V10.4.3
+1. Sostituire soltanto index.html nel repository GitHub Pages.
+2. Non modificare database.rules.json né le impostazioni Firebase.
+3. Da smartphone/tablet, provare la condivisione su una partita conclusa: se si apre il menu nativo, selezionare WhatsApp e verificare che il PNG sia allegato; se il browser non supporta la condivisione di file, usare il PNG scaricato e la didascalia copiata.
+4. Verificare che la didascalia contenga l'intestazione della competizione/categoria e RISULTATO FINALE con i set vinti, senza l'elenco testuale dei parziali e senza URL LIVE.
+5. Da PC, testare WhatsApp Web e, quando disponibile, il menu nativo delle app.
+
+
+AGGIORNAMENTO V10.5 — SCELTA SCARICA O CONDIVIDI + DESTINAZIONI PERSONALIZZATE
+- Alla pressione del pulsante nella schermata celebrativa, l’amministratore sceglie prima se scaricare soltanto il PNG oppure condividerlo. La stessa scelta viene proposta su PC, Android e iOS.
+- Su Android/iOS viene utilizzato il menu nativo del dispositivo per la condivisione del PNG, quando supportato. Se non è disponibile, il PNG viene scaricato e la didascalia viene copiata se il browser lo consente.
+- Su PC si apre un menu interno ispirato alla schermata di condivisione di Windows con esattamente queste destinazioni: WhatsApp Web, WhatsApp app, Copia, Facebook, Instagram e Mail.
+- La didascalia contiene soltanto l’icona pallavolo e il nome del campionato/categoria, poi l’icona del trofeo e “RISULTATO FINALE”. Non contiene nomi delle squadre, parziali testuali o link. I parziali restano nell’immagine PNG celebrativa.
+- WhatsApp Web/app: il PNG viene scaricato e la destinazione si apre con la didascalia precompilata; l’immagine va allegata manualmente. Facebook e Instagram aprono il sito e scaricano il PNG, che va caricato manualmente; viene inoltre copiata la didascalia se supportato. Mail apre una bozza con oggetto e didascalia, a cui va allegata l’immagine. “Copia” tenta di copiare il PNG negli appunti; se non supportato, scarica l’immagine e copia la didascalia.
+- Le destinazioni PC sono offerte da un menu personalizzato nel sito. Il browser non consente di filtrare i destinatari della finestra nativa di condivisione di Windows; per questo è stato creato un menu web con le sole sei opzioni richieste.
+- Nessuna modifica alle regole o alla configurazione Firebase. La condivisione rimane riservata all’amministratore autenticato.
+
+PUBBLICAZIONE V10.5
+1. Sostituire soltanto index.html nel repository GitHub Pages.
+2. Non modificare database.rules.json né le impostazioni Firebase.
+3. Da PC: terminare una partita di prova, cliccare “SCARICA / CONDIVIDI IMMAGINE”, scegliere “Condividi immagine”, quindi provare ciascuna delle sei destinazioni.
+4. Da Android/iOS: premere il pulsante, selezionare “Condividi immagine” e verificare il menu nativo con il PNG; provare anche “Scarica solo immagine”.
+5. Verificare che il testo contenga soltanto categoria/campionato e “RISULTATO FINALE” con icone, senza nomi delle squadre, parziali testuali o link.
+
+AGGIORNAMENTO V10.6 — DOWNLOAD IMMAGINE FINALE PER GLI SPETTATORI
+- Nella schermata celebrativa pubblica, gli spettatori vedono il pulsante verde “SCARICA IMMAGINE” con icona di download/salvataggio.
+- Il pulsante genera e scarica soltanto il PNG del tabellone celebrativo (campionato, vittoria, squadra vincitrice, risultato finale e parziali). Non apre WhatsApp e non mostra menu di condivisione.
+- Il pulsante di condivisione multi-destinazione rimane disponibile esclusivamente all’amministratore autenticato, come nelle versioni precedenti.
+- Non sono necessarie modifiche a Firebase, alle regole del Realtime Database o alle impostazioni di autenticazione.
+
+PUBBLICAZIONE V10.6
+1. Sostituire soltanto index.html nel repository GitHub Pages.
+2. Non modificare database.rules.json o le impostazioni Firebase.
+3. A partita conclusa, aprire il link pubblico, premere “AVVIA TABELLONE” e verificare che appaia “SCARICA IMMAGINE”.
+4. Premere il pulsante e controllare che il PNG venga scaricato. Verificare inoltre che la finestra e i menu di condivisione non si aprano in modalità spettatore.
+
+AGGIORNAMENTO V10.7 — ATTRIBUZIONE DEL PROGETTO
+- Inserita nel footer del tabellone la dicitura “© 2026 Fabio Marsico · Volley Live. Tutti i diritti riservati, nei limiti consentiti dalla legge.”
+- Aggiunti i metadati autore/copyright e una nota di attribuzione nel sorgente HTML.
+- Aggiunto il file ATTRIBUZIONE_E_DIRITTI.txt con la dichiarazione estesa e le relative precisazioni.
+- Questa modifica è soltanto informativa e grafica: non cambia autenticazione, punteggio, sincronizzazione, condivisione o regole Firebase.
+
+PUBBLICAZIONE V10.7
+1. Sostituire soltanto index.html nel repository GitHub Pages.
+2. Non modificare database.rules.json né le impostazioni Firebase.
+3. Ricaricare il sito e verificare la dicitura discreta in fondo al tabellone.
