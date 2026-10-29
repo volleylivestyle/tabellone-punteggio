@@ -11,7 +11,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827">
-<meta name="description" content="Tabellone pallavolo live con punteggio sincronizzato in tempo reale e anteprima della partita."><meta name="author" content="Fabio Marsico"><meta name="copyright" content="© 2026 Fabio Marsico — Volley Live. Tutti i diritti riservati nei limiti consentiti dalla legge."><title>Volley Live — Tabellone v10.8</title>
+<meta name="description" content="Tabellone pallavolo live con punteggio sincronizzato in tempo reale e anteprima della partita."><meta name="author" content="Fabio Marsico"><meta name="copyright" content="© 2026 Fabio Marsico — Volley Live. Tutti i diritti riservati nei limiti consentiti dalla legge."><title>Volley Live — Tabellone v10.9</title>
 <style>
 :root {
   color-scheme: dark;
@@ -61,6 +61,15 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 @media (prefers-reduced-motion:reduce) { .live.state-connecting .dot { animation:none; } }
 .fullscreen-btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; border:1px solid #2e4358; background:rgba(14,27,41,.9); color:#d4e2f1; border-radius:8px; padding:9px 11px; cursor:pointer; font-size:.7rem; font-weight:900; letter-spacing:.08em; white-space:nowrap; }
 .fullscreen-btn:hover { border-color:#56738f; background:#152639; }
+.sound-toggle { display:inline-flex; align-items:center; justify-content:center; gap:7px; border:1px solid rgba(72,241,138,.48); background:rgba(14,35,27,.9); color:#d9ffe2; border-radius:8px; padding:9px 11px; cursor:pointer; font-size:.7rem; font-weight:900; letter-spacing:.06em; white-space:nowrap; transition:background .18s ease,border-color .18s ease,color .18s ease; }
+.sound-toggle:hover { border-color:#48f18a; background:#163c2a; }
+.sound-toggle.sound-off { border-color:#344354; background:rgba(14,27,41,.9); color:#b4c2cf; }
+.sound-toggle.sound-off:hover { border-color:#61768a; background:#152639; }
+.sound-toggle .sound-icon { width:17px; height:17px; display:block; flex:none; }
+.sound-toggle .sound-icon-off { display:none; }
+.sound-toggle.sound-off .sound-icon-on { display:none; }
+.sound-toggle.sound-off .sound-icon-off { display:block; }
+.sound-toggle:focus-visible { outline:2px solid var(--blue); outline-offset:3px; }
 .fullscreen-icon { font-size:1rem; line-height:1; }
 .spectator-prompt { position:fixed; z-index:10001; inset:0; width:100%; min-height:100vh; min-height:100dvh; overflow-y:auto; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:15px; padding:max(20px,env(safe-area-inset-top)) max(15px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(15px,env(safe-area-inset-left)); border:0; border-radius:0; background:radial-gradient(ellipse at 50% 42%,rgba(22,57,82,.91),rgba(5,8,13,.99) 70%); color:#f4f8ff; text-align:center; cursor:default; box-shadow:none; transform:none; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
 .spectator-prompt:hover { background:radial-gradient(ellipse at 50% 42%,rgba(27,72,103,.94),rgba(5,8,13,.995) 70%); }
@@ -236,6 +245,8 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
   .header-actions { gap:6px; }
   .live { padding:8px 9px; font-size:.62rem; letter-spacing:.08em; }
   .fullscreen-btn { padding:8px 9px; font-size:.62rem; letter-spacing:.03em; }
+  .sound-toggle { padding:8px 9px; font-size:.62rem; letter-spacing:.02em; }
+  .sound-toggle-label { display:none; }
   .fullscreen-label { display:none; }
   .meta-row { margin:14px 2px 13px; align-items:flex-start; }
   .meta { font-size:.84rem; }
@@ -372,10 +383,10 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
 @media (max-height:690px) { .match-finale-overlay { align-items:flex-start; } .match-finale-card { gap:8px; padding-top:12px; padding-bottom:12px; } .finale-winner-mark { width:60px; height:60px; border-radius:13px; } .finale-title { font-size:clamp(2rem,6vh,3.5rem); } .finale-winner { gap:5px; } .finale-set-card { padding:7px 5px; } }
 @media (prefers-reduced-motion:reduce) { .match-finale-card::before { animation:none; } .match-finale-overlay:not(.hide) .match-finale-card,.match-finale-overlay:not(.hide) .finale-title { animation:none; } }
 
-</style><!-- Volley Live v10.8: indicatore connessione Realtime Database aggiornato in modo affidabile. -->
+</style><!-- Volley Live v10.9: effetti sonori locali, sintetizzati via Web Audio e disattivabili per dispositivo. -->
 </head>
 <body><div class="wrap">
-<header class="top"><div class="brandline"><div class="brandmark" aria-hidden="true">VL</div><div><div class="eyebrow">VOLLEY • LIVE SCORE</div><div class="brand">VOLLEY <span>LIVE</span></div></div></div><div class="header-actions"><div class="live state-connecting" id="liveBadge" role="status" aria-live="polite" aria-atomic="true"><span class="dot" aria-hidden="true"></span>CONNESSIONE…</div><button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="Attiva o disattiva schermo intero"><span class="fullscreen-icon" aria-hidden="true">⛶</span><span class="fullscreen-label">SCHERMO INTERO</span></button></div></header>
+<header class="top"><div class="brandline"><div class="brandmark" aria-hidden="true">VL</div><div><div class="eyebrow">VOLLEY • LIVE SCORE</div><div class="brand">VOLLEY <span>LIVE</span></div></div></div><div class="header-actions"><div class="live state-connecting" id="liveBadge" role="status" aria-live="polite" aria-atomic="true"><span class="dot" aria-hidden="true"></span>CONNESSIONE…</div><button class="sound-toggle sound-on" id="soundToggleBtn" type="button" aria-pressed="true" aria-label="Disattiva effetti sonori" title="Disattiva effetti sonori"><svg class="sound-icon sound-icon-on" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h4l5 4V6l-5 4H4z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M18.5 6.5a9 9 0 0 1 0 11"/></svg><svg class="sound-icon sound-icon-off" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h4l5 4V6l-5 4H4z"/><path d="m17 9 5 6m0-6-5 6"/></svg><span class="sound-toggle-label">SUONI ON</span></button><button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="Attiva o disattiva schermo intero"><span class="fullscreen-icon" aria-hidden="true">⛶</span><span class="fullscreen-label">SCHERMO INTERO</span></button></div></header>
 <div class="meta-row"><p class="meta" id="matchMeta">PUNTEGGIO IN DIRETTA</p><div class="time-meta"><span class="current-time" id="currentTime">ORA --:--:--</span><span class="updated" id="updatedLabel">Connessione in corso…</span></div></div>
 <div id="notice" class="notice hide">Connessione a Firebase in corso…</div>
 <section class="panel auth-panel hide" id="authPanel"><h2>Accesso amministratore</h2><div class="authrow" id="authRow"><label class="field">Email<input id="emailInput" type="email" autocomplete="username" placeholder="Email amministratore"></label><label class="field">Password<input id="passwordInput" type="password" autocomplete="current-password" placeholder="Password" /></label><button class="btn primary" id="loginBtn" type="button">Accedi</button></div><div class="authstate" id="authState">Gli spettatori possono consultare il tabellone senza accedere.</div><div class="actions"><button class="btn hide" id="logoutBtn">Esci</button><button class="btn copy-public-btn hide" id="copyPublicBtn" type="button" aria-label="Copia link spettatori">
@@ -514,6 +525,100 @@ function updateConnectionBadge(){
 }
 function updateCurrentTime(){const clock=$('currentTime');if(!clock)return;clock.textContent='ORA '+new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
 updateCurrentTime();setInterval(updateCurrentTime,1000);
+
+// Effetti sonori originali sintetizzati dal browser: nessun file audio esterno.
+// La preferenza è locale al dispositivo e non viene salvata in Firebase.
+const SOUND_PREF_KEY='volleyLiveEffectsEnabled';
+function readSoundPreference(){try{const value=localStorage.getItem(SOUND_PREF_KEY);return value===null?true:value==='true';}catch{return true;}}
+let soundEnabled=readSoundPreference();
+let soundAudioContext=null;
+let soundUnlockPromise=null;
+let lastSoundObservedState=null;
+let suppressNextSoundChange=false;
+let reconnectSoundSuppressionTimer=null;
+function updateSoundToggle(){
+ const button=$('soundToggleBtn');if(!button)return;
+ button.classList.toggle('sound-on',soundEnabled);button.classList.toggle('sound-off',!soundEnabled);
+ button.setAttribute('aria-pressed',String(soundEnabled));
+ const label=button.querySelector('.sound-toggle-label');if(label)label.textContent=soundEnabled?'SUONI ON':'SUONI OFF';
+ const action=soundEnabled?'Disattiva effetti sonori':'Attiva effetti sonori';button.setAttribute('aria-label',action);button.title=action;
+}
+function unlockSoundFromGesture(){
+ if(!soundEnabled)return Promise.resolve(false);
+ const AudioContextClass=window.AudioContext||window.webkitAudioContext;if(!AudioContextClass)return Promise.resolve(false);
+ try{
+  if(!soundAudioContext)soundAudioContext=new AudioContextClass();
+  if(soundAudioContext.state==='running')return Promise.resolve(true);
+  soundUnlockPromise=soundAudioContext.resume().then(()=>soundAudioContext.state==='running').catch(()=>false);
+  return soundUnlockPromise;
+ }catch{return Promise.resolve(false);}
+}
+function scheduleSoundTone(ctx,frequency,start,duration,volume=.045,type='triangle'){
+ try{
+  const oscillator=ctx.createOscillator(),gain=ctx.createGain();oscillator.type=type;oscillator.frequency.setValueAtTime(frequency,start);
+  gain.gain.setValueAtTime(.0001,start);gain.gain.exponentialRampToValueAtTime(volume,start+.012);gain.gain.setValueAtTime(volume,start+duration*.62);gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
+  oscillator.connect(gain);gain.connect(ctx.destination);oscillator.start(start);oscillator.stop(start+duration+.025);
+  oscillator.addEventListener('ended',()=>{try{oscillator.disconnect();gain.disconnect();}catch{}},{once:true});
+ }catch{/* Dispositivo/browser senza supporto audio: il tabellone continua a funzionare. */}
+}
+function playSoundCue(cue){
+ if(!soundEnabled)return;
+ const run=()=>{
+  const ctx=soundAudioContext;if(!soundEnabled||!ctx||ctx.state!=='running')return;
+  const sequence={
+   point:[{f:740,t:0,d:.085,v:.038},{f:988,t:.095,d:.09,v:.04}],
+   setpoint:[{f:587,t:0,d:.13,v:.045},{f:740,t:.12,d:.14,v:.05},{f:988,t:.25,d:.19,v:.052}],
+   matchpoint:[{f:523,t:0,d:.14,v:.048},{f:659,t:.12,d:.14,v:.052},{f:830,t:.24,d:.16,v:.055},{f:1046,t:.37,d:.22,v:.058}],
+   victory:[{f:523,t:0,d:.19,v:.052},{f:659,t:.17,d:.2,v:.055},{f:784,t:.35,d:.23,v:.058},{f:1046,t:.56,d:.34,v:.06}]
+  }[cue];
+  if(!sequence)return;const start=ctx.currentTime+.025;sequence.forEach(n=>scheduleSoundTone(ctx,n.f,start+n.t,n.d,n.v,'triangle'));
+ };
+ if(soundAudioContext&&soundAudioContext.state==='running'){run();return;}
+ // Se resume è in corso per un gesto utente appena avvenuto, accoda solo questo breve effetto.
+ if(soundUnlockPromise)void soundUnlockPromise.then(ok=>{if(ok&&soundEnabled)run();});
+}
+function audioWinnerSide(snapshot){const toWin=Math.ceil((Number(snapshot.format)===3?3:5)/2);if(Number(snapshot.homeSets)>=toWin)return'home';if(Number(snapshot.awaySets)>=toWin)return'away';return null;}
+function audioAlertFor(snapshot,side){
+ if(snapshot.finished||snapshot.sets?.[snapshot.setIndex])return null;
+ const score=side==='home'?snapshot.homeScore:snapshot.awayScore,opponent=side==='home'?snapshot.awayScore:snapshot.homeScore;
+ if(score<(snapshot.setIndex===snapshot.format-1?15:25)-1||score<=opponent)return null;
+ const toWin=Math.ceil((Number(snapshot.format)===3?3:5)/2),setsWon=side==='home'?snapshot.homeSets:snapshot.awaySets;
+ return setsWon>=toWin-1?'matchpoint':'setpoint';
+}
+function soundSnapshot(source){return {homeScore:Number(source.homeScore)||0,awayScore:Number(source.awayScore)||0,homeSets:Number(source.homeSets)||0,awaySets:Number(source.awaySets)||0,format:Number(source.format)===3?3:5,setIndex:Math.max(0,Number(source.setIndex)||0),sets:Array.isArray(source.sets)?source.sets.slice(0,5).map(v=>v&&typeof v==='object'?{home:Number(v.home)||0,away:Number(v.away)||0}:null):[],finished:!!source.finished};}
+function observeSoundState(source){
+ const next=soundSnapshot(source),previous=lastSoundObservedState;lastSoundObservedState=next;
+ if(!previous)return;
+ if(suppressNextSoundChange){suppressNextSoundChange=false;clearTimeout(reconnectSoundSuppressionTimer);reconnectSoundSuppressionTimer=null;return;}
+ if(!soundEnabled||previous.finished||previous.setIndex!==next.setIndex||previous.format!==next.format)return;
+ const homeAdded=next.homeScore===previous.homeScore+1&&next.awayScore===previous.awayScore;
+ const awayAdded=next.awayScore===previous.awayScore+1&&next.homeScore===previous.homeScore;
+ if(!homeAdded&&!awayAdded)return;
+ const oldWinner=audioWinnerSide(previous),newWinner=audioWinnerSide(next);
+ if(!oldWinner&&newWinner){playSoundCue('victory');return;}
+ let specialCue=null;
+ for(const side of ['home','away']){
+  const before=audioAlertFor(previous,side),after=audioAlertFor(next,side);
+  if(after&&after!==before){specialCue=after;break;}
+ }
+ playSoundCue(specialCue||'point');
+}
+function suppressSoundForReconnect(){
+ suppressNextSoundChange=true;clearTimeout(reconnectSoundSuppressionTimer);
+ // Se il browser non riceve uno snapshot immediato al ritorno online, non sopprimere il punto successivo.
+ reconnectSoundSuppressionTimer=setTimeout(()=>{suppressNextSoundChange=false;reconnectSoundSuppressionTimer=null;},1400);
+}
+updateSoundToggle();
+$('soundToggleBtn').addEventListener('click',()=>{
+ soundEnabled=!soundEnabled;
+ try{localStorage.setItem(SOUND_PREF_KEY,String(soundEnabled));}catch{}
+ updateSoundToggle();
+ if(soundEnabled)void unlockSoundFromGesture();
+});
+// La prima interazione (AVVIA TABELLONE, login o controllo punteggio) sblocca l'audio secondo le regole del browser.
+document.addEventListener('pointerdown',()=>{if(soundEnabled)void unlockSoundFromGesture();},{capture:true});
+document.addEventListener('keydown',e=>{if(soundEnabled&&!e.repeat)void unlockSoundFromGesture();},{capture:true});
+
 function target(){return state.setIndex===state.format-1?15:25;}
 function winnerSide(){if(state.homeSets>=Math.ceil(state.format/2))return 'home';if(state.awaySets>=Math.ceil(state.format/2))return 'away';return null;}
 function canWin(a,b,limit){return a>=limit&&a-b>=2;}
@@ -923,5 +1028,5 @@ if(SPECTATOR_VIEW){
 document.addEventListener('fullscreenchange',updateFullscreenButton);
 updateFullscreenButton();
 if(!configReady){notice('Configurazione Firebase incompleta. Controlla i parametri della tua app Web in index.html. Nessuna password va inserita nel codice.','error');$('liveBadge').classList.remove('state-connected','state-disconnected','state-connecting','state-finale');$('liveBadge').classList.add('state-disconnected');$('liveBadge').innerHTML='<span class="dot"></span>DA CONFIGURARE';showAdmin();}
-else {try{app=initializeApp(firebaseConfig);auth=getAuth(app);db=getDatabase(app);onValue(ref(db,'.info/connected'),snap=>{firebaseConnectionKnown=true;firebaseConnected=snap.val()===true;updateConnectionBadge();});onValue(ref(db,'match'),snap=>{if(snap.exists()){state=cleanState(snap.val());history=Array.isArray(snap.val().history)?snap.val().history:[];}else{state=blank();history=[];}remoteReady=true;remoteReadError=false;render();if(!$('notice').classList.contains('error'))notice('Collegamento al tabellone attivo.','ok');},err=>{remoteReady=false;remoteReadError=true;notice('Lettura Firebase non riuscita. Controlla le regole Realtime Database e la configurazione. '+err.message,'error');render();});onAuthStateChanged(auth,user=>{currentUser=user;const authorizedUser=!!user&&user.uid===ADMIN_UID;isAdmin=authorizedUser&&ADMIN_MODE;showAdmin();if(user&&!authorizedUser){signOut(auth).catch(()=>{});notice('Questo account non è autorizzato a gestire il tabellone.','error');}else if(isAdmin){notice('Accesso amministratore verificato.','ok');get(ref(db,'match')).then(snap=>{if(!snap.exists())return set(ref(db,'match'),{...blank(),history:[]});}).catch(e=>notice('Impossibile inizializzare/verificare il tabellone. Controlla che le regole Firebase siano pubblicate. '+e.message,'error'));}});}catch(e){notice('Errore inizializzazione Firebase: '+e.message,'error');}}
+else {try{app=initializeApp(firebaseConfig);auth=getAuth(app);db=getDatabase(app);let hasBeenConnectedOnce=false;onValue(ref(db,'.info/connected'),snap=>{const nextConnected=snap.val()===true;if(hasBeenConnectedOnce&&!firebaseConnected&&nextConnected)suppressSoundForReconnect();if(nextConnected)hasBeenConnectedOnce=true;firebaseConnectionKnown=true;firebaseConnected=nextConnected;updateConnectionBadge();});onValue(ref(db,'match'),snap=>{const incoming=snap.exists()?cleanState(snap.val()):blank();observeSoundState(incoming);if(snap.exists()){state=incoming;history=Array.isArray(snap.val().history)?snap.val().history:[];}else{state=incoming;history=[];}remoteReady=true;remoteReadError=false;render();if(!$('notice').classList.contains('error'))notice('Collegamento al tabellone attivo.','ok');},err=>{remoteReady=false;remoteReadError=true;notice('Lettura Firebase non riuscita. Controlla le regole Realtime Database e la configurazione. '+err.message,'error');render();});onAuthStateChanged(auth,user=>{currentUser=user;const authorizedUser=!!user&&user.uid===ADMIN_UID;isAdmin=authorizedUser&&ADMIN_MODE;showAdmin();if(user&&!authorizedUser){signOut(auth).catch(()=>{});notice('Questo account non è autorizzato a gestire il tabellone.','error');}else if(isAdmin){notice('Accesso amministratore verificato.','ok');get(ref(db,'match')).then(snap=>{if(!snap.exists())return set(ref(db,'match'),{...blank(),history:[]});}).catch(e=>notice('Impossibile inizializzare/verificare il tabellone. Controlla che le regole Firebase siano pubblicate. '+e.message,'error'));}});}catch(e){notice('Errore inizializzazione Firebase: '+e.message,'error');}}
 </script></body></html>
