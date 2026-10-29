@@ -310,6 +310,9 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
 .finale-share-btn { display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:46px; max-width:100%; padding:12px 18px; border:1px solid #25D366; border-radius:10px; background:linear-gradient(135deg,#25D366,#1fb957); color:#062811; font-size:.76rem; font-weight:1000; letter-spacing:.09em; cursor:pointer; box-shadow:0 0 20px rgba(37,211,102,.12),inset 0 1px rgba(255,255,255,.25); }
 .finale-share-btn:hover { background:linear-gradient(135deg,#35e477,#25c866); box-shadow:0 0 28px rgba(37,211,102,.2),inset 0 1px rgba(255,255,255,.3); }
 .finale-share-btn .whatsapp-icon { display:block; width:22px; height:22px; flex:none; }
+.finale-share-btn:disabled { opacity:.72; cursor:wait; }
+.finale-share-status { width:min(100%,650px); min-height:0; margin:0; color:#b9d3e9; text-align:center; font-size:.78rem; line-height:1.45; }
+.finale-share-status:empty { display:none; }
 @keyframes finaleCardIn { 0% { opacity:0; transform:translateY(28px) scale(.9); filter:blur(6px); } 70% { opacity:1; transform:translateY(-3px) scale(1.015); filter:blur(0); } 100% { opacity:1; transform:translateY(0) scale(1); filter:blur(0); } }
 @keyframes finaleHalo { to { transform:rotate(360deg); } }
 @media (prefers-reduced-motion:no-preference) { .match-finale-overlay:not(.hide) .match-finale-card { animation:finaleCardIn .8s cubic-bezier(.18,.8,.22,1) both; } .match-finale-overlay:not(.hide) .finale-title { animation:finaleTitlePulse 1.8s ease-in-out .75s 2; } @keyframes finaleTitlePulse { 0%,100% { text-shadow:0 0 10px rgba(255,208,115,.65),0 0 28px rgba(255,168,45,.28); } 50% { text-shadow:0 0 16px rgba(255,208,115,.95),0 0 48px rgba(255,168,45,.48); } } }
@@ -317,7 +320,7 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
 @media (max-height:690px) { .match-finale-overlay { align-items:flex-start; } .match-finale-card { gap:8px; padding-top:12px; padding-bottom:12px; } .finale-winner-mark { width:60px; height:60px; border-radius:13px; } .finale-title { font-size:clamp(2rem,6vh,3.5rem); } .finale-winner { gap:5px; } .finale-set-card { padding:7px 5px; } }
 @media (prefers-reduced-motion:reduce) { .match-finale-card::before { animation:none; } .match-finale-overlay:not(.hide) .match-finale-card,.match-finale-overlay:not(.hide) .finale-title { animation:none; } }
 
-</style><!-- Volley Live v10.3: condivisione WhatsApp del risultato finale. -->
+</style><!-- Volley Live v10.4: condivisione amministratore come immagine PNG della schermata celebrativa. -->
 </head>
 <body><div class="wrap">
 <header class="top"><div class="brandline"><div class="brandmark" aria-hidden="true">VL</div><div><div class="eyebrow">VOLLEY • LIVE SCORE</div><div class="brand">VOLLEY <span>LIVE</span></div></div></div><div class="header-actions"><div class="live" id="liveBadge"><span class="dot"></span>CONNESSIONE…</div><button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="Attiva o disattiva schermo intero"><span class="fullscreen-icon" aria-hidden="true">⛶</span><span class="fullscreen-label">SCHERMO INTERO</span></button></div></header>
@@ -352,12 +355,13 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
     <div class="finale-sets-label">PARZIALI DI TUTTI I SET</div>
     <div class="finale-set-results" id="finaleSetResults" aria-label="Parziali dei set"></div>
     <div class="finale-actions">
-      <button type="button" id="finaleShareBtn" class="finale-share-btn" aria-label="Condividi risultato finale su WhatsApp">
+      <button type="button" id="finaleShareBtn" class="finale-share-btn hide" aria-label="Condividi immagine del risultato finale su WhatsApp">
         <svg class="whatsapp-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.874 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.693.626.711.226 1.358.194 1.87.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.999-3.648-.235-.374a9.822 9.822 0 0 1-1.5-5.25c.002-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.874-9.896 9.874m8.413-18.29A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.893c0 2.096.547 4.142 1.588 5.946L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.684 1.448h.005c6.566 0 11.902-5.334 11.905-11.893a11.82 11.82 0 0 0-3.471-8.411z"/></svg>
-        <span>CONDIVIDI RISULTATO</span>
+        <span>CONDIVIDI IMMAGINE SU WHATSAPP</span>
       </button>
       <button type="button" id="finaleCloseButton" class="finale-return-btn">TORNA AL TABELLONE</button>
     </div>
+    <p id="finaleShareStatus" class="finale-share-status" role="status" aria-live="polite"></p>
   </section>
 </div>
 
@@ -492,6 +496,9 @@ function renderSpectatorPreview(){
 function renderMatchFinale(){
  const overlay=$('matchFinaleOverlay');
  if(!overlay)return;
+ const shareButton=$('finaleShareBtn');
+ // La condivisione dell'immagine è disponibile solo nel pannello admin dopo autenticazione UID.
+ if(shareButton)shareButton.classList.toggle('hide',!(ADMIN_MODE&&isAdmin&&currentUser&&currentUser.uid===ADMIN_UID));
  const win=winnerSide();
  // Il numero di set vinti è la fonte più affidabile per rilevare la conclusione:
  // così la schermata appare anche se un vecchio stato Firebase ha finished=false.
@@ -562,15 +569,13 @@ let copyPublicResetTimer=null;
 function setCopyPublicButtonCopied(copied){const btn=$('copyPublicBtn');const label=btn.querySelector('.copy-public-label');btn.classList.toggle('copied',copied);btn.setAttribute('aria-label',copied?'Link copiato!':'Copia link spettatori');label.textContent=copied?'Link copiato!':'Copia link spettatori';}
 async function sharePublic(){const url=publicUrl();try{await navigator.clipboard.writeText(url);clearTimeout(copyPublicResetTimer);setCopyPublicButtonCopied(true);copyPublicResetTimer=setTimeout(()=>setCopyPublicButtonCopied(false),2500);notice('Link spettatori copiato negli appunti.','ok');}catch{prompt('Copia questo link spettatori:',url);}}
 $('copyPublicBtn').onclick=sharePublic;$('whatsappBtn').onclick=()=>{const msg=`Segui la partita in diretta: ${publicUrl()}`;window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank','noopener,noreferrer');};
-function shareFinalResult(){
+function finaleShareCaption(){
  const win=winnerSide();
- if(!win)return;
- const homeName=state.homeName||'SQUADRA DI CASA';
- const awayName=state.awayName||'SQUADRA OSPITE';
+ if(!win)return '';
  const lines=[];
  if((state.event||'').trim())lines.push(`🏐 ${(state.event||'').trim()}`);
  lines.push('🏆 RISULTATO FINALE');
- lines.push(`${homeName} ${state.homeSets} – ${state.awaySets} ${awayName}`);
+ lines.push(`${state.homeName||'SQUADRA DI CASA'} ${state.homeSets} – ${state.awaySets} ${state.awayName||'SQUADRA OSPITE'}`);
  const partials=[];
  for(let i=0;i<state.format;i++){
   const sc=state.sets[i];
@@ -578,10 +583,123 @@ function shareFinalResult(){
  }
  if(partials.length)lines.push('','Parziali:',...partials);
  lines.push('',`Tabellone LIVE: ${publicUrl()}`);
- const message=lines.join('\n');
- window.open('https://wa.me/?text='+encodeURIComponent(message),'_blank','noopener,noreferrer');
+ return lines.join('\n');
 }
-$('finaleShareBtn').onclick=shareFinalResult;
+function roundRectPath(ctx,x,y,w,h,r){
+ const radius=Math.min(r,w/2,h/2);
+ ctx.beginPath();ctx.moveTo(x+radius,y);ctx.arcTo(x+w,y,x+w,y+h,radius);ctx.arcTo(x+w,y+h,x,y+h,radius);ctx.arcTo(x,y+h,x,y,radius);ctx.arcTo(x,y,x+w,y,radius);ctx.closePath();
+}
+function drawRoundedRect(ctx,x,y,w,h,r,fill,stroke=null,lineWidth=1){
+ roundRectPath(ctx,x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lineWidth;ctx.stroke();}
+}
+function fitCanvasText(ctx,text,maxWidth,desired,min=24,weight=900,family='Arial, Helvetica, sans-serif'){
+ let size=desired;do{ctx.font=`${weight} ${size}px ${family}`;if(ctx.measureText(String(text)).width<=maxWidth||size<=min)break;size-=2;}while(size>min);
+ return size;
+}
+function drawCenteredFit(ctx,text,x,y,maxWidth,desired,min,color,weight=900,family='Arial, Helvetica, sans-serif'){
+ const size=fitCanvasText(ctx,text,maxWidth,desired,min,weight,family);ctx.font=`${weight} ${size}px ${family}`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=color;ctx.fillText(String(text),x,y,maxWidth);return size;
+}
+function drawImageContain(ctx,img,x,y,w,h){
+ if(!img||!img.complete||!img.naturalWidth||!img.naturalHeight)return false;
+ const scale=Math.min(w/img.naturalWidth,h/img.naturalHeight);const dw=img.naturalWidth*scale,dh=img.naturalHeight*scale;
+ ctx.drawImage(img,x+(w-dw)/2,y+(h-dh)/2,dw,dh);return true;
+}
+function drawFinaleScoreImage(){
+ const win=winnerSide();if(!win)throw new Error('La partita non risulta conclusa.');
+ const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1350;
+ const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Il browser non supporta la creazione dell’immagine.');
+ const W=canvas.width,H=canvas.height;
+ // Sfondo elettronico, ispirato alla schermata celebrativa del tabellone.
+ const bg=ctx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#0e1c2b');bg.addColorStop(.55,'#050b12');bg.addColorStop(1,'#101c28');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+ const glow=ctx.createRadialGradient(W/2,280,30,W/2,280,650);glow.addColorStop(0,'rgba(255,208,115,.19)');glow.addColorStop(.52,'rgba(33,99,73,.09)');glow.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,W,H);
+ drawRoundedRect(ctx,26,26,W-52,H-52,30,'rgba(4,10,16,.42)','rgba(255,208,115,.55)',2);
+ // Accenti superiori e intestazione.
+ const topGrad=ctx.createLinearGradient(70,0,W-70,0);topGrad.addColorStop(0,'rgba(67,185,255,0)');topGrad.addColorStop(.5,'rgba(67,185,255,.7)');topGrad.addColorStop(1,'rgba(67,185,255,0)');ctx.fillStyle=topGrad;ctx.fillRect(80,62,W-160,2);
+ drawCenteredFit(ctx,'VOLLEY • LIVE SCORE',W/2,99,900,26,20,'#83d4ff',950);
+ const event=String(state.event||'VOLLEY • LIVE SCORE').trim().toUpperCase();
+ drawCenteredFit(ctx,event,W/2,151,930,25,18,'#a7c4d9',900);
+ ctx.save();ctx.shadowColor='rgba(255,208,115,.58)';ctx.shadowBlur=24;
+ drawCenteredFit(ctx,'🏆 VITTORIA!',W/2,230,990,76,52,'#ffd073',1000);
+ ctx.restore();
+ drawCenteredFit(ctx,'PARTITA CONCLUSA',W/2,292,900,21,16,'#d0e0ec',950);
+ // Emblema della squadra vincitrice.
+ const badgeX=W/2-78,badgeY=329,badgeS=156;
+ // Canvas non gestisce gradient CSS: dipingiamo il fondo con un gradiente Canvas nativo.
+ const badgeGrad=ctx.createLinearGradient(badgeX,badgeY,badgeX+badgeS,badgeY+badgeS);badgeGrad.addColorStop(0,'#3e321f');badgeGrad.addColorStop(1,'#0f171b');drawRoundedRect(ctx,badgeX,badgeY,badgeS,badgeS,24,badgeGrad,'rgba(255,208,115,.85)',3);
+ const winnerName=String(win==='home'?state.homeName:state.awayName)||'SQUADRA VINCITRICE';
+ const winnerLogo=win==='home'?$('finaleWinnerLogo'):$('finaleWinnerLogo');
+ ctx.save();roundRectPath(ctx,badgeX+8,badgeY+8,badgeS-16,badgeS-16,16);ctx.clip();
+ let logoDrawn=false;
+ // I loghi caricati da file sono incorporati come data URL; URL esterni sono esclusi per evitare canvas non esportabili.
+ const logoValue=win==='home'?state.homeLogo:state.awayLogo;
+ if(isEmbeddedLogo(logoValue))logoDrawn=drawImageContain(ctx,winnerLogo,badgeX+10,badgeY+10,badgeS-20,badgeS-20);
+ if(!logoDrawn){const label=initials(winnerName,win==='home'?'CAS':'OSP');drawCenteredFit(ctx,label,W/2,badgeY+badgeS/2,badgeS-24,43,28,'#ffd073',1000);}
+ ctx.restore();
+ drawCenteredFit(ctx,winnerName,W/2,526,970,42,26,'#f6fbff',1000);
+ drawCenteredFit(ctx,'VINCITRICE DELLA PARTITA',W/2,574,940,18,14,'#48f18a',950);
+ drawCenteredFit(ctx,'RISULTATO FINALE',W/2,641,850,20,15,'#8098ad',950);
+ // Pannello del risultato complessivo.
+ const panelX=65,panelY=670,panelW=950,panelH=176;
+ const panelGrad=ctx.createLinearGradient(panelX,panelY,panelX,panelY+panelH);panelGrad.addColorStop(0,'rgba(4,10,16,.96)');panelGrad.addColorStop(1,'rgba(12,22,32,.98)');drawRoundedRect(ctx,panelX,panelY,panelW,panelH,18,panelGrad,'#294055',2);
+ drawCenteredFit(ctx,String(state.homeName||'SQUADRA DI CASA').toUpperCase(),292,panelY+43,365,24,15,'#c2d2df',900);
+ drawCenteredFit(ctx,String(state.awayName||'SQUADRA OSPITE').toUpperCase(),788,panelY+43,365,24,15,'#c2d2df',900);
+ drawCenteredFit(ctx,String(state.homeSets),426,panelY+112,115,74,58,win==='home'?'#ff6578':'#e7f0f8',1000,'monospace');
+ drawCenteredFit(ctx,'–',540,panelY+112,70,43,28,'#526b80',800);
+ drawCenteredFit(ctx,String(state.awaySets),654,panelY+112,115,74,58,win==='away'?'#ff6578':'#e7f0f8',1000,'monospace');
+ drawCenteredFit(ctx,'PARZIALI DI TUTTI I SET',W/2,902,900,19,15,'#8098ad',950);
+ const completedSets=[];
+ for(let i=0;i<state.format;i++){const sc=state.sets[i];if(sc&&typeof sc==='object')completedSets.push({index:i+1,home:Number(sc.home)||0,away:Number(sc.away)||0});}
+ if(completedSets.length){
+  const gap=12,margin=55,cardW=Math.min(220,(W-margin*2-gap*(completedSets.length-1))/completedSets.length),total=cardW*completedSets.length+gap*(completedSets.length-1),startX=(W-total)/2,cardY=935,cardH=140;
+  completedSets.forEach((sc,i)=>{
+   const x=startX+i*(cardW+gap);drawRoundedRect(ctx,x,cardY,cardW,cardH,12,'#09121c','#2a3e51',2);
+   drawCenteredFit(ctx,`SET ${sc.index}`,x+cardW/2,cardY+34,cardW-12,17,13,'#8198ad',950);
+   const winnerHome=sc.home>sc.away;
+   drawCenteredFit(ctx,String(sc.home),x+cardW*.34,cardY+88,cardW*.32,30,22,winnerHome?'#ff6578':'#eaf2fa',1000,'monospace');
+   drawCenteredFit(ctx,'–',x+cardW*.5,cardY+88,20,18,14,'#8198ad',800);
+   drawCenteredFit(ctx,String(sc.away),x+cardW*.68,cardY+88,cardW*.32,30,22,sc.away>sc.home?'#ff6578':'#eaf2fa',1000,'monospace');
+  });
+ }
+ const footerY=1173;
+ const separator=ctx.createLinearGradient(100,0,W-100,0);separator.addColorStop(0,'rgba(255,208,115,0)');separator.addColorStop(.5,'rgba(255,208,115,.45)');separator.addColorStop(1,'rgba(255,208,115,0)');ctx.fillStyle=separator;ctx.fillRect(100,footerY,W-200,2);
+ drawCenteredFit(ctx,'RISULTATO DELLA PARTITA • VOLLEY LIVE',W/2,1210,920,18,14,'#b7cada',900);
+ drawCenteredFit(ctx,'volleylivestyle.github.io/tabellone-punteggio/',W/2,1250,930,17,13,'#7592a9',700);
+ drawCenteredFit(ctx,'CONDIVISO DALL’AMMINISTRAZIONE',W/2,1290,930,14,11,'#5d7488',800);
+ return canvas;
+}
+function canvasToPngBlob(canvas){return new Promise((resolve,reject)=>{try{canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('Non è stato possibile creare il PNG.')),'image/png');}catch(e){reject(e);}});}
+function downloadBlob(blob,filename){const objectUrl=URL.createObjectURL(blob);const a=document.createElement('a');a.href=objectUrl;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(objectUrl),30000);}
+async function shareFinalResultAsImage(){
+ const status=$('finaleShareStatus'),button=$('finaleShareBtn');
+ if(status)status.textContent='';
+ if(!(ADMIN_MODE&&isAdmin&&currentUser&&currentUser.uid===ADMIN_UID)){if(status)status.textContent='La condivisione dell’immagine è disponibile solo per l’amministratore autenticato.';return;}
+ if(!winnerSide()){if(status)status.textContent='La partita non è ancora conclusa.';return;}
+ button.disabled=true;
+ const oldLabel=button.querySelector('span');if(oldLabel)oldLabel.textContent='PREPARO IMMAGINE…';
+ try{
+  const canvas=drawFinaleScoreImage();
+  const blob=await canvasToPngBlob(canvas);
+  const filename=`Volley-Live-Risultato-${new Date().toISOString().slice(0,10)}.png`;
+  const file=new File([blob],filename,{type:'image/png'});
+  const caption=finaleShareCaption();
+  let fileShareAvailable=false;
+  try{fileShareAvailable=typeof navigator.share==='function'&&typeof navigator.canShare==='function'&&navigator.canShare({files:[file]});}catch{fileShareAvailable=false;}
+  if(fileShareAvailable){
+   try{
+    await navigator.share({files:[file],title:'Volley Live - Risultato finale',text:caption});
+    if(status)status.textContent='Immagine pronta per la condivisione. Seleziona WhatsApp nel menu di condivisione, se non è già stato scelto.';
+    return;
+   }catch(err){if(err&&err.name==='AbortError')return;}
+  }
+  // Fallback per browser desktop che non consentono la condivisione diretta di file.
+  downloadBlob(blob,filename);
+  let captionCopied=false;
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(caption);captionCopied=true;}}catch{}
+  if(status)status.textContent=`Il PNG “${filename}” è stato scaricato${captionCopied?' e il testo del risultato è stato copiato':''}. Apri WhatsApp, allega l’immagine scaricata e incolla il testo del risultato.`;
+ }catch(err){if(status)status.textContent='Non è stato possibile creare o condividere l’immagine: '+(err&&err.message?err.message:'errore sconosciuto')+'.';}
+ finally{button.disabled=false;if(oldLabel)oldLabel.textContent='CONDIVIDI IMMAGINE SU WHATSAPP';}
+}
+$('finaleShareBtn').onclick=shareFinalResultAsImage;
 $('finaleCloseButton').onclick=()=>{finaleDismissed=true;$('matchFinaleOverlay').classList.add('hide');};
 $('loginBtn').onclick=async()=>{const email=$('emailInput').value.trim(),password=$('passwordInput').value;if(!email||!password){notice('Inserisci email e password dell’amministratore.','error');return;}try{await signInWithEmailAndPassword(auth,email,password);$('passwordInput').value='';}catch(e){notice('Accesso non riuscito. Controlla le credenziali e che l’utente sia abilitato in Firebase Authentication.','error');}};
 $('logoutBtn').onclick=()=>signOut(auth).catch(e=>notice('Errore durante l’uscita: '+e.message,'error'));
