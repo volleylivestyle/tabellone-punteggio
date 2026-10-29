@@ -11,7 +11,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827">
-<meta name="description" content="Tabellone pallavolo live con punteggio sincronizzato in tempo reale e anteprima della partita."><meta name="author" content="Fabio Marsico"><meta name="copyright" content="© 2026 Fabio Marsico — Volley Live. Tutti i diritti riservati nei limiti consentiti dalla legge."><title>Volley Live — Tabellone v10.7</title>
+<meta name="description" content="Tabellone pallavolo live con punteggio sincronizzato in tempo reale e anteprima della partita."><meta name="author" content="Fabio Marsico"><meta name="copyright" content="© 2026 Fabio Marsico — Volley Live. Tutti i diritti riservati nei limiti consentiti dalla legge."><title>Volley Live — Tabellone v10.8</title>
 <style>
 :root {
   color-scheme: dark;
@@ -52,6 +52,13 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .header-actions { display:flex; align-items:center; justify-content:flex-end; gap:9px; }
 .live { display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(72,241,138,.42); color:#d5ffe0; background:rgba(22,83,48,.34); padding:9px 12px; border-radius:8px; font-weight:950; font-size:.7rem; letter-spacing:.14em; white-space:nowrap; box-shadow:0 0 20px rgba(72,241,138,.06); }
 .dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--green2); box-shadow:0 0 10px var(--green2); flex:none; }
+.live.state-connected, .live.state-finale { border-color:rgba(72,241,138,.42); color:#d5ffe0; background:rgba(22,83,48,.34); }
+.live.state-disconnected { border-color:rgba(255,101,120,.58); color:#ffdce0; background:rgba(75,32,42,.48); box-shadow:0 0 20px rgba(255,101,120,.09); }
+.live.state-disconnected .dot { background:var(--red); box-shadow:0 0 10px var(--red); }
+.live.state-connecting { border-color:rgba(255,208,115,.5); color:#ffe8b1; background:rgba(74,54,18,.38); }
+.live.state-connecting .dot { background:var(--amber); box-shadow:0 0 10px var(--amber); animation:livePulse 1.05s ease-in-out infinite; }
+@keyframes livePulse { 0%,100% { opacity:.45; transform:scale(.85); } 50% { opacity:1; transform:scale(1.15); } }
+@media (prefers-reduced-motion:reduce) { .live.state-connecting .dot { animation:none; } }
 .fullscreen-btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; border:1px solid #2e4358; background:rgba(14,27,41,.9); color:#d4e2f1; border-radius:8px; padding:9px 11px; cursor:pointer; font-size:.7rem; font-weight:900; letter-spacing:.08em; white-space:nowrap; }
 .fullscreen-btn:hover { border-color:#56738f; background:#152639; }
 .fullscreen-icon { font-size:1rem; line-height:1; }
@@ -365,10 +372,10 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
 @media (max-height:690px) { .match-finale-overlay { align-items:flex-start; } .match-finale-card { gap:8px; padding-top:12px; padding-bottom:12px; } .finale-winner-mark { width:60px; height:60px; border-radius:13px; } .finale-title { font-size:clamp(2rem,6vh,3.5rem); } .finale-winner { gap:5px; } .finale-set-card { padding:7px 5px; } }
 @media (prefers-reduced-motion:reduce) { .match-finale-card::before { animation:none; } .match-finale-overlay:not(.hide) .match-finale-card,.match-finale-overlay:not(.hide) .finale-title { animation:none; } }
 
-</style><!-- Volley Live v10.6: download immagine celebrativa disponibile anche agli spettatori; condivisione resta riservata all’amministratore. -->
+</style><!-- Volley Live v10.8: indicatore connessione Realtime Database aggiornato in modo affidabile. -->
 </head>
 <body><div class="wrap">
-<header class="top"><div class="brandline"><div class="brandmark" aria-hidden="true">VL</div><div><div class="eyebrow">VOLLEY • LIVE SCORE</div><div class="brand">VOLLEY <span>LIVE</span></div></div></div><div class="header-actions"><div class="live" id="liveBadge"><span class="dot"></span>CONNESSIONE…</div><button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="Attiva o disattiva schermo intero"><span class="fullscreen-icon" aria-hidden="true">⛶</span><span class="fullscreen-label">SCHERMO INTERO</span></button></div></header>
+<header class="top"><div class="brandline"><div class="brandmark" aria-hidden="true">VL</div><div><div class="eyebrow">VOLLEY • LIVE SCORE</div><div class="brand">VOLLEY <span>LIVE</span></div></div></div><div class="header-actions"><div class="live state-connecting" id="liveBadge" role="status" aria-live="polite" aria-atomic="true"><span class="dot" aria-hidden="true"></span>CONNESSIONE…</div><button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="Attiva o disattiva schermo intero"><span class="fullscreen-icon" aria-hidden="true">⛶</span><span class="fullscreen-label">SCHERMO INTERO</span></button></div></header>
 <div class="meta-row"><p class="meta" id="matchMeta">PUNTEGGIO IN DIRETTA</p><div class="time-meta"><span class="current-time" id="currentTime">ORA --:--:--</span><span class="updated" id="updatedLabel">Connessione in corso…</span></div></div>
 <div id="notice" class="notice hide">Connessione a Firebase in corso…</div>
 <section class="panel auth-panel hide" id="authPanel"><h2>Accesso amministratore</h2><div class="authrow" id="authRow"><label class="field">Email<input id="emailInput" type="email" autocomplete="username" placeholder="Email amministratore"></label><label class="field">Password<input id="passwordInput" type="password" autocomplete="current-password" placeholder="Password" /></label><button class="btn primary" id="loginBtn" type="button">Accedi</button></div><div class="authstate" id="authState">Gli spettatori possono consultare il tabellone senza accedere.</div><div class="actions"><button class="btn hide" id="logoutBtn">Esci</button><button class="btn copy-public-btn hide" id="copyPublicBtn" type="button" aria-label="Copia link spettatori">
@@ -486,7 +493,7 @@ const $ = id => document.getElementById(id);
 const blank = () => ({homeName:'SQUADRA DI CASA',awayName:'SQUADRA OSPITE',homeLogo:'',awayLogo:'',event:'',format:5,setIndex:0,homeScore:0,awayScore:0,homeSets:0,awaySets:0,homeTimeouts:0,awayTimeouts:0,sets:[],serving:'none',finished:false,updatedAt:null,history:[]});
 const ADMIN_MODE = new URLSearchParams(location.search).get('admin') === '1';
 const SPECTATOR_VIEW = !ADMIN_MODE;
-let state=blank(), app, auth, db, currentUser=null, isAdmin=false, remoteReady=false, pending=false, history=[];
+let state=blank(), app, auth, db, currentUser=null, isAdmin=false, remoteReady=false, remoteReadError=false, firebaseConnectionKnown=false, firebaseConnected=false, pending=false, history=[];
 let spectatorStarted=false, finaleDismissed=false;
 // Logo selezionati nel pannello admin: undefined = invariato, stringa = nuovo data URL, '' = rimuovere.
 let logoDraft={home:undefined,away:undefined};
@@ -494,6 +501,17 @@ const HISTORY_HOME_LOGO='__VOLLEY_HOME_LOGO_SAVED__';
 const HISTORY_AWAY_LOGO='__VOLLEY_AWAY_LOGO_SAVED__';
 const configReady = !!firebaseConfig.apiKey && !!firebaseConfig.authDomain && !!firebaseConfig.projectId && !!firebaseConfig.appId && firebaseConfig.projectId==='tabellone-punteggio' && firebaseConfig.databaseURL==='https://tabellone-punteggio-default-rtdb.europe-west1.firebasedatabase.app';
 function notice(message,type=''){const el=$('notice');el.textContent=message;el.className='notice'+(type?' '+type:'');el.classList.toggle('hide',!ADMIN_MODE&&type!=='error');}
+function updateConnectionBadge(){
+ const badge=$('liveBadge');if(!badge)return;
+ let status='connecting',label='CONNESSIONE…',accessible='Connessione al server in verifica';
+ if(firebaseConnectionKnown&&!firebaseConnected){status='disconnected';label='OFFLINE';accessible='Connessione al server assente. Il punteggio potrebbe non essere aggiornato.';}
+ else if(firebaseConnected&&remoteReadError){status='disconnected';label='ERRORE LETTURA';accessible='Connessione al server presente ma lettura del tabellone non riuscita';}
+ else if(firebaseConnected&&!remoteReady){status='connecting';label='COLLEGATO…';accessible='Connessione presente, sincronizzazione iniziale in corso';}
+ else if(firebaseConnected&&remoteReady&&state.finished){status='finale';label='FINALE';accessible='Partita conclusa, connessione attiva';}
+ else if(firebaseConnected&&remoteReady){status='connected';label='LIVE';accessible='Connessione al tabellone attiva in tempo reale';}
+ badge.classList.remove('state-connected','state-disconnected','state-connecting','state-finale');badge.classList.add('state-'+status);
+ badge.replaceChildren();const dot=document.createElement('span');dot.className='dot';dot.setAttribute('aria-hidden','true');badge.append(dot,document.createTextNode(label));badge.setAttribute('aria-label',accessible);
+}
 function updateCurrentTime(){const clock=$('currentTime');if(!clock)return;clock.textContent='ORA '+new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
 updateCurrentTime();setInterval(updateCurrentTime,1000);
 function target(){return state.setIndex===state.format-1?15:25;}
@@ -647,7 +665,7 @@ function render(){
  $('eventLabel').textContent=state.event||'Campionato / amichevole';$('matchMeta').textContent=state.event?state.event.toUpperCase():'PUNTEGGIO IN DIRETTA';$('updatedLabel').textContent=state.updatedAt?'AGGIORNATO '+new Date(state.updatedAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}):'IN ATTESA DEL PRIMO AGGIORNAMENTO';$('setStrip').style.gridTemplateColumns=`repeat(${state.format}, minmax(0, 1fr))`;
  $('setStrip').replaceChildren();for(let i=0;i<state.format;i++){const el=document.createElement('div');el.className='setbox'+(i===state.setIndex&&!state.finished?' current':'');const small=document.createElement('small');small.textContent=`SET ${i+1}`;const strong=document.createElement('strong');const sc=state.sets[i];if(sc&&typeof sc==='object'){const homeSetScore=Number(sc.home)||0,awaySetScore=Number(sc.away)||0;const homeSpan=document.createElement('span');homeSpan.textContent=String(homeSetScore);if(homeSetScore>awaySetScore)homeSpan.className='set-winning-score';const awaySpan=document.createElement('span');awaySpan.textContent=String(awaySetScore);if(awaySetScore>homeSetScore)awaySpan.className='set-winning-score';strong.append(homeSpan,document.createTextNode(' – '),awaySpan);}else{strong.textContent='—';}el.append(small,strong);$('setStrip').append(el);}
  const win=winnerSide();$('winner').textContent=win?`🏆 VINCE ${win==='home'?state.homeName:state.awayName}`:'';$('homePlus').disabled=!isAdmin||matchComplete||!!state.sets[state.setIndex]||pending;$('awayPlus').disabled=!isAdmin||matchComplete||!!state.sets[state.setIndex]||pending;$('nextSetBtn').disabled=!isAdmin||matchComplete||!state.sets[state.setIndex]||pending;$('undoBtn').disabled=!isAdmin||!history.length||pending;
- $('liveBadge').innerHTML=state.finished?'<span class="dot"></span>FINALE':remoteReady?'<span class="dot"></span>LIVE':'<span class="dot"></span>OFFLINE';
+ updateConnectionBadge();
  if(isAdmin){if(document.activeElement!==$('homeInput'))$('homeInput').value=state.homeName;if(document.activeElement!==$('awayInput'))$('awayInput').value=state.awayName;if(document.activeElement!==$('eventInput'))$('eventInput').value=state.event;if(document.activeElement!==$('formatInput'))$('formatInput').value=String(state.format);updateLogoStatuses();}
  renderMatchFinale();
 }
@@ -904,6 +922,6 @@ if(SPECTATOR_VIEW){
 }
 document.addEventListener('fullscreenchange',updateFullscreenButton);
 updateFullscreenButton();
-if(!configReady){notice('Configurazione Firebase incompleta. Controlla i parametri della tua app Web in index.html. Nessuna password va inserita nel codice.','error');$('liveBadge').innerHTML='<span class="dot"></span>DA CONFIGURARE';showAdmin();}
-else {try{app=initializeApp(firebaseConfig);auth=getAuth(app);db=getDatabase(app);onValue(ref(db,'match'),snap=>{if(snap.exists()){state=cleanState(snap.val());history=Array.isArray(snap.val().history)?snap.val().history:[];}else{state=blank();history=[];}remoteReady=true;render();if(!$('notice').classList.contains('error'))notice('Collegamento al tabellone attivo.','ok');},err=>{remoteReady=false;notice('Lettura Firebase non riuscita. Controlla le regole Realtime Database e la configurazione. '+err.message,'error');render();});onAuthStateChanged(auth,user=>{currentUser=user;const authorizedUser=!!user&&user.uid===ADMIN_UID;isAdmin=authorizedUser&&ADMIN_MODE;showAdmin();if(user&&!authorizedUser){signOut(auth).catch(()=>{});notice('Questo account non è autorizzato a gestire il tabellone.','error');}else if(isAdmin){notice('Accesso amministratore verificato.','ok');get(ref(db,'match')).then(snap=>{if(!snap.exists())return set(ref(db,'match'),{...blank(),history:[]});}).catch(e=>notice('Impossibile inizializzare/verificare il tabellone. Controlla che le regole Firebase siano pubblicate. '+e.message,'error'));}});}catch(e){notice('Errore inizializzazione Firebase: '+e.message,'error');}}
+if(!configReady){notice('Configurazione Firebase incompleta. Controlla i parametri della tua app Web in index.html. Nessuna password va inserita nel codice.','error');$('liveBadge').classList.remove('state-connected','state-disconnected','state-connecting','state-finale');$('liveBadge').classList.add('state-disconnected');$('liveBadge').innerHTML='<span class="dot"></span>DA CONFIGURARE';showAdmin();}
+else {try{app=initializeApp(firebaseConfig);auth=getAuth(app);db=getDatabase(app);onValue(ref(db,'.info/connected'),snap=>{firebaseConnectionKnown=true;firebaseConnected=snap.val()===true;updateConnectionBadge();});onValue(ref(db,'match'),snap=>{if(snap.exists()){state=cleanState(snap.val());history=Array.isArray(snap.val().history)?snap.val().history:[];}else{state=blank();history=[];}remoteReady=true;remoteReadError=false;render();if(!$('notice').classList.contains('error'))notice('Collegamento al tabellone attivo.','ok');},err=>{remoteReady=false;remoteReadError=true;notice('Lettura Firebase non riuscita. Controlla le regole Realtime Database e la configurazione. '+err.message,'error');render();});onAuthStateChanged(auth,user=>{currentUser=user;const authorizedUser=!!user&&user.uid===ADMIN_UID;isAdmin=authorizedUser&&ADMIN_MODE;showAdmin();if(user&&!authorizedUser){signOut(auth).catch(()=>{});notice('Questo account non è autorizzato a gestire il tabellone.','error');}else if(isAdmin){notice('Accesso amministratore verificato.','ok');get(ref(db,'match')).then(snap=>{if(!snap.exists())return set(ref(db,'match'),{...blank(),history:[]});}).catch(e=>notice('Impossibile inizializzare/verificare il tabellone. Controlla che le regole Firebase siano pubblicate. '+e.message,'error'));}});}catch(e){notice('Errore inizializzazione Firebase: '+e.message,'error');}}
 </script></body></html>
