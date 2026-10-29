@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827">
-<meta name="description" content="Tabellone pallavolo live con punteggio sincronizzato in tempo reale e anteprima della partita."><title>Volley Live — Tabellone v10.3</title>
+<meta name="description" content="Tabellone pallavolo live con punteggio sincronizzato in tempo reale e anteprima della partita."><title>Volley Live — Tabellone v10.4.3</title>
 <style>
 :root {
   color-scheme: dark;
@@ -313,6 +313,21 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
 .finale-share-btn:disabled { opacity:.72; cursor:wait; }
 .finale-share-status { width:min(100%,650px); min-height:0; margin:0; color:#b9d3e9; text-align:center; font-size:.78rem; line-height:1.45; }
 .finale-share-status:empty { display:none; }
+/* Selettore per la condivisione su PC: consente di scegliere WhatsApp Web o il menu nativo delle app. */
+.desktop-share-choice { position:fixed; inset:0; z-index:10060; display:flex; align-items:center; justify-content:center; padding:18px; background:rgba(1,5,9,.88); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); }
+.desktop-share-choice-card { width:min(100%,520px); display:flex; flex-direction:column; gap:13px; padding:clamp(18px,3vw,28px); border:1px solid rgba(67,185,255,.5); border-radius:18px; background:linear-gradient(150deg,#122334,#050a11 78%); box-shadow:0 24px 80px rgba(0,0,0,.55),0 0 32px rgba(67,185,255,.1); }
+.desktop-share-choice-title { margin:0; color:#eaf6ff; font-size:clamp(1.05rem,3vw,1.35rem); font-weight:1000; text-align:center; letter-spacing:.055em; }
+.desktop-share-choice-intro { margin:0; color:#a9c2d6; font-size:.87rem; line-height:1.5; text-align:center; }
+.desktop-share-choice-option { display:flex; align-items:center; gap:12px; width:100%; min-height:66px; padding:13px 15px; border:1px solid #2e4358; border-radius:12px; background:#0b1622; color:#f4f8ff; text-align:left; cursor:pointer; }
+.desktop-share-choice-option:hover { border-color:#6583a0; background:#132538; }
+.desktop-share-choice-option .whatsapp-icon { display:block; width:28px; height:28px; flex:none; color:#25D366; }
+.desktop-share-choice-option .choice-symbol { display:grid; place-items:center; width:30px; height:30px; flex:none; color:#83d4ff; font-size:1.5rem; font-weight:900; }
+.desktop-share-choice-option span { display:block; }
+.desktop-share-choice-option strong { display:block; font-size:.91rem; font-weight:950; }
+.desktop-share-choice-option small { display:block; margin-top:4px; color:#a9c2d6; font-size:.73rem; line-height:1.4; font-weight:600; }
+.desktop-share-choice-cancel { align-self:center; padding:9px 18px; border:1px solid #344b60; border-radius:9px; background:#13202c; color:#d5e2ed; font-size:.78rem; font-weight:850; cursor:pointer; }
+.desktop-share-choice-note { margin:0; min-height:0; color:#8ea9bd; font-size:.73rem; text-align:center; line-height:1.45; }
+@media (max-width:520px) { .desktop-share-choice { padding:12px; } .desktop-share-choice-card { gap:10px; padding:16px 13px; border-radius:15px; } .desktop-share-choice-option { padding:12px; } }
 @keyframes finaleCardIn { 0% { opacity:0; transform:translateY(28px) scale(.9); filter:blur(6px); } 70% { opacity:1; transform:translateY(-3px) scale(1.015); filter:blur(0); } 100% { opacity:1; transform:translateY(0) scale(1); filter:blur(0); } }
 @keyframes finaleHalo { to { transform:rotate(360deg); } }
 @media (prefers-reduced-motion:no-preference) { .match-finale-overlay:not(.hide) .match-finale-card { animation:finaleCardIn .8s cubic-bezier(.18,.8,.22,1) both; } .match-finale-overlay:not(.hide) .finale-title { animation:finaleTitlePulse 1.8s ease-in-out .75s 2; } @keyframes finaleTitlePulse { 0%,100% { text-shadow:0 0 10px rgba(255,208,115,.65),0 0 28px rgba(255,168,45,.28); } 50% { text-shadow:0 0 16px rgba(255,208,115,.95),0 0 48px rgba(255,168,45,.48); } } }
@@ -320,7 +335,7 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
 @media (max-height:690px) { .match-finale-overlay { align-items:flex-start; } .match-finale-card { gap:8px; padding-top:12px; padding-bottom:12px; } .finale-winner-mark { width:60px; height:60px; border-radius:13px; } .finale-title { font-size:clamp(2rem,6vh,3.5rem); } .finale-winner { gap:5px; } .finale-set-card { padding:7px 5px; } }
 @media (prefers-reduced-motion:reduce) { .match-finale-card::before { animation:none; } .match-finale-overlay:not(.hide) .match-finale-card,.match-finale-overlay:not(.hide) .finale-title { animation:none; } }
 
-</style><!-- Volley Live v10.4: condivisione amministratore come immagine PNG della schermata celebrativa. -->
+</style><!-- Volley Live v10.4.3: PNG admin, didascalia breve senza parziali/link e condivisione mobile/tablet ottimizzata. -->
 </head>
 <body><div class="wrap">
 <header class="top"><div class="brandline"><div class="brandmark" aria-hidden="true">VL</div><div><div class="eyebrow">VOLLEY • LIVE SCORE</div><div class="brand">VOLLEY <span>LIVE</span></div></div></div><div class="header-actions"><div class="live" id="liveBadge"><span class="dot"></span>CONNESSIONE…</div><button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="Attiva o disattiva schermo intero"><span class="fullscreen-icon" aria-hidden="true">⛶</span><span class="fullscreen-label">SCHERMO INTERO</span></button></div></header>
@@ -362,6 +377,22 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
       <button type="button" id="finaleCloseButton" class="finale-return-btn">TORNA AL TABELLONE</button>
     </div>
     <p id="finaleShareStatus" class="finale-share-status" role="status" aria-live="polite"></p>
+  </section>
+</div>
+<div id="desktopShareChoice" class="desktop-share-choice hide" role="dialog" aria-modal="true" aria-labelledby="desktopShareChoiceTitle" aria-describedby="desktopShareChoiceIntro">
+  <section class="desktop-share-choice-card">
+    <h2 class="desktop-share-choice-title" id="desktopShareChoiceTitle">COME VUOI CONDIVIDERE?</h2>
+    <p class="desktop-share-choice-intro" id="desktopShareChoiceIntro">L’immagine del risultato è pronta. Scegli WhatsApp Web nel browser oppure il menu di condivisione del computer.</p>
+    <button type="button" id="shareWhatsAppWebBtn" class="desktop-share-choice-option">
+      <svg class="whatsapp-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.874 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.693.626.711.226 1.358.194 1.87.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.999-3.648-.235-.374a9.822 9.822 0 0 1-1.5-5.25c.002-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.874-9.896 9.874m8.413-18.29A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.893c0 2.096.547 4.142 1.588 5.946L.057 24l6.305-1.654a11.882 11.882 0 0 1 5.684 1.448h.005c6.566 0 11.902-5.334 11.905-11.893a11.82 11.82 0 0 0-3.471-8.411z"/></svg>
+      <span><strong>WhatsApp Web</strong><small>Scarica il PNG e apri WhatsApp Web con il testo già compilato; allega l’immagine nella chat prima di inviare.</small></span>
+    </button>
+    <button type="button" id="shareDeviceBtn" class="desktop-share-choice-option">
+      <span class="choice-symbol" aria-hidden="true">↗</span>
+      <span><strong>App installata / menu di condivisione</strong><small>Apri il menu del computer per scegliere WhatsApp Desktop o un’altra app compatibile. L’immagine viene allegata direttamente se supportato.</small></span>
+    </button>
+    <button type="button" id="shareChoiceCancelBtn" class="desktop-share-choice-cancel">Annulla</button>
+    <p class="desktop-share-choice-note" id="desktopShareChoiceNote" role="status" aria-live="polite"></p>
   </section>
 </div>
 
@@ -569,21 +600,22 @@ let copyPublicResetTimer=null;
 function setCopyPublicButtonCopied(copied){const btn=$('copyPublicBtn');const label=btn.querySelector('.copy-public-label');btn.classList.toggle('copied',copied);btn.setAttribute('aria-label',copied?'Link copiato!':'Copia link spettatori');label.textContent=copied?'Link copiato!':'Copia link spettatori';}
 async function sharePublic(){const url=publicUrl();try{await navigator.clipboard.writeText(url);clearTimeout(copyPublicResetTimer);setCopyPublicButtonCopied(true);copyPublicResetTimer=setTimeout(()=>setCopyPublicButtonCopied(false),2500);notice('Link spettatori copiato negli appunti.','ok');}catch{prompt('Copia questo link spettatori:',url);}}
 $('copyPublicBtn').onclick=sharePublic;$('whatsappBtn').onclick=()=>{const msg=`Segui la partita in diretta: ${publicUrl()}`;window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank','noopener,noreferrer');};
-function finaleShareCaption(){
+function finaleShareCaption(plainText=false){
  const win=winnerSide();
  if(!win)return '';
  const lines=[];
- if((state.event||'').trim())lines.push(`🏐 ${(state.event||'').trim()}`);
- lines.push('🏆 RISULTATO FINALE');
+ // Didascalia breve: competizione, risultato finale e set vinti.
+ // I parziali restano nell'immagine PNG, non nel testo WhatsApp; il link LIVE è escluso.
+ // Emoji sui dispositivi mobili/tablet; testo semplice su PC per evitare caratteri sostitutivi.
+ if((state.event||'').trim())lines.push(plainText?`VOLLEY LIVE | ${(state.event||'').trim()}`:`🏐 ${(state.event||'').trim()}`);
+ lines.push(plainText?'RISULTATO FINALE':'🏆 RISULTATO FINALE');
  lines.push(`${state.homeName||'SQUADRA DI CASA'} ${state.homeSets} – ${state.awaySets} ${state.awayName||'SQUADRA OSPITE'}`);
- const partials=[];
- for(let i=0;i<state.format;i++){
-  const sc=state.sets[i];
-  if(sc&&typeof sc==='object')partials.push(`Set ${i+1}: ${Number(sc.home)||0}–${Number(sc.away)||0}`);
- }
- if(partials.length)lines.push('','Parziali:',...partials);
- lines.push('',`Tabellone LIVE: ${publicUrl()}`);
  return lines.join('\n');
+}
+function shareUsesPlainCaption(){
+ const mobileUA=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent||'');
+ const hasTouch=Number(navigator.maxTouchPoints||0)>0;
+ return !(mobileUA||hasTouch);
 }
 function roundRectPath(ctx,x,y,w,h,r){
  const radius=Math.min(r,w/2,h/2);
@@ -669,6 +701,41 @@ function drawFinaleScoreImage(){
 }
 function canvasToPngBlob(canvas){return new Promise((resolve,reject)=>{try{canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('Non è stato possibile creare il PNG.')),'image/png');}catch(e){reject(e);}});}
 function downloadBlob(blob,filename){const objectUrl=URL.createObjectURL(blob);const a=document.createElement('a');a.href=objectUrl;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(objectUrl),30000);}
+let pendingDesktopShare=null;
+function updateDesktopShareChoices(fileShareAvailable){
+ const nativeButton=$('shareDeviceBtn');
+ nativeButton.classList.toggle('hide',!fileShareAvailable);
+ $('desktopShareChoiceNote').textContent=fileShareAvailable
+  ? 'WhatsApp Web richiede di allegare manualmente il PNG scaricato. Il menu di condivisione può invece inviare il file direttamente alle app compatibili.'
+  : 'Questo browser non permette di inviare il PNG tramite il menu nativo. Usa WhatsApp Web: scaricheremo l’immagine e prepareremo il testo.';
+}
+function closeDesktopShareChooser(clearPending=true){
+ $('desktopShareChoice').classList.add('hide');
+ if(clearPending)pendingDesktopShare=null;
+}
+function showDesktopShareChooser(payload){
+ pendingDesktopShare=payload;
+ updateDesktopShareChoices(payload.fileShareAvailable);
+ $('desktopShareChoice').classList.remove('hide');
+ $('shareWhatsAppWebBtn').focus();
+}
+function canvasToPngBlobSync(canvas){
+ // Su smartphone/tablet convertiamo il canvas in PNG in modo sincrono, così
+ // navigator.share() può essere chiamato direttamente nel gesto del pulsante.
+ const dataUrl=canvas.toDataURL('image/png');
+ const comma=dataUrl.indexOf(',');
+ if(comma<0)throw new Error('Formato PNG non valido.');
+ const binary=atob(dataUrl.slice(comma+1));
+ const bytes=new Uint8Array(binary.length);
+ for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+ return new Blob([bytes],{type:'image/png'});
+}
+async function fallbackDownloadAndCopy(blob,filename,caption,status){
+ downloadBlob(blob,filename);
+ let captionCopied=false;
+ try{if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(caption);captionCopied=true;}}catch{}
+ if(status)status.textContent=`Il PNG “${filename}” è stato scaricato${captionCopied?' e la didascalia breve è stata copiata':''}. Apri WhatsApp, allega l’immagine e incolla la didascalia.`;
+}
 async function shareFinalResultAsImage(){
  const status=$('finaleShareStatus'),button=$('finaleShareBtn');
  if(status)status.textContent='';
@@ -678,27 +745,71 @@ async function shareFinalResultAsImage(){
  const oldLabel=button.querySelector('span');if(oldLabel)oldLabel.textContent='PREPARO IMMAGINE…';
  try{
   const canvas=drawFinaleScoreImage();
-  const blob=await canvasToPngBlob(canvas);
   const filename=`Volley-Live-Risultato-${new Date().toISOString().slice(0,10)}.png`;
+  const plainCaption=shareUsesPlainCaption();
+  const caption=finaleShareCaption(plainCaption);
+
+  // Su smartphone/tablet tentiamo la condivisione nativa del PNG. La conversione
+  // sincrona evita di perdere il gesto utente prima di chiamare navigator.share.
+  if(!plainCaption){
+   const blob=canvasToPngBlobSync(canvas);
+   const file=new File([blob],filename,{type:'image/png'});
+   let fileShareAvailable=false;
+   try{fileShareAvailable=typeof navigator.share==='function'&&typeof navigator.canShare==='function'&&navigator.canShare({files:[file]});}catch{fileShareAvailable=false;}
+   if(fileShareAvailable){
+    let sharePromise;
+    try{sharePromise=navigator.share({files:[file],title:'Volley Live - Risultato finale',text:caption});}
+    catch(err){if(err&&err.name==='AbortError')return;await fallbackDownloadAndCopy(blob,filename,caption,status);return;}
+    Promise.resolve(sharePromise).then(()=>{
+     if(status)status.textContent='Menu di condivisione chiuso. Se hai scelto WhatsApp, controlla la chat e invia il risultato.';
+    }).catch(async err=>{
+     if(err&&err.name==='AbortError'){if(status)status.textContent='Condivisione annullata.';return;}
+     await fallbackDownloadAndCopy(blob,filename,caption,status);
+    });
+    return;
+   }
+   // Fallback per browser/tablet che non possono condividere file via Web Share.
+   await fallbackDownloadAndCopy(blob,filename,caption,status);
+   return;
+  }
+
+  // Su PC manteniamo la scelta WhatsApp Web / menu nativo, che richiede un
+  // secondo clic utente per aprire la destinazione di condivisione.
+  const blob=await canvasToPngBlob(canvas);
   const file=new File([blob],filename,{type:'image/png'});
-  const caption=finaleShareCaption();
   let fileShareAvailable=false;
   try{fileShareAvailable=typeof navigator.share==='function'&&typeof navigator.canShare==='function'&&navigator.canShare({files:[file]});}catch{fileShareAvailable=false;}
-  if(fileShareAvailable){
-   try{
-    await navigator.share({files:[file],title:'Volley Live - Risultato finale',text:caption});
-    if(status)status.textContent='Immagine pronta per la condivisione. Seleziona WhatsApp nel menu di condivisione, se non è già stato scelto.';
-    return;
-   }catch(err){if(err&&err.name==='AbortError')return;}
-  }
-  // Fallback per browser desktop che non consentono la condivisione diretta di file.
-  downloadBlob(blob,filename);
-  let captionCopied=false;
-  try{if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(caption);captionCopied=true;}}catch{}
-  if(status)status.textContent=`Il PNG “${filename}” è stato scaricato${captionCopied?' e il testo del risultato è stato copiato':''}. Apri WhatsApp, allega l’immagine scaricata e incolla il testo del risultato.`;
+  showDesktopShareChooser({blob,file,filename,caption,fileShareAvailable});
  }catch(err){if(status)status.textContent='Non è stato possibile creare o condividere l’immagine: '+(err&&err.message?err.message:'errore sconosciuto')+'.';}
  finally{button.disabled=false;if(oldLabel)oldLabel.textContent='CONDIVIDI IMMAGINE SU WHATSAPP';}
 }
+function shareViaWhatsAppWeb(){
+ const payload=pendingDesktopShare;if(!payload)return;
+ // La condivisione file attraverso una URL non è prevista da WhatsApp Web:
+ // scarichiamo il PNG e apriamo WhatsApp Web con la didascalia semplice precompilata.
+ const waUrl='https://web.whatsapp.com/send?text='+encodeURIComponent(finaleShareCaption(true));
+ try{const tab=window.open(waUrl,'_blank');if(tab)tab.opener=null;}catch{}
+ downloadBlob(payload.blob,payload.filename);
+ const status=$('finaleShareStatus');
+ closeDesktopShareChooser();
+ if(status)status.textContent=`Il PNG “${payload.filename}” è stato scaricato. WhatsApp Web si apre con il testo compatibile già compilato: nella chat allega il PNG scaricato prima di inviare. Se la scheda non si è aperta, consenti i popup e visita web.whatsapp.com.`;
+}
+function shareViaDeviceApps(){
+ const payload=pendingDesktopShare;if(!payload||!payload.fileShareAvailable||typeof navigator.share!=='function')return;
+ const status=$('finaleShareStatus');
+ // La chiamata viene eseguita direttamente nel gesto del clic per rispettare
+ // le politiche del browser sulle API di condivisione.
+ let sharePromise;
+ try{sharePromise=navigator.share({files:[payload.file],title:'Volley Live - Risultato finale',text:payload.caption});}
+ catch(err){if(status)status.textContent='Il menu di condivisione non è disponibile: '+(err&&err.message?err.message:'errore sconosciuto')+'. Puoi scegliere WhatsApp Web riprovando la condivisione.';closeDesktopShareChooser();return;}
+ closeDesktopShareChooser();
+ Promise.resolve(sharePromise).then(()=>{if(status)status.textContent='Menu di condivisione aperto. Scegli WhatsApp Desktop o un’altra app compatibile per inviare l’immagine.';}).catch(err=>{if(status)status.textContent=err&&err.name==='AbortError'?'Condivisione annullata.': 'Condivisione non riuscita. Ripremi “Condividi immagine su WhatsApp” e scegli WhatsApp Web.';});
+}
+$('shareWhatsAppWebBtn').onclick=shareViaWhatsAppWeb;
+$('shareDeviceBtn').onclick=shareViaDeviceApps;
+$('shareChoiceCancelBtn').onclick=()=>closeDesktopShareChooser();
+$('desktopShareChoice').addEventListener('click',e=>{if(e.target===$('desktopShareChoice'))closeDesktopShareChooser();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('desktopShareChoice').classList.contains('hide'))closeDesktopShareChooser();});
 $('finaleShareBtn').onclick=shareFinalResultAsImage;
 $('finaleCloseButton').onclick=()=>{finaleDismissed=true;$('matchFinaleOverlay').classList.add('hide');};
 $('loginBtn').onclick=async()=>{const email=$('emailInput').value.trim(),password=$('passwordInput').value;if(!email||!password){notice('Inserisci email e password dell’amministratore.','error');return;}try{await signInWithEmailAndPassword(auth,email,password);$('passwordInput').value='';}catch(e){notice('Accesso non riuscito. Controlla le credenziali e che l’utente sia abilitato in Firebase Authentication.','error');}};
