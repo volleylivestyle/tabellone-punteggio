@@ -385,8 +385,12 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
 .fixture-picker-grid .wide{grid-column:1/-1}
 .fixture-result-preview{margin:12px 0;padding:13px;border:1px solid #2c455b;border-radius:10px;background:#08131e}
 .fixture-result-preview .fixture-preview-teams{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:10px;font-weight:900;color:#fff;text-align:center}
-.fixture-result-preview .fixture-preview-teams span:first-child{text-align:right}
-.fixture-result-preview .fixture-preview-teams span:last-child{text-align:left}
+.fixture-result-preview .fixture-preview-team{display:flex;align-items:center;gap:9px;min-width:0}
+.fixture-result-preview .fixture-preview-team.home{justify-content:flex-end;text-align:right}
+.fixture-result-preview .fixture-preview-team.away{justify-content:flex-start;text-align:left}
+.fixture-result-preview .fixture-preview-team-name{overflow-wrap:anywhere;line-height:1.2}
+.fixture-result-preview .fixture-preview-logo{width:42px;height:42px;flex:none;object-fit:contain;background:#fff;border-radius:9px;padding:3px;border:1px solid rgba(255,255,255,.16)}
+.fixture-result-preview .fixture-preview-logo.fallback{display:none}
 .fixture-result-preview .fixture-preview-vs{color:#82a5c4;font-size:.7rem}
 .fixture-result-preview .fixture-preview-meta{margin-top:8px;color:#b7c8d7;font-size:.75rem;line-height:1.5;text-align:center}
 .fixture-result-preview .fixture-preview-partials{margin-top:5px;color:#8fa7bd;font-size:.7rem;text-align:center}
@@ -396,7 +400,7 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
 .fixture-demo-count{margin:0 0 8px;color:#8fa8bf;font-size:.72rem}
 .fixture-include-played{display:flex;gap:8px;align-items:center;margin:4px 0 10px;color:#c7d5e1;font-size:.78rem}
 .fixture-include-played input{accent-color:#62b5ff}
-@media(max-width:600px){.fixture-picker-grid{grid-template-columns:1fr}.fixture-picker-grid .wide{grid-column:auto}.fixture-result-preview .fixture-preview-teams{font-size:.82rem;gap:5px}}
+@media(max-width:600px){.fixture-picker-grid{grid-template-columns:1fr}.fixture-picker-grid .wide{grid-column:auto}.fixture-result-preview .fixture-preview-teams{font-size:.82rem;gap:5px}.fixture-result-preview .fixture-preview-logo{width:34px;height:34px}.fixture-result-preview .fixture-preview-team{gap:5px}}
 
 </style><!-- Volley Live v10.8: indicatore connessione Realtime Database aggiornato in modo affidabile. -->
 </head>
@@ -997,6 +1001,21 @@ function fixtureDateValue(value){
 }
 function fixtureOption(select,value,label){const o=document.createElement('option');o.value=String(value);o.textContent=String(label);select.append(o);}
 function selectedFixtureGroup(){return fixtureCatalog?.groupsById?.[fixtureEls.group.value]||null;}
+function fixtureTeamLogo(groupData,teamName){
+ const logos=groupData?.teamLogos||{};
+ return logos[teamName]||'';
+}
+function fixturePreviewTeam(name,logoUrl,side){
+ const wrap=document.createElement('div');wrap.className=`fixture-preview-team ${side}`;
+ const img=document.createElement('img');img.className='fixture-preview-logo';img.alt='';img.loading='lazy';
+ if(logoUrl){
+  img.src=logoUrl;
+  img.onerror=()=>{img.classList.add('fallback');};
+ }else img.classList.add('fallback');
+ const label=document.createElement('span');label.className='fixture-preview-team-name';label.textContent=name||'—';
+ if(side==='home'){wrap.append(img,label);}else{wrap.append(label,img);}
+ return wrap;
+}
 function renderFixturePreview(){
  if(!fixtureCatalog||!fixtureEls.preview)return;
  const groupId=fixtureEls.group.value;
@@ -1004,9 +1023,9 @@ function renderFixturePreview(){
  const game=groupData?.matches.find(x=>String(x.gameNo)===fixtureEls.match.value);
  fixtureEls.preview.replaceChildren();
  const teams=document.createElement('div');teams.className='fixture-preview-teams';
- const home=document.createElement('span');home.textContent=game?game.home:'Seleziona una partita';
+ const home=fixturePreviewTeam(game?.home||'Seleziona una partita',fixtureTeamLogo(groupData,game?.home),'home');
  const vs=document.createElement('span');vs.className='fixture-preview-vs';vs.textContent='VS';
- const away=document.createElement('span');away.textContent=game?game.away:'—';
+ const away=fixturePreviewTeam(game?.away||'—',fixtureTeamLogo(groupData,game?.away),'away');
  teams.append(home,vs,away);fixtureEls.preview.append(teams);
  const meta=document.createElement('div');meta.className='fixture-preview-meta';
  const partials=document.createElement('div');partials.className='fixture-preview-partials';
@@ -1048,7 +1067,7 @@ function updateFixtureMatches(){
  fixtureEls.round.value=String(defaultRound||'');
  filterFixtureGames();
  fixtureEls.count.textContent=`${groupData.matches.length} gare · ${groupData.counts.completedMatches} disputate · ${groupData.counts.upcomingMatches} da disputare · ${groupData.counts.rounds} giornate · ${groupData.teams.length} squadre. Dati del 02/11/2026.`;
- fixtureEls.status.textContent='Catalogo statico di prova. La selezione carica la gara in Firebase; non aggiorna automaticamente il calendario FIPAV.';
+ fixtureEls.status.textContent='Catalogo statico di prova. I loghi ufficiali FIPAV disponibili sono mostrati in anteprima e collegati automaticamente alla gara; il calendario non si aggiorna automaticamente.';
  renderFixturePreview();
 }
 function filterFixtureGames(){
@@ -1117,13 +1136,15 @@ async function importSelectedFixture(){
  if(!game){notice('Seleziona una partita valida.','error');return;}
  const comp=fixtureEls.competition.value;
  const groupName=fixtureEls.group.options[fixtureEls.group.selectedIndex]?.textContent.split(' · ')[0]||'Girone';
- const confirmation=`Caricare nel tabellone?\n\n${game.home}\ncontro\n${game.away}\n\n${comp} · ${groupName} · Giornata ${game.round}\n${game.date} ore ${game.time}\n${game.venue}\n\nIl punteggio e i set della partita attualmente attiva verranno azzerati. I loghi già caricati saranno conservati solo per le squadre che coincidono esattamente.`;
+ const confirmation=`Caricare nel tabellone?\n\n${game.home}\ncontro\n${game.away}\n\n${comp} · ${groupName} · Giornata ${game.round}\n${game.date} ore ${game.time}\n${game.venue}\n\nIl punteggio e i set della partita attualmente attiva verranno azzerati. I loghi ufficiali disponibili saranno collegati automaticamente; in mancanza di un logo ufficiale verrà conservato quello già caricato per la stessa squadra.`;
  if(!confirm(confirmation))return;
  const next=JSON.parse(JSON.stringify(state));
  const preserveHomeLogo=state.homeName===game.home?state.homeLogo:'';
  const preserveAwayLogo=state.awayName===game.away?state.awayLogo:'';
+ const officialHomeLogo=fixtureTeamLogo(groupData,game.home);
+ const officialAwayLogo=fixtureTeamLogo(groupData,game.away);
  next.homeName=game.home;next.awayName=game.away;
- next.homeLogo=preserveHomeLogo;next.awayLogo=preserveAwayLogo;
+ next.homeLogo=officialHomeLogo||preserveHomeLogo;next.awayLogo=officialAwayLogo||preserveAwayLogo;
  next.event=`${comp} · ${groupName} · Giornata ${game.round}`;
  next.format=5;next.setIndex=0;next.homeScore=0;next.awayScore=0;next.homeSets=0;next.awaySets=0;
  next.homeTimeouts=0;next.awayTimeouts=0;next.sets=[];next.serving='none';next.finished=false;

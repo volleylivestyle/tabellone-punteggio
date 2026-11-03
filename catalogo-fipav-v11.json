@@ -1,1 +1,3190 @@
-{"version":"github-poc-1","snapshotDate":"2026-11-02","snapshotNote":"Fotografia di prova: catalogo campionati/gironi letto dalla pagina di selezione Spazio Commerciale; calendario copiato dalla pagina ufficiale FIPAVOnline del girone 63719. Non è un collegamento automatico né un feed aggiornato.","committee":{"id":"04020","name":"Comitato Territoriale Varese","region":"Lombardia","selectionUrl":"https://public.fipavonline.it/comitati/04020/campionati"},"officialSelectionUrl":"https://pallavolo.spaziocommerciale.com/index.php?page=selezione","groups":[{"name":"Prima Divisione Femminile","gender":"femminile","groups":[{"id":"63718","name":"Girone A"},{"id":"63719","name":"Girone B"}]},{"name":"Seconda Divisione Femminile","gender":"femminile","groups":[{"id":"63720","name":"Girone A"},{"id":"63722","name":"Girone B"}]},{"name":"Terza Divisione Femminile","gender":"femminile","groups":[{"id":"64152","name":"Girone A"},{"id":"64154","name":"Girone B"},{"id":"64156","name":"Girone C"}]},{"name":"Under 13 Femminile","gender":"femminile","groups":[{"id":"64286","name":"Girone A"},{"id":"64428","name":"Girone B"},{"id":"64429","name":"Girone C"},{"id":"64430","name":"Girone D"}]},{"name":"Under 14 Femminile","gender":"femminile","groups":[{"id":"63899","name":"Girone A ECCELLENZA"},{"id":"63900","name":"Girone B"},{"id":"63901","name":"Girone C"},{"id":"63903","name":"Girone D"},{"id":"63905","name":"Girone E"}]},{"name":"Under 15 Femminile","gender":"femminile","groups":[{"id":"63798","name":"Girone A ECCELLENZA"},{"id":"63799","name":"Girone B"},{"id":"63800","name":"Girone C"},{"id":"63801","name":"Girone D"},{"id":"63802","name":"Girone E"},{"id":"63803","name":"Girone F"}]},{"name":"Under 17 Femminile","gender":"femminile","groups":[{"id":"63792","name":"Girone A ECCELLENZA"},{"id":"63793","name":"Girone B"},{"id":"63794","name":"Girone C"},{"id":"63795","name":"Girone D"},{"id":"63796","name":"Girone E"},{"id":"63797","name":"Girone F"}]},{"name":"Under 19 Femminile","gender":"femminile","groups":[{"id":"63752","name":"Girone A ECCELLENZA"},{"id":"63754","name":"Girone B"},{"id":"63755","name":"Girone C"},{"id":"63756","name":"Girone D"}]},{"name":"Prima Divisione Maschile","gender":"maschile","groups":[{"id":"64079","name":"Girone A"},{"id":"64081","name":"Girone B"}]},{"name":"Under 14 Maschile","gender":"maschile","groups":[{"id":"63921","name":"Girone A"}]},{"name":"Under 15 Maschile","gender":"maschile","groups":[{"id":"63919","name":"Girone A UNICO"}]},{"name":"Under 17 Maschile","gender":"maschile","groups":[{"id":"63909","name":"Girone A"},{"id":"63910","name":"Girone B"}]},{"name":"Under 19 Maschile","gender":"maschile","groups":[{"id":"63911","name":"Girone A"},{"id":"63914","name":"Girone B"}]}],"groupSnapshots":{"63719":{"competition":"Prima Divisione Femminile","gender":"femminile","group":"Girone B","groupId":"63719","sourceUrl":"https://public.fipavonline.it/gironi/63719","teams":["ASD VOLLEY SUMIRAGO","BLU VOLLEY","CASTRONNO VERDE","CENTRO CAR CAZZARO SARONNO","CO-BIT UYBA BUSTO ARSIZIO U19","DUO VOLLEY GOBBO ALLESTIMENTI VERDE","FULL VOLLEY ARCOBALENO-CISTELLUM U19","GAR PALLAVOLO RESCALDINA","GERMAN AUTO PANTA REI","GORLA VOLLEY","REMAX CLASS EAGLES","ROSSELLA ETS CARONNO PERTUSELLA","SEVEN LAKES - PRO BODIO LOMNAGO","UNION ORATORI CASTELLANZA ASD","VOLLEY NETWORK'S SATINOX ACCIAI","VOLLEY PLUS FVG U21"],"matches":[{"date":"07/10/2026","time":"21.00","round":1,"gameNo":1240,"venue":"PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO","home":"VOLLEY PLUS FVG U21","away":"ROSSELLA ETS CARONNO PERTUSELLA","result":[1,3],"partials":["27/25","15/25","22/25","22/25"]},{"date":"09/10/2026","time":"21.00","round":1,"gameNo":1241,"venue":"PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE","home":"GERMAN AUTO PANTA REI","away":"VOLLEY NETWORK'S SATINOX ACCIAI","result":[3,1],"partials":["25/23","18/25","25/9","25/18"]},{"date":"09/10/2026","time":"21.15","round":1,"gameNo":1242,"venue":"CENTRO POLIVALENTE - via fornaci 6 - TERNATE","home":"SEVEN LAKES - PRO BODIO LOMNAGO","away":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","result":[0,3],"partials":["21/25","20/25","23/25"]},{"date":"10/10/2026","time":"19.00","round":1,"gameNo":1243,"venue":"PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO","home":"BLU VOLLEY","away":"GAR PALLAVOLO RESCALDINA","result":[2,3],"partials":["13/25","25/22","18/25","25/21","9/15"]},{"date":"10/10/2026","time":"21.00","round":1,"gameNo":1244,"venue":"PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE","home":"GORLA VOLLEY","away":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","result":[3,0],"partials":["25/10","25/13","25/16"]},{"date":"09/10/2026","time":"21.00","round":1,"gameNo":1245,"venue":"PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO","home":"ASD VOLLEY SUMIRAGO","away":"CO-BIT UYBA BUSTO ARSIZIO U19","result":[3,0],"partials":["25/12","25/13","25/16"]},{"date":"09/10/2026","time":"21.15","round":1,"gameNo":1246,"venue":"PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA","home":"CENTRO CAR CAZZARO SARONNO","away":"UNION ORATORI CASTELLANZA ASD","result":[1,3],"partials":["15/25","25/17","25/27","17/25"]},{"date":"08/10/2026","time":"21.00","round":1,"gameNo":1247,"venue":"PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO","home":"REMAX CLASS EAGLES","away":"CASTRONNO VERDE","result":[3,2],"partials":["20/25","25/23","23/25","25/14","15/9"]},{"date":"18/10/2026","time":"18.00","round":2,"gameNo":1248,"venue":"PALESTRA ORAT. DI SACCONAGO - VIA ORTIGARA, 42 - BUSTO ARSIZIO","home":"CO-BIT UYBA BUSTO ARSIZIO U19","away":"VOLLEY PLUS FVG U21","result":[0,3],"partials":["20/25","14/25","17/25"]},{"date":"17/10/2026","time":"21.00","round":2,"gameNo":1249,"venue":"PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO","home":"VOLLEY NETWORK'S SATINOX ACCIAI","away":"GORLA VOLLEY","result":[1,3],"partials":["25/20","22/25","14/25","21/25"]},{"date":"17/10/2026","time":"18.00","round":2,"gameNo":1250,"venue":"PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA","home":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","away":"GERMAN AUTO PANTA REI","result":[1,3],"partials":["25/21","12/25","19/25","14/25"]},{"date":"18/10/2026","time":"18.30","round":2,"gameNo":1251,"venue":"PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA","home":"GAR PALLAVOLO RESCALDINA","away":"SEVEN LAKES - PRO BODIO LOMNAGO","result":[3,0],"partials":["25/21","25/22","25/21"]},{"date":"18/10/2026","time":"19.00","round":2,"gameNo":1252,"venue":"PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE","home":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","away":"BLU VOLLEY","result":[0,3],"partials":["16/25","16/25","17/25"]},{"date":"16/10/2026","time":"21.15","round":2,"gameNo":1253,"venue":"PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA","home":"CENTRO CAR CAZZARO SARONNO","away":"REMAX CLASS EAGLES","result":[0,3],"partials":["22/25","17/25","20/25"]},{"date":"13/10/2026","time":"20.45","round":2,"gameNo":1254,"venue":"TENSOSTRUTTURA - VIA PIAVE - CASTRONNO","home":"CASTRONNO VERDE","away":"UNION ORATORI CASTELLANZA ASD","result":[1,3],"partials":["25/22","22/25","22/25","23/25"]},{"date":"16/10/2026","time":"21.15","round":2,"gameNo":1255,"venue":"PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA","home":"ROSSELLA ETS CARONNO PERTUSELLA","away":"ASD VOLLEY SUMIRAGO","result":[0,3],"partials":["14/25","22/25","19/25"]},{"date":"20/10/2026","time":"20.30","round":3,"gameNo":1256,"venue":"TENSOSTRUTTURA - VIA PIAVE - CASTRONNO","home":"CASTRONNO VERDE","away":"CO-BIT UYBA BUSTO ARSIZIO U19","result":[3,0],"partials":["25/23","25/15","25/23"]},{"date":"24/10/2026","time":"21.00","round":3,"gameNo":1257,"venue":"PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE","home":"GORLA VOLLEY","away":"SEVEN LAKES - PRO BODIO LOMNAGO","result":[3,0],"partials":["25/23","25/18","25/21"]},{"date":"25/10/2026","time":"18.00","round":3,"gameNo":1258,"venue":"PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA","home":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","away":"BLU VOLLEY","result":[3,0],"partials":["25/19","25/22","25/20"]},{"date":"25/10/2026","time":"18.30","round":3,"gameNo":1259,"venue":"PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA","home":"GAR PALLAVOLO RESCALDINA","away":"GERMAN AUTO PANTA REI","result":[1,3],"partials":["25/20","19/25","17/25","21/25"]},{"date":"24/10/2026","time":"21.00","round":3,"gameNo":1260,"venue":"PALESTRA ORAT. DI SACCONAGO - VIA ORTIGARA, 42 - BUSTO ARSIZIO","home":"VOLLEY PLUS FVG U21","away":"REMAX CLASS EAGLES","result":[1,3],"partials":["15/25","25/21","21/25","18/25"]},{"date":"25/10/2026","time":"19.00","round":3,"gameNo":1261,"venue":"PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE","home":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","away":"VOLLEY NETWORK'S SATINOX ACCIAI","result":[0,3],"partials":["14/25","11/25","7/25"]},{"date":"23/10/2026","time":"21.15","round":3,"gameNo":1262,"venue":"PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA","home":"CENTRO CAR CAZZARO SARONNO","away":"ASD VOLLEY SUMIRAGO","result":[1,3],"partials":["25/16","17/25","20/25","14/25"]},{"date":"23/10/2026","time":"21.15","round":3,"gameNo":1263,"venue":"PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA","home":"ROSSELLA ETS CARONNO PERTUSELLA","away":"UNION ORATORI CASTELLANZA ASD","result":[1,3],"partials":["21/25","15/25","25/17","18/25"]},{"date":"30/10/2026","time":"21.15","round":4,"gameNo":1264,"venue":"PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA","home":"CO-BIT UYBA BUSTO ARSIZIO U19","away":"ROSSELLA ETS CARONNO PERTUSELLA","result":[0,3],"partials":["23/25","14/25","12/25"]},{"date":"30/10/2026","time":"21.00","round":4,"gameNo":1265,"venue":"PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE","home":"GERMAN AUTO PANTA REI","away":"GORLA VOLLEY","result":[2,3],"partials":["25/20","22/25","12/25","25/20","5/15"]},{"date":"31/10/2026","time":"21.00","round":4,"gameNo":1266,"venue":"PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO","home":"VOLLEY NETWORK'S SATINOX ACCIAI","away":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","result":[3,0],"partials":["28/26","25/15","25/17"]},{"date":"29/10/2026","time":"21.00","round":4,"gameNo":1267,"venue":"PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO","home":"REMAX CLASS EAGLES","away":"GAR PALLAVOLO RESCALDINA","result":[1,3],"partials":["21/25","18/25","25/9","24/26"]},{"date":"30/10/2026","time":"21.15","round":4,"gameNo":1268,"venue":"CENTRO POLIVALENTE - via fornaci 6 - TERNATE","home":"SEVEN LAKES - PRO BODIO LOMNAGO","away":"VOLLEY PLUS FVG U21","result":[2,3],"partials":["25/18","26/24","21/25","17/25","8/15"]},{"date":"01/11/2026","time":"20.30","round":4,"gameNo":1269,"venue":"PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA","home":"UNION ORATORI CASTELLANZA ASD","away":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","result":[3,0],"partials":["25/15","25/17","25/16"]},{"date":"31/10/2026","time":"19.00","round":4,"gameNo":1270,"venue":"PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO","home":"BLU VOLLEY","away":"CENTRO CAR CAZZARO SARONNO","result":[2,3],"partials":["25/20","23/25","21/25","25/22","10/15"]},{"date":"30/10/2026","time":"21.00","round":4,"gameNo":1271,"venue":"PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO","home":"ASD VOLLEY SUMIRAGO","away":"CASTRONNO VERDE","result":[3,0],"partials":["25/20","25/22","25/22"]},{"date":"07/11/2026","time":"20.00","round":5,"gameNo":1272,"venue":"PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA","home":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","away":"GORLA VOLLEY","result":null,"partials":[]},{"date":"08/11/2026","time":"18.30","round":5,"gameNo":1273,"venue":"PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA","home":"GAR PALLAVOLO RESCALDINA","away":"VOLLEY NETWORK'S SATINOX ACCIAI","result":null,"partials":[]},{"date":"08/11/2026","time":"17.00","round":5,"gameNo":1274,"venue":"PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA","home":"CO-BIT UYBA BUSTO ARSIZIO U19","away":"UNION ORATORI CASTELLANZA ASD","result":null,"partials":[]},{"date":"06/11/2026","time":"21.00","round":5,"gameNo":1275,"venue":"PALESTRA SCUOLE MEDIE E.FERMI - via enrico fermi 1 - VENEGONO INFERIORE","home":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","away":"REMAX CLASS EAGLES","result":null,"partials":[]},{"date":"04/11/2026","time":"21.00","round":5,"gameNo":1276,"venue":"PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO","home":"VOLLEY PLUS FVG U21","away":"ASD VOLLEY SUMIRAGO","result":null,"partials":[]},{"date":"06/11/2026","time":"21.15","round":5,"gameNo":1277,"venue":"PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA","home":"CENTRO CAR CAZZARO SARONNO","away":"GERMAN AUTO PANTA REI","result":null,"partials":[]},{"date":"06/11/2026","time":"21.15","round":5,"gameNo":1278,"venue":"PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA","home":"ROSSELLA ETS CARONNO PERTUSELLA","away":"SEVEN LAKES - PRO BODIO LOMNAGO","result":null,"partials":[]},{"date":"03/11/2026","time":"20.30","round":5,"gameNo":1279,"venue":"TENSOSTRUTTURA - VIA PIAVE - CASTRONNO","home":"CASTRONNO VERDE","away":"BLU VOLLEY","result":null,"partials":[]},{"date":"15/11/2026","time":"21.00","round":6,"gameNo":1280,"venue":"PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA","home":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","away":"GAR PALLAVOLO RESCALDINA","result":null,"partials":[]},{"date":"15/11/2026","time":"20.30","round":6,"gameNo":1281,"venue":"PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA","home":"UNION ORATORI CASTELLANZA ASD","away":"ASD VOLLEY SUMIRAGO","result":null,"partials":[]},{"date":"13/11/2026","time":"21.15","round":6,"gameNo":1282,"venue":"PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA","home":"ROSSELLA ETS CARONNO PERTUSELLA","away":"GORLA VOLLEY","result":null,"partials":[]},{"date":"13/11/2026","time":"21.00","round":6,"gameNo":1283,"venue":"PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO","home":"REMAX CLASS EAGLES","away":"CO-BIT UYBA BUSTO ARSIZIO U19","result":null,"partials":[]},{"date":"13/11/2026","time":"21.00","round":6,"gameNo":1284,"venue":"PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE","home":"GERMAN AUTO PANTA REI","away":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","result":null,"partials":[]},{"date":"14/11/2026","time":"19.00","round":6,"gameNo":1285,"venue":"PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO","home":"BLU VOLLEY","away":"VOLLEY PLUS FVG U21","result":null,"partials":[]},{"date":"14/11/2026","time":"17.45","round":6,"gameNo":1286,"venue":"PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA","home":"CENTRO CAR CAZZARO SARONNO","away":"VOLLEY NETWORK'S SATINOX ACCIAI","result":null,"partials":[]},{"date":"13/11/2026","time":"21.15","round":6,"gameNo":1287,"venue":"CENTRO POLIVALENTE - via fornaci 6 - TERNATE","home":"SEVEN LAKES - PRO BODIO LOMNAGO","away":"CASTRONNO VERDE","result":null,"partials":[]},{"date":"20/11/2026","time":"21.00","round":7,"gameNo":1288,"venue":"PALESTRA SCUOLE MEDIE E.FERMI - via enrico fermi 1 - VENEGONO INFERIORE","home":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","away":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","result":null,"partials":[]},{"date":"22/11/2026","time":"18.30","round":7,"gameNo":1289,"venue":"PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA","home":"GAR PALLAVOLO RESCALDINA","away":"GORLA VOLLEY","result":null,"partials":[]},{"date":"20/11/2026","time":"21.00","round":7,"gameNo":1290,"venue":"PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO","home":"ASD VOLLEY SUMIRAGO","away":"REMAX CLASS EAGLES","result":null,"partials":[]},{"date":"18/11/2026","time":"21.00","round":7,"gameNo":1291,"venue":"PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO","home":"VOLLEY PLUS FVG U21","away":"UNION ORATORI CASTELLANZA ASD","result":null,"partials":[]},{"date":"02/12/2026","time":"21.15","round":7,"gameNo":1292,"venue":"CENTRO POLIVALENTE - via fornaci 6 - TERNATE","home":"SEVEN LAKES - PRO BODIO LOMNAGO","away":"CENTRO CAR CAZZARO SARONNO","result":null,"partials":[]},{"date":"20/11/2026","time":"21.15","round":7,"gameNo":1293,"venue":"PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA","home":"ROSSELLA ETS CARONNO PERTUSELLA","away":"BLU VOLLEY","result":null,"partials":[]},{"date":"20/11/2026","time":"21.00","round":7,"gameNo":1294,"venue":"PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE","home":"CO-BIT UYBA BUSTO ARSIZIO U19","away":"GERMAN AUTO PANTA REI","result":null,"partials":[]},{"date":"17/11/2026","time":"20.30","round":7,"gameNo":1295,"venue":"TENSOSTRUTTURA - VIA PIAVE - CASTRONNO","home":"CASTRONNO VERDE","away":"VOLLEY NETWORK'S SATINOX ACCIAI","result":null,"partials":[]},{"date":"29/11/2026","time":"18.30","round":8,"gameNo":1296,"venue":"PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA","home":"GAR PALLAVOLO RESCALDINA","away":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","result":null,"partials":[]},{"date":"28/11/2026","time":"21.00","round":8,"gameNo":1297,"venue":"PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA","home":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","away":"CENTRO CAR CAZZARO SARONNO","result":null,"partials":[]},{"date":"27/11/2026","time":"21.00","round":8,"gameNo":1298,"venue":"PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO","home":"REMAX CLASS EAGLES","away":"UNION ORATORI CASTELLANZA ASD","result":null,"partials":[]},{"date":"28/11/2026","time":"19.00","round":8,"gameNo":1299,"venue":"PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO","home":"BLU VOLLEY","away":"ASD VOLLEY SUMIRAGO","result":null,"partials":[]},{"date":"28/11/2026","time":"21.00","round":8,"gameNo":1300,"venue":"PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE","home":"GORLA VOLLEY","away":"VOLLEY PLUS FVG U21","result":null,"partials":[]},{"date":"27/11/2026","time":"21.15","round":8,"gameNo":1301,"venue":"CENTRO POLIVALENTE - via fornaci 6 - TERNATE","home":"SEVEN LAKES - PRO BODIO LOMNAGO","away":"CO-BIT UYBA BUSTO ARSIZIO U19","result":null,"partials":[]},{"date":"27/11/2026","time":"21.00","round":8,"gameNo":1302,"venue":"PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE","home":"GERMAN AUTO PANTA REI","away":"CASTRONNO VERDE","result":null,"partials":[]},{"date":"28/11/2026","time":"21.00","round":8,"gameNo":1303,"venue":"PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO","home":"VOLLEY NETWORK'S SATINOX ACCIAI","away":"ROSSELLA ETS CARONNO PERTUSELLA","result":null,"partials":[]},{"date":"04/12/2026","time":"21.15","round":9,"gameNo":1304,"venue":"PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA","home":"CENTRO CAR CAZZARO SARONNO","away":"GAR PALLAVOLO RESCALDINA","result":null,"partials":[]},{"date":"01/12/2026","time":"20.30","round":9,"gameNo":1305,"venue":"TENSOSTRUTTURA - VIA PIAVE - CASTRONNO","home":"CASTRONNO VERDE","away":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","result":null,"partials":[]},{"date":"04/02/2027","time":"21.00","round":9,"gameNo":1306,"venue":"PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO","home":"BLU VOLLEY","away":"UNION ORATORI CASTELLANZA ASD","result":null,"partials":[]},{"date":"04/12/2026","time":"21.00","round":9,"gameNo":1307,"venue":"PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO","home":"ASD VOLLEY SUMIRAGO","away":"GORLA VOLLEY","result":null,"partials":[]},{"date":"02/12/2026","time":"21.00","round":9,"gameNo":1308,"venue":"PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO","home":"VOLLEY PLUS FVG U21","away":"GERMAN AUTO PANTA REI","result":null,"partials":[]},{"date":"06/12/2026","time":"19.00","round":9,"gameNo":1309,"venue":"PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE","home":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","away":"SEVEN LAKES - PRO BODIO LOMNAGO","result":null,"partials":[]},{"date":"06/12/2026","time":"21.00","round":9,"gameNo":1310,"venue":"PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO","home":"CO-BIT UYBA BUSTO ARSIZIO U19","away":"VOLLEY NETWORK'S SATINOX ACCIAI","result":null,"partials":[]},{"date":"04/12/2026","time":"21.15","round":9,"gameNo":1311,"venue":"PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA","home":"ROSSELLA ETS CARONNO PERTUSELLA","away":"REMAX CLASS EAGLES","result":null,"partials":[]},{"date":"13/12/2026","time":"19.00","round":10,"gameNo":1312,"venue":"PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE","home":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","away":"CENTRO CAR CAZZARO SARONNO","result":null,"partials":[]},{"date":"13/12/2026","time":"18.30","round":10,"gameNo":1313,"venue":"PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA","home":"GAR PALLAVOLO RESCALDINA","away":"CASTRONNO VERDE","result":null,"partials":[]},{"date":"12/12/2026","time":"18.00","round":10,"gameNo":1314,"venue":"PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA","home":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","away":"ROSSELLA ETS CARONNO PERTUSELLA","result":null,"partials":[]},{"date":"10/12/2026","time":"21.00","round":10,"gameNo":1315,"venue":"PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO","home":"REMAX CLASS EAGLES","away":"BLU VOLLEY","result":null,"partials":[]},{"date":"11/12/2026","time":"21.00","round":10,"gameNo":1316,"venue":"PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE","home":"GERMAN AUTO PANTA REI","away":"UNION ORATORI CASTELLANZA ASD","result":null,"partials":[]},{"date":"11/12/2026","time":"21.15","round":10,"gameNo":1317,"venue":"CENTRO POLIVALENTE - via fornaci 6 - TERNATE","home":"SEVEN LAKES - PRO BODIO LOMNAGO","away":"ASD VOLLEY SUMIRAGO","result":null,"partials":[]},{"date":"12/12/2026","time":"21.00","round":10,"gameNo":1318,"venue":"PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE","home":"GORLA VOLLEY","away":"CO-BIT UYBA BUSTO ARSIZIO U19","result":null,"partials":[]},{"date":"12/12/2026","time":"21.00","round":10,"gameNo":1319,"venue":"PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO","home":"VOLLEY NETWORK'S SATINOX ACCIAI","away":"VOLLEY PLUS FVG U21","result":null,"partials":[]},{"date":"15/12/2026","time":"20.30","round":11,"gameNo":1320,"venue":"TENSOSTRUTTURA - VIA PIAVE - CASTRONNO","home":"CASTRONNO VERDE","away":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","result":null,"partials":[]},{"date":"18/12/2026","time":"21.15","round":11,"gameNo":1321,"venue":"PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA","home":"ROSSELLA ETS CARONNO PERTUSELLA","away":"GAR PALLAVOLO RESCALDINA","result":null,"partials":[]},{"date":"16/12/2026","time":"21.00","round":11,"gameNo":1322,"venue":"PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO","home":"VOLLEY PLUS FVG U21","away":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","result":null,"partials":[]},{"date":"18/12/2026","time":"21.00","round":11,"gameNo":1323,"venue":"PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO","home":"REMAX CLASS EAGLES","away":"SEVEN LAKES - PRO BODIO LOMNAGO","result":null,"partials":[]},{"date":"20/12/2026","time":"20.30","round":11,"gameNo":1324,"venue":"PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA","home":"UNION ORATORI CASTELLANZA ASD","away":"VOLLEY NETWORK'S SATINOX ACCIAI","result":null,"partials":[]},{"date":"18/12/2026","time":"21.15","round":11,"gameNo":1325,"venue":"PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA","home":"CENTRO CAR CAZZARO SARONNO","away":"GORLA VOLLEY","result":null,"partials":[]},{"date":"18/12/2026","time":"21.00","round":11,"gameNo":1326,"venue":"PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO","home":"ASD VOLLEY SUMIRAGO","away":"GERMAN AUTO PANTA REI","result":null,"partials":[]},{"date":"20/12/2026","time":"19.00","round":11,"gameNo":1327,"venue":"PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO","home":"CO-BIT UYBA BUSTO ARSIZIO U19","away":"BLU VOLLEY","result":null,"partials":[]},{"date":"08/01/2027","time":"21.00","round":12,"gameNo":1328,"venue":"TENSOSTRUTTURA - VIA PIAVE - CASTRONNO","home":"CASTRONNO VERDE","away":"CENTRO CAR CAZZARO SARONNO","result":null,"partials":[]},{"date":"10/01/2027","time":"19.00","round":12,"gameNo":1329,"venue":"PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE","home":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","away":"ROSSELLA ETS CARONNO PERTUSELLA","result":null,"partials":[]},{"date":"10/01/2027","time":"18.30","round":12,"gameNo":1330,"venue":"PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA","home":"GAR PALLAVOLO RESCALDINA","away":"VOLLEY PLUS FVG U21","result":null,"partials":[]},{"date":"10/01/2027","time":"18.00","round":12,"gameNo":1331,"venue":"PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA","home":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","away":"CO-BIT UYBA BUSTO ARSIZIO U19","result":null,"partials":[]},{"date":"08/01/2027","time":"21.15","round":12,"gameNo":1332,"venue":"CENTRO POLIVALENTE - via fornaci 6 - TERNATE","home":"SEVEN LAKES - PRO BODIO LOMNAGO","away":"BLU VOLLEY","result":null,"partials":[]},{"date":"08/01/2027","time":"21.00","round":12,"gameNo":1333,"venue":"PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE","home":"GERMAN AUTO PANTA REI","away":"REMAX CLASS EAGLES","result":null,"partials":[]},{"date":"09/01/2027","time":"21.00","round":12,"gameNo":1334,"venue":"PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE","home":"GORLA VOLLEY","away":"UNION ORATORI CASTELLANZA ASD","result":null,"partials":[]},{"date":"09/01/2027","time":"21.00","round":12,"gameNo":1335,"venue":"PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO","home":"VOLLEY NETWORK'S SATINOX ACCIAI","away":"ASD VOLLEY SUMIRAGO","result":null,"partials":[]},{"date":"15/01/2027","time":"21.15","round":13,"gameNo":1336,"venue":"PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA","home":"ROSSELLA ETS CARONNO PERTUSELLA","away":"CENTRO CAR CAZZARO SARONNO","result":null,"partials":[]},{"date":"13/01/2027","time":"21.00","round":13,"gameNo":1337,"venue":"PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO","home":"VOLLEY PLUS FVG U21","away":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","result":null,"partials":[]},{"date":"15/01/2027","time":"20.30","round":13,"gameNo":1338,"venue":"E-WORK ARENA - viale gabardi, 43 - BUSTO ARSIZIO","home":"CO-BIT UYBA BUSTO ARSIZIO U19","away":"GAR PALLAVOLO RESCALDINA","result":null,"partials":[]},{"date":"16/01/2027","time":"19.00","round":13,"gameNo":1339,"venue":"PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO","home":"BLU VOLLEY","away":"GERMAN AUTO PANTA REI","result":null,"partials":[]},{"date":"15/01/2027","time":"21.00","round":13,"gameNo":1340,"venue":"PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO","home":"REMAX CLASS EAGLES","away":"VOLLEY NETWORK'S SATINOX ACCIAI","result":null,"partials":[]},{"date":"15/01/2027","time":"21.00","round":13,"gameNo":1341,"venue":"PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO","home":"ASD VOLLEY SUMIRAGO","away":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","result":null,"partials":[]},{"date":"17/01/2027","time":"20.30","round":13,"gameNo":1342,"venue":"PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA","home":"UNION ORATORI CASTELLANZA ASD","away":"SEVEN LAKES - PRO BODIO LOMNAGO","result":null,"partials":[]},{"date":"12/01/2027","time":"20.30","round":13,"gameNo":1343,"venue":"TENSOSTRUTTURA - VIA PIAVE - CASTRONNO","home":"CASTRONNO VERDE","away":"GORLA VOLLEY","result":null,"partials":[]},{"date":"19/01/2027","time":"20.30","round":14,"gameNo":1344,"venue":"TENSOSTRUTTURA - VIA PIAVE - CASTRONNO","home":"CASTRONNO VERDE","away":"ROSSELLA ETS CARONNO PERTUSELLA","result":null,"partials":[]},{"date":"20/01/2027","time":"21.00","round":14,"gameNo":1345,"venue":"PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO","home":"VOLLEY PLUS FVG U21","away":"CENTRO CAR CAZZARO SARONNO","result":null,"partials":[]},{"date":"24/01/2027","time":"19.00","round":14,"gameNo":1346,"venue":"PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE","home":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","away":"CO-BIT UYBA BUSTO ARSIZIO U19","result":null,"partials":[]},{"date":"22/01/2027","time":"21.00","round":14,"gameNo":1347,"venue":"PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE","home":"GERMAN AUTO PANTA REI","away":"SEVEN LAKES - PRO BODIO LOMNAGO","result":null,"partials":[]},{"date":"23/01/2027","time":"21.00","round":14,"gameNo":1348,"venue":"PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO","home":"VOLLEY NETWORK'S SATINOX ACCIAI","away":"BLU VOLLEY","result":null,"partials":[]},{"date":"23/01/2027","time":"21.00","round":14,"gameNo":1349,"venue":"PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE","home":"GORLA VOLLEY","away":"REMAX CLASS EAGLES","result":null,"partials":[]},{"date":"24/01/2027","time":"21.00","round":14,"gameNo":1350,"venue":"PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA","home":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","away":"UNION ORATORI CASTELLANZA ASD","result":null,"partials":[]},{"date":"24/01/2027","time":"18.30","round":14,"gameNo":1351,"venue":"PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA","home":"GAR PALLAVOLO RESCALDINA","away":"ASD VOLLEY SUMIRAGO","result":null,"partials":[]},{"date":"27/01/2027","time":"21.00","round":15,"gameNo":1352,"venue":"PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO","home":"VOLLEY PLUS FVG U21","away":"CASTRONNO VERDE","result":null,"partials":[]},{"date":"29/01/2027","time":"21.15","round":15,"gameNo":1353,"venue":"PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA","home":"CO-BIT UYBA BUSTO ARSIZIO U19","away":"CENTRO CAR CAZZARO SARONNO","result":null,"partials":[]},{"date":"29/01/2027","time":"21.15","round":15,"gameNo":1354,"venue":"CENTRO POLIVALENTE - via fornaci 6 - TERNATE","home":"SEVEN LAKES - PRO BODIO LOMNAGO","away":"VOLLEY NETWORK'S SATINOX ACCIAI","result":null,"partials":[]},{"date":"30/01/2027","time":"19.00","round":15,"gameNo":1355,"venue":"PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO","home":"BLU VOLLEY","away":"GORLA VOLLEY","result":null,"partials":[]},{"date":"29/01/2027","time":"21.00","round":15,"gameNo":1356,"venue":"PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO","home":"REMAX CLASS EAGLES","away":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","result":null,"partials":[]},{"date":"31/01/2027","time":"20.30","round":15,"gameNo":1357,"venue":"PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA","home":"UNION ORATORI CASTELLANZA ASD","away":"GAR PALLAVOLO RESCALDINA","result":null,"partials":[]},{"date":"29/01/2027","time":"21.00","round":15,"gameNo":1358,"venue":"PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO","home":"ASD VOLLEY SUMIRAGO","away":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","result":null,"partials":[]},{"date":"29/01/2027","time":"21.15","round":15,"gameNo":1359,"venue":"PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA","home":"ROSSELLA ETS CARONNO PERTUSELLA","away":"GERMAN AUTO PANTA REI","result":null,"partials":[]},{"date":"05/02/2027","time":"21.15","round":16,"gameNo":1360,"venue":"PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA","home":"ROSSELLA ETS CARONNO PERTUSELLA","away":"VOLLEY PLUS FVG U21","result":null,"partials":[]},{"date":"06/02/2027","time":"21.00","round":16,"gameNo":1361,"venue":"PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO","home":"VOLLEY NETWORK'S SATINOX ACCIAI","away":"GERMAN AUTO PANTA REI","result":null,"partials":[]},{"date":"07/02/2027","time":"18.00","round":16,"gameNo":1362,"venue":"PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA","home":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","away":"SEVEN LAKES - PRO BODIO LOMNAGO","result":null,"partials":[]},{"date":"07/02/2027","time":"18.30","round":16,"gameNo":1363,"venue":"PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA","home":"GAR PALLAVOLO RESCALDINA","away":"BLU VOLLEY","result":null,"partials":[]},{"date":"07/02/2027","time":"19.00","round":16,"gameNo":1364,"venue":"PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE","home":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","away":"GORLA VOLLEY","result":null,"partials":[]},{"date":"05/02/2027","time":"20.30","round":16,"gameNo":1365,"venue":"E-WORK ARENA - viale gabardi, 43 - BUSTO ARSIZIO","home":"CO-BIT UYBA BUSTO ARSIZIO U19","away":"ASD VOLLEY SUMIRAGO","result":null,"partials":[]},{"date":"07/02/2027","time":"20.30","round":16,"gameNo":1366,"venue":"PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA","home":"UNION ORATORI CASTELLANZA ASD","away":"CENTRO CAR CAZZARO SARONNO","result":null,"partials":[]},{"date":"02/02/2027","time":"20.30","round":16,"gameNo":1367,"venue":"TENSOSTRUTTURA - VIA PIAVE - CASTRONNO","home":"CASTRONNO VERDE","away":"REMAX CLASS EAGLES","result":null,"partials":[]},{"date":"10/02/2027","time":"21.00","round":17,"gameNo":1368,"venue":"PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO","home":"VOLLEY PLUS FVG U21","away":"CO-BIT UYBA BUSTO ARSIZIO U19","result":null,"partials":[]},{"date":"13/02/2027","time":"21.00","round":17,"gameNo":1369,"venue":"PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE","home":"GORLA VOLLEY","away":"VOLLEY NETWORK'S SATINOX ACCIAI","result":null,"partials":[]},{"date":"12/02/2027","time":"21.00","round":17,"gameNo":1370,"venue":"PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE","home":"GERMAN AUTO PANTA REI","away":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","result":null,"partials":[]},{"date":"12/02/2027","time":"21.15","round":17,"gameNo":1371,"venue":"CENTRO POLIVALENTE - via fornaci 6 - TERNATE","home":"SEVEN LAKES - PRO BODIO LOMNAGO","away":"GAR PALLAVOLO RESCALDINA","result":null,"partials":[]},{"date":"13/02/2027","time":"19.00","round":17,"gameNo":1372,"venue":"PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO","home":"BLU VOLLEY","away":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","result":null,"partials":[]},{"date":"12/02/2027","time":"21.00","round":17,"gameNo":1373,"venue":"PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO","home":"REMAX CLASS EAGLES","away":"CENTRO CAR CAZZARO SARONNO","result":null,"partials":[]},{"date":"14/02/2027","time":"20.30","round":17,"gameNo":1374,"venue":"PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA","home":"UNION ORATORI CASTELLANZA ASD","away":"CASTRONNO VERDE","result":null,"partials":[]},{"date":"12/02/2027","time":"21.00","round":17,"gameNo":1375,"venue":"PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO","home":"ASD VOLLEY SUMIRAGO","away":"ROSSELLA ETS CARONNO PERTUSELLA","result":null,"partials":[]},{"date":"16/02/2027","time":"20.30","round":18,"gameNo":1376,"venue":"E-WORK ARENA - viale gabardi, 43 - BUSTO ARSIZIO","home":"CO-BIT UYBA BUSTO ARSIZIO U19","away":"CASTRONNO VERDE","result":null,"partials":[]},{"date":"19/02/2027","time":"21.15","round":18,"gameNo":1377,"venue":"CENTRO POLIVALENTE - via fornaci 6 - TERNATE","home":"SEVEN LAKES - PRO BODIO LOMNAGO","away":"GORLA VOLLEY","result":null,"partials":[]},{"date":"20/02/2027","time":"19.00","round":18,"gameNo":1378,"venue":"PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO","home":"BLU VOLLEY","away":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","result":null,"partials":[]},{"date":"19/02/2027","time":"21.00","round":18,"gameNo":1379,"venue":"PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE","home":"GERMAN AUTO PANTA REI","away":"GAR PALLAVOLO RESCALDINA","result":null,"partials":[]},{"date":"18/02/2027","time":"21.00","round":18,"gameNo":1380,"venue":"PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO","home":"REMAX CLASS EAGLES","away":"VOLLEY PLUS FVG U21","result":null,"partials":[]},{"date":"20/02/2027","time":"21.00","round":18,"gameNo":1381,"venue":"PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO","home":"VOLLEY NETWORK'S SATINOX ACCIAI","away":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","result":null,"partials":[]},{"date":"19/02/2027","time":"21.00","round":18,"gameNo":1382,"venue":"PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO","home":"ASD VOLLEY SUMIRAGO","away":"CENTRO CAR CAZZARO SARONNO","result":null,"partials":[]},{"date":"20/02/2027","time":"20.30","round":18,"gameNo":1383,"venue":"PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA","home":"UNION ORATORI CASTELLANZA ASD","away":"ROSSELLA ETS CARONNO PERTUSELLA","result":null,"partials":[]},{"date":"26/02/2027","time":"21.15","round":19,"gameNo":1384,"venue":"PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA","home":"ROSSELLA ETS CARONNO PERTUSELLA","away":"CO-BIT UYBA BUSTO ARSIZIO U19","result":null,"partials":[]},{"date":"27/02/2027","time":"21.00","round":19,"gameNo":1385,"venue":"PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE","home":"GORLA VOLLEY","away":"GERMAN AUTO PANTA REI","result":null,"partials":[]},{"date":"28/02/2027","time":"18.00","round":19,"gameNo":1386,"venue":"PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA","home":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","away":"VOLLEY NETWORK'S SATINOX ACCIAI","result":null,"partials":[]},{"date":"27/02/2027","time":"20.15","round":19,"gameNo":1387,"venue":"PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA","home":"GAR PALLAVOLO RESCALDINA","away":"REMAX CLASS EAGLES","result":null,"partials":[]},{"date":"24/02/2027","time":"21.00","round":19,"gameNo":1388,"venue":"PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO","home":"VOLLEY PLUS FVG U21","away":"SEVEN LAKES - PRO BODIO LOMNAGO","result":null,"partials":[]},{"date":"28/02/2027","time":"19.00","round":19,"gameNo":1389,"venue":"PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE","home":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","away":"UNION ORATORI CASTELLANZA ASD","result":null,"partials":[]},{"date":"26/02/2027","time":"21.15","round":19,"gameNo":1390,"venue":"PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA","home":"CENTRO CAR CAZZARO SARONNO","away":"BLU VOLLEY","result":null,"partials":[]},{"date":"23/02/2027","time":"20.30","round":19,"gameNo":1391,"venue":"TENSOSTRUTTURA - VIA PIAVE - CASTRONNO","home":"CASTRONNO VERDE","away":"ASD VOLLEY SUMIRAGO","result":null,"partials":[]},{"date":"06/03/2027","time":"21.00","round":20,"gameNo":1392,"venue":"PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE","home":"GORLA VOLLEY","away":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","result":null,"partials":[]},{"date":"06/03/2027","time":"21.00","round":20,"gameNo":1393,"venue":"PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO","home":"VOLLEY NETWORK'S SATINOX ACCIAI","away":"GAR PALLAVOLO RESCALDINA","result":null,"partials":[]},{"date":"07/03/2027","time":"20.30","round":20,"gameNo":1394,"venue":"PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA","home":"UNION ORATORI CASTELLANZA ASD","away":"CO-BIT UYBA BUSTO ARSIZIO U19","result":null,"partials":[]},{"date":"04/03/2027","time":"21.00","round":20,"gameNo":1395,"venue":"PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO","home":"REMAX CLASS EAGLES","away":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","result":null,"partials":[]},{"date":"05/03/2027","time":"21.00","round":20,"gameNo":1396,"venue":"PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO","home":"ASD VOLLEY SUMIRAGO","away":"VOLLEY PLUS FVG U21","result":null,"partials":[]},{"date":"05/03/2027","time":"21.00","round":20,"gameNo":1397,"venue":"PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE","home":"GERMAN AUTO PANTA REI","away":"CENTRO CAR CAZZARO SARONNO","result":null,"partials":[]},{"date":"05/03/2027","time":"21.15","round":20,"gameNo":1398,"venue":"CENTRO POLIVALENTE - via fornaci 6 - TERNATE","home":"SEVEN LAKES - PRO BODIO LOMNAGO","away":"ROSSELLA ETS CARONNO PERTUSELLA","result":null,"partials":[]},{"date":"06/03/2027","time":"19.00","round":20,"gameNo":1399,"venue":"PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO","home":"BLU VOLLEY","away":"CASTRONNO VERDE","result":null,"partials":[]},{"date":"14/03/2027","time":"18.30","round":21,"gameNo":1400,"venue":"PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA","home":"GAR PALLAVOLO RESCALDINA","away":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","result":null,"partials":[]},{"date":"12/03/2027","time":"21.00","round":21,"gameNo":1401,"venue":"PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO","home":"ASD VOLLEY SUMIRAGO","away":"UNION ORATORI CASTELLANZA ASD","result":null,"partials":[]},{"date":"14/03/2027","time":"18.00","round":21,"gameNo":1402,"venue":"PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE","home":"GORLA VOLLEY","away":"ROSSELLA ETS CARONNO PERTUSELLA","result":null,"partials":[]},{"date":"12/03/2027","time":"20.30","round":21,"gameNo":1403,"venue":"E-WORK ARENA - viale gabardi, 43 - BUSTO ARSIZIO","home":"CO-BIT UYBA BUSTO ARSIZIO U19","away":"REMAX CLASS EAGLES","result":null,"partials":[]},{"date":"14/03/2027","time":"19.00","round":21,"gameNo":1404,"venue":"PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE","home":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","away":"GERMAN AUTO PANTA REI","result":null,"partials":[]},{"date":"10/03/2027","time":"21.00","round":21,"gameNo":1405,"venue":"PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO","home":"VOLLEY PLUS FVG U21","away":"BLU VOLLEY","result":null,"partials":[]},{"date":"12/03/2027","time":"21.00","round":21,"gameNo":1406,"venue":"PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO","home":"VOLLEY NETWORK'S SATINOX ACCIAI","away":"CENTRO CAR CAZZARO SARONNO","result":null,"partials":[]},{"date":"09/03/2027","time":"20.30","round":21,"gameNo":1407,"venue":"TENSOSTRUTTURA - VIA PIAVE - CASTRONNO","home":"CASTRONNO VERDE","away":"SEVEN LAKES - PRO BODIO LOMNAGO","result":null,"partials":[]},{"date":"21/03/2027","time":"18.00","round":22,"gameNo":1408,"venue":"PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA","home":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","away":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","result":null,"partials":[]},{"date":"20/03/2027","time":"21.00","round":22,"gameNo":1409,"venue":"PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE","home":"GORLA VOLLEY","away":"GAR PALLAVOLO RESCALDINA","result":null,"partials":[]},{"date":"18/03/2027","time":"21.00","round":22,"gameNo":1410,"venue":"PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO","home":"REMAX CLASS EAGLES","away":"ASD VOLLEY SUMIRAGO","result":null,"partials":[]},{"date":"21/03/2027","time":"20.30","round":22,"gameNo":1411,"venue":"PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA","home":"UNION ORATORI CASTELLANZA ASD","away":"VOLLEY PLUS FVG U21","result":null,"partials":[]},{"date":"20/03/2027","time":"21.00","round":22,"gameNo":1412,"venue":"PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA","home":"CENTRO CAR CAZZARO SARONNO","away":"SEVEN LAKES - PRO BODIO LOMNAGO","result":null,"partials":[]},{"date":"20/03/2027","time":"19.00","round":22,"gameNo":1413,"venue":"PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO","home":"BLU VOLLEY","away":"ROSSELLA ETS CARONNO PERTUSELLA","result":null,"partials":[]},{"date":"19/03/2027","time":"21.00","round":22,"gameNo":1414,"venue":"PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE","home":"GERMAN AUTO PANTA REI","away":"CO-BIT UYBA BUSTO ARSIZIO U19","result":null,"partials":[]},{"date":"20/03/2027","time":"21.00","round":22,"gameNo":1415,"venue":"PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO","home":"VOLLEY NETWORK'S SATINOX ACCIAI","away":"CASTRONNO VERDE","result":null,"partials":[]},{"date":"04/04/2027","time":"19.00","round":23,"gameNo":1416,"venue":"PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE","home":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","away":"GAR PALLAVOLO RESCALDINA","result":null,"partials":[]},{"date":"02/04/2027","time":"21.15","round":23,"gameNo":1417,"venue":"PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA","home":"CENTRO CAR CAZZARO SARONNO","away":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","result":null,"partials":[]},{"date":"03/04/2027","time":"21.00","round":23,"gameNo":1418,"venue":"PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA","home":"UNION ORATORI CASTELLANZA ASD","away":"REMAX CLASS EAGLES","result":null,"partials":[]},{"date":"02/04/2027","time":"21.00","round":23,"gameNo":1419,"venue":"PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO","home":"ASD VOLLEY SUMIRAGO","away":"BLU VOLLEY","result":null,"partials":[]},{"date":"31/03/2027","time":"21.00","round":23,"gameNo":1420,"venue":"PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO","home":"VOLLEY PLUS FVG U21","away":"GORLA VOLLEY","result":null,"partials":[]},{"date":"02/04/2027","time":"20.30","round":23,"gameNo":1421,"venue":"E-WORK ARENA - viale gabardi, 43 - BUSTO ARSIZIO","home":"CO-BIT UYBA BUSTO ARSIZIO U19","away":"SEVEN LAKES - PRO BODIO LOMNAGO","result":null,"partials":[]},{"date":"30/03/2027","time":"20.30","round":23,"gameNo":1422,"venue":"TENSOSTRUTTURA - VIA PIAVE - CASTRONNO","home":"CASTRONNO VERDE","away":"GERMAN AUTO PANTA REI","result":null,"partials":[]},{"date":"02/04/2027","time":"21.15","round":23,"gameNo":1423,"venue":"PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA","home":"ROSSELLA ETS CARONNO PERTUSELLA","away":"VOLLEY NETWORK'S SATINOX ACCIAI","result":null,"partials":[]},{"date":"11/04/2027","time":"18.30","round":24,"gameNo":1424,"venue":"PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA","home":"GAR PALLAVOLO RESCALDINA","away":"CENTRO CAR CAZZARO SARONNO","result":null,"partials":[]},{"date":"11/04/2027","time":"18.00","round":24,"gameNo":1425,"venue":"PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA","home":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","away":"CASTRONNO VERDE","result":null,"partials":[]},{"date":"11/04/2027","time":"17.00","round":24,"gameNo":1426,"venue":"PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA","home":"UNION ORATORI CASTELLANZA ASD","away":"BLU VOLLEY","result":null,"partials":[]},{"date":"10/04/2027","time":"21.00","round":24,"gameNo":1427,"venue":"PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE","home":"GORLA VOLLEY","away":"ASD VOLLEY SUMIRAGO","result":null,"partials":[]},{"date":"09/04/2027","time":"21.00","round":24,"gameNo":1428,"venue":"PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE","home":"GERMAN AUTO PANTA REI","away":"VOLLEY PLUS FVG U21","result":null,"partials":[]},{"date":"09/04/2027","time":"21.15","round":24,"gameNo":1429,"venue":"CENTRO POLIVALENTE - via fornaci 6 - TERNATE","home":"SEVEN LAKES - PRO BODIO LOMNAGO","away":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","result":null,"partials":[]},{"date":"10/04/2027","time":"21.00","round":24,"gameNo":1430,"venue":"PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO","home":"VOLLEY NETWORK'S SATINOX ACCIAI","away":"CO-BIT UYBA BUSTO ARSIZIO U19","result":null,"partials":[]},{"date":"09/04/2027","time":"21.00","round":24,"gameNo":1431,"venue":"PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO","home":"REMAX CLASS EAGLES","away":"ROSSELLA ETS CARONNO PERTUSELLA","result":null,"partials":[]},{"date":"16/04/2027","time":"21.15","round":25,"gameNo":1432,"venue":"PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA","home":"CENTRO CAR CAZZARO SARONNO","away":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","result":null,"partials":[]},{"date":"13/04/2027","time":"20.30","round":25,"gameNo":1433,"venue":"TENSOSTRUTTURA - VIA PIAVE - CASTRONNO","home":"CASTRONNO VERDE","away":"GAR PALLAVOLO RESCALDINA","result":null,"partials":[]},{"date":"16/04/2027","time":"21.15","round":25,"gameNo":1434,"venue":"PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA","home":"ROSSELLA ETS CARONNO PERTUSELLA","away":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","result":null,"partials":[]},{"date":"18/04/2027","time":"20.30","round":25,"gameNo":1435,"venue":"PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO","home":"BLU VOLLEY","away":"REMAX CLASS EAGLES","result":null,"partials":[]},{"date":"18/04/2027","time":"20.30","round":25,"gameNo":1436,"venue":"PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA","home":"UNION ORATORI CASTELLANZA ASD","away":"GERMAN AUTO PANTA REI","result":null,"partials":[]},{"date":"16/04/2027","time":"21.00","round":25,"gameNo":1437,"venue":"PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO","home":"ASD VOLLEY SUMIRAGO","away":"SEVEN LAKES - PRO BODIO LOMNAGO","result":null,"partials":[]},{"date":"16/04/2027","time":"20.30","round":25,"gameNo":1438,"venue":"E-WORK ARENA - viale gabardi, 43 - BUSTO ARSIZIO","home":"CO-BIT UYBA BUSTO ARSIZIO U19","away":"GORLA VOLLEY","result":null,"partials":[]},{"date":"14/04/2027","time":"21.00","round":25,"gameNo":1439,"venue":"PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO","home":"VOLLEY PLUS FVG U21","away":"VOLLEY NETWORK'S SATINOX ACCIAI","result":null,"partials":[]},{"date":"25/04/2027","time":"19.00","round":26,"gameNo":1440,"venue":"PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE","home":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","away":"CASTRONNO VERDE","result":null,"partials":[]},{"date":"24/04/2027","time":"18.30","round":26,"gameNo":1441,"venue":"PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA","home":"GAR PALLAVOLO RESCALDINA","away":"ROSSELLA ETS CARONNO PERTUSELLA","result":null,"partials":[]},{"date":"25/04/2027","time":"18.00","round":26,"gameNo":1442,"venue":"PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA","home":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","away":"VOLLEY PLUS FVG U21","result":null,"partials":[]},{"date":"23/04/2027","time":"21.15","round":26,"gameNo":1443,"venue":"CENTRO POLIVALENTE - via fornaci 6 - TERNATE","home":"SEVEN LAKES - PRO BODIO LOMNAGO","away":"REMAX CLASS EAGLES","result":null,"partials":[]},{"date":"24/04/2027","time":"20.30","round":26,"gameNo":1444,"venue":"PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO","home":"VOLLEY NETWORK'S SATINOX ACCIAI","away":"UNION ORATORI CASTELLANZA ASD","result":null,"partials":[]},{"date":"24/04/2027","time":"21.00","round":26,"gameNo":1445,"venue":"PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE","home":"GORLA VOLLEY","away":"CENTRO CAR CAZZARO SARONNO","result":null,"partials":[]},{"date":"23/04/2027","time":"21.00","round":26,"gameNo":1446,"venue":"PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE","home":"GERMAN AUTO PANTA REI","away":"ASD VOLLEY SUMIRAGO","result":null,"partials":[]},{"date":"24/04/2027","time":"19.00","round":26,"gameNo":1447,"venue":"PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO","home":"BLU VOLLEY","away":"CO-BIT UYBA BUSTO ARSIZIO U19","result":null,"partials":[]},{"date":"30/04/2027","time":"21.15","round":27,"gameNo":1448,"venue":"PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA","home":"CENTRO CAR CAZZARO SARONNO","away":"CASTRONNO VERDE","result":null,"partials":[]},{"date":"30/04/2027","time":"21.15","round":27,"gameNo":1449,"venue":"PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA","home":"ROSSELLA ETS CARONNO PERTUSELLA","away":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","result":null,"partials":[]},{"date":"28/04/2027","time":"21.00","round":27,"gameNo":1450,"venue":"PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO","home":"VOLLEY PLUS FVG U21","away":"GAR PALLAVOLO RESCALDINA","result":null,"partials":[]},{"date":"30/04/2027","time":"20.30","round":27,"gameNo":1451,"venue":"E-WORK ARENA - viale gabardi, 43 - BUSTO ARSIZIO","home":"CO-BIT UYBA BUSTO ARSIZIO U19","away":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","result":null,"partials":[]},{"date":"01/05/2027","time":"19.00","round":27,"gameNo":1452,"venue":"PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO","home":"BLU VOLLEY","away":"SEVEN LAKES - PRO BODIO LOMNAGO","result":null,"partials":[]},{"date":"30/04/2027","time":"21.00","round":27,"gameNo":1453,"venue":"PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO","home":"REMAX CLASS EAGLES","away":"GERMAN AUTO PANTA REI","result":null,"partials":[]},{"date":"02/05/2027","time":"20.30","round":27,"gameNo":1454,"venue":"PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA","home":"UNION ORATORI CASTELLANZA ASD","away":"GORLA VOLLEY","result":null,"partials":[]},{"date":"30/04/2027","time":"21.00","round":27,"gameNo":1455,"venue":"PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO","home":"ASD VOLLEY SUMIRAGO","away":"VOLLEY NETWORK'S SATINOX ACCIAI","result":null,"partials":[]},{"date":"08/05/2027","time":"21.00","round":28,"gameNo":1456,"venue":"PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA","home":"CENTRO CAR CAZZARO SARONNO","away":"ROSSELLA ETS CARONNO PERTUSELLA","result":null,"partials":[]},{"date":"09/05/2027","time":"19.00","round":28,"gameNo":1457,"venue":"PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE","home":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","away":"VOLLEY PLUS FVG U21","result":null,"partials":[]},{"date":"09/05/2027","time":"18.30","round":28,"gameNo":1458,"venue":"PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA","home":"GAR PALLAVOLO RESCALDINA","away":"CO-BIT UYBA BUSTO ARSIZIO U19","result":null,"partials":[]},{"date":"07/05/2027","time":"21.00","round":28,"gameNo":1459,"venue":"PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE","home":"GERMAN AUTO PANTA REI","away":"BLU VOLLEY","result":null,"partials":[]},{"date":"08/05/2027","time":"21.00","round":28,"gameNo":1460,"venue":"PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO","home":"VOLLEY NETWORK'S SATINOX ACCIAI","away":"REMAX CLASS EAGLES","result":null,"partials":[]},{"date":"09/05/2027","time":"18.00","round":28,"gameNo":1461,"venue":"PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA","home":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","away":"ASD VOLLEY SUMIRAGO","result":null,"partials":[]},{"date":"07/05/2027","time":"21.15","round":28,"gameNo":1462,"venue":"CENTRO POLIVALENTE - via fornaci 6 - TERNATE","home":"SEVEN LAKES - PRO BODIO LOMNAGO","away":"UNION ORATORI CASTELLANZA ASD","result":null,"partials":[]},{"date":"08/05/2027","time":"21.00","round":28,"gameNo":1463,"venue":"PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE","home":"GORLA VOLLEY","away":"CASTRONNO VERDE","result":null,"partials":[]},{"date":"14/05/2027","time":"21.15","round":29,"gameNo":1464,"venue":"PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA","home":"ROSSELLA ETS CARONNO PERTUSELLA","away":"CASTRONNO VERDE","result":null,"partials":[]},{"date":"14/05/2027","time":"21.15","round":29,"gameNo":1465,"venue":"PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA","home":"CENTRO CAR CAZZARO SARONNO","away":"VOLLEY PLUS FVG U21","result":null,"partials":[]},{"date":"14/05/2027","time":"20.30","round":29,"gameNo":1466,"venue":"E-WORK ARENA - viale gabardi, 43 - BUSTO ARSIZIO","home":"CO-BIT UYBA BUSTO ARSIZIO U19","away":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","result":null,"partials":[]},{"date":"14/05/2027","time":"21.15","round":29,"gameNo":1467,"venue":"CENTRO POLIVALENTE - via fornaci 6 - TERNATE","home":"SEVEN LAKES - PRO BODIO LOMNAGO","away":"GERMAN AUTO PANTA REI","result":null,"partials":[]},{"date":"15/05/2027","time":"19.00","round":29,"gameNo":1468,"venue":"PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO","home":"BLU VOLLEY","away":"VOLLEY NETWORK'S SATINOX ACCIAI","result":null,"partials":[]},{"date":"14/05/2027","time":"21.00","round":29,"gameNo":1469,"venue":"PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO","home":"REMAX CLASS EAGLES","away":"GORLA VOLLEY","result":null,"partials":[]},{"date":"16/05/2027","time":"20.30","round":29,"gameNo":1470,"venue":"PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA","home":"UNION ORATORI CASTELLANZA ASD","away":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","result":null,"partials":[]},{"date":"14/05/2027","time":"21.00","round":29,"gameNo":1471,"venue":"PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO","home":"ASD VOLLEY SUMIRAGO","away":"GAR PALLAVOLO RESCALDINA","result":null,"partials":[]},{"date":"18/05/2027","time":"20.30","round":30,"gameNo":1472,"venue":"TENSOSTRUTTURA - VIA PIAVE - CASTRONNO","home":"CASTRONNO VERDE","away":"VOLLEY PLUS FVG U21","result":null,"partials":[]},{"date":"21/05/2027","time":"21.15","round":30,"gameNo":1473,"venue":"PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA","home":"CENTRO CAR CAZZARO SARONNO","away":"CO-BIT UYBA BUSTO ARSIZIO U19","result":null,"partials":[]},{"date":"22/05/2027","time":"21.00","round":30,"gameNo":1474,"venue":"PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO","home":"VOLLEY NETWORK'S SATINOX ACCIAI","away":"SEVEN LAKES - PRO BODIO LOMNAGO","result":null,"partials":[]},{"date":"22/05/2027","time":"21.00","round":30,"gameNo":1475,"venue":"PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE","home":"GORLA VOLLEY","away":"BLU VOLLEY","result":null,"partials":[]},{"date":"23/05/2027","time":"18.00","round":30,"gameNo":1476,"venue":"PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA","home":"DUO VOLLEY GOBBO ALLESTIMENTI VERDE","away":"REMAX CLASS EAGLES","result":null,"partials":[]},{"date":"23/05/2027","time":"18.30","round":30,"gameNo":1477,"venue":"PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA","home":"GAR PALLAVOLO RESCALDINA","away":"UNION ORATORI CASTELLANZA ASD","result":null,"partials":[]},{"date":"23/05/2027","time":"19.00","round":30,"gameNo":1478,"venue":"PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE","home":"FULL VOLLEY ARCOBALENO-CISTELLUM U19","away":"ASD VOLLEY SUMIRAGO","result":null,"partials":[]},{"date":"21/05/2027","time":"21.00","round":30,"gameNo":1479,"venue":"PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE","home":"GERMAN AUTO PANTA REI","away":"ROSSELLA ETS CARONNO PERTUSELLA","result":null,"partials":[]}],"counts":{"totalMatches":240,"completedMatches":32,"upcomingMatches":208,"rounds":30}}}}
+{
+  "version": "github-poc-1",
+  "snapshotDate": "2026-11-02",
+  "snapshotNote": "Fotografia di prova: catalogo campionati/gironi letto dalla pagina di selezione Spazio Commerciale; calendario copiato dalla pagina ufficiale FIPAVOnline del girone 63719. Non è un collegamento automatico né un feed aggiornato.",
+  "committee": {
+    "id": "04020",
+    "name": "Comitato Territoriale Varese",
+    "region": "Lombardia",
+    "selectionUrl": "https://public.fipavonline.it/comitati/04020/campionati"
+  },
+  "officialSelectionUrl": "https://pallavolo.spaziocommerciale.com/index.php?page=selezione",
+  "groups": [
+    {
+      "name": "Prima Divisione Femminile",
+      "gender": "femminile",
+      "groups": [
+        {
+          "id": "63718",
+          "name": "Girone A"
+        },
+        {
+          "id": "63719",
+          "name": "Girone B"
+        }
+      ]
+    },
+    {
+      "name": "Seconda Divisione Femminile",
+      "gender": "femminile",
+      "groups": [
+        {
+          "id": "63720",
+          "name": "Girone A"
+        },
+        {
+          "id": "63722",
+          "name": "Girone B"
+        }
+      ]
+    },
+    {
+      "name": "Terza Divisione Femminile",
+      "gender": "femminile",
+      "groups": [
+        {
+          "id": "64152",
+          "name": "Girone A"
+        },
+        {
+          "id": "64154",
+          "name": "Girone B"
+        },
+        {
+          "id": "64156",
+          "name": "Girone C"
+        }
+      ]
+    },
+    {
+      "name": "Under 13 Femminile",
+      "gender": "femminile",
+      "groups": [
+        {
+          "id": "64286",
+          "name": "Girone A"
+        },
+        {
+          "id": "64428",
+          "name": "Girone B"
+        },
+        {
+          "id": "64429",
+          "name": "Girone C"
+        },
+        {
+          "id": "64430",
+          "name": "Girone D"
+        }
+      ]
+    },
+    {
+      "name": "Under 14 Femminile",
+      "gender": "femminile",
+      "groups": [
+        {
+          "id": "63899",
+          "name": "Girone A ECCELLENZA"
+        },
+        {
+          "id": "63900",
+          "name": "Girone B"
+        },
+        {
+          "id": "63901",
+          "name": "Girone C"
+        },
+        {
+          "id": "63903",
+          "name": "Girone D"
+        },
+        {
+          "id": "63905",
+          "name": "Girone E"
+        }
+      ]
+    },
+    {
+      "name": "Under 15 Femminile",
+      "gender": "femminile",
+      "groups": [
+        {
+          "id": "63798",
+          "name": "Girone A ECCELLENZA"
+        },
+        {
+          "id": "63799",
+          "name": "Girone B"
+        },
+        {
+          "id": "63800",
+          "name": "Girone C"
+        },
+        {
+          "id": "63801",
+          "name": "Girone D"
+        },
+        {
+          "id": "63802",
+          "name": "Girone E"
+        },
+        {
+          "id": "63803",
+          "name": "Girone F"
+        }
+      ]
+    },
+    {
+      "name": "Under 17 Femminile",
+      "gender": "femminile",
+      "groups": [
+        {
+          "id": "63792",
+          "name": "Girone A ECCELLENZA"
+        },
+        {
+          "id": "63793",
+          "name": "Girone B"
+        },
+        {
+          "id": "63794",
+          "name": "Girone C"
+        },
+        {
+          "id": "63795",
+          "name": "Girone D"
+        },
+        {
+          "id": "63796",
+          "name": "Girone E"
+        },
+        {
+          "id": "63797",
+          "name": "Girone F"
+        }
+      ]
+    },
+    {
+      "name": "Under 19 Femminile",
+      "gender": "femminile",
+      "groups": [
+        {
+          "id": "63752",
+          "name": "Girone A ECCELLENZA"
+        },
+        {
+          "id": "63754",
+          "name": "Girone B"
+        },
+        {
+          "id": "63755",
+          "name": "Girone C"
+        },
+        {
+          "id": "63756",
+          "name": "Girone D"
+        }
+      ]
+    },
+    {
+      "name": "Prima Divisione Maschile",
+      "gender": "maschile",
+      "groups": [
+        {
+          "id": "64079",
+          "name": "Girone A"
+        },
+        {
+          "id": "64081",
+          "name": "Girone B"
+        }
+      ]
+    },
+    {
+      "name": "Under 14 Maschile",
+      "gender": "maschile",
+      "groups": [
+        {
+          "id": "63921",
+          "name": "Girone A"
+        }
+      ]
+    },
+    {
+      "name": "Under 15 Maschile",
+      "gender": "maschile",
+      "groups": [
+        {
+          "id": "63919",
+          "name": "Girone A UNICO"
+        }
+      ]
+    },
+    {
+      "name": "Under 17 Maschile",
+      "gender": "maschile",
+      "groups": [
+        {
+          "id": "63909",
+          "name": "Girone A"
+        },
+        {
+          "id": "63910",
+          "name": "Girone B"
+        }
+      ]
+    },
+    {
+      "name": "Under 19 Maschile",
+      "gender": "maschile",
+      "groups": [
+        {
+          "id": "63911",
+          "name": "Girone A"
+        },
+        {
+          "id": "63914",
+          "name": "Girone B"
+        }
+      ]
+    }
+  ],
+  "groupSnapshots": {
+    "63719": {
+      "competition": "Prima Divisione Femminile",
+      "gender": "femminile",
+      "group": "Girone B",
+      "groupId": "63719",
+      "sourceUrl": "https://public.fipavonline.it/gironi/63719",
+      "teams": [
+        "ASD VOLLEY SUMIRAGO",
+        "BLU VOLLEY",
+        "CASTRONNO VERDE",
+        "CENTRO CAR CAZZARO SARONNO",
+        "CO-BIT UYBA BUSTO ARSIZIO U19",
+        "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+        "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+        "GAR PALLAVOLO RESCALDINA",
+        "GERMAN AUTO PANTA REI",
+        "GORLA VOLLEY",
+        "REMAX CLASS EAGLES",
+        "ROSSELLA ETS CARONNO PERTUSELLA",
+        "SEVEN LAKES - PRO BODIO LOMNAGO",
+        "UNION ORATORI CASTELLANZA ASD",
+        "VOLLEY NETWORK'S SATINOX ACCIAI",
+        "VOLLEY PLUS FVG U21"
+      ],
+      "matches": [
+        {
+          "date": "07/10/2026",
+          "time": "21.00",
+          "round": 1,
+          "gameNo": 1240,
+          "venue": "PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO",
+          "home": "VOLLEY PLUS FVG U21",
+          "away": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "result": [
+            1,
+            3
+          ],
+          "partials": [
+            "27/25",
+            "15/25",
+            "22/25",
+            "22/25"
+          ]
+        },
+        {
+          "date": "09/10/2026",
+          "time": "21.00",
+          "round": 1,
+          "gameNo": 1241,
+          "venue": "PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE",
+          "home": "GERMAN AUTO PANTA REI",
+          "away": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "result": [
+            3,
+            1
+          ],
+          "partials": [
+            "25/23",
+            "18/25",
+            "25/9",
+            "25/18"
+          ]
+        },
+        {
+          "date": "09/10/2026",
+          "time": "21.15",
+          "round": 1,
+          "gameNo": 1242,
+          "venue": "CENTRO POLIVALENTE - via fornaci 6 - TERNATE",
+          "home": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "away": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "result": [
+            0,
+            3
+          ],
+          "partials": [
+            "21/25",
+            "20/25",
+            "23/25"
+          ]
+        },
+        {
+          "date": "10/10/2026",
+          "time": "19.00",
+          "round": 1,
+          "gameNo": 1243,
+          "venue": "PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO",
+          "home": "BLU VOLLEY",
+          "away": "GAR PALLAVOLO RESCALDINA",
+          "result": [
+            2,
+            3
+          ],
+          "partials": [
+            "13/25",
+            "25/22",
+            "18/25",
+            "25/21",
+            "9/15"
+          ]
+        },
+        {
+          "date": "10/10/2026",
+          "time": "21.00",
+          "round": 1,
+          "gameNo": 1244,
+          "venue": "PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE",
+          "home": "GORLA VOLLEY",
+          "away": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "result": [
+            3,
+            0
+          ],
+          "partials": [
+            "25/10",
+            "25/13",
+            "25/16"
+          ]
+        },
+        {
+          "date": "09/10/2026",
+          "time": "21.00",
+          "round": 1,
+          "gameNo": 1245,
+          "venue": "PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO",
+          "home": "ASD VOLLEY SUMIRAGO",
+          "away": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "result": [
+            3,
+            0
+          ],
+          "partials": [
+            "25/12",
+            "25/13",
+            "25/16"
+          ]
+        },
+        {
+          "date": "09/10/2026",
+          "time": "21.15",
+          "round": 1,
+          "gameNo": 1246,
+          "venue": "PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA",
+          "home": "CENTRO CAR CAZZARO SARONNO",
+          "away": "UNION ORATORI CASTELLANZA ASD",
+          "result": [
+            1,
+            3
+          ],
+          "partials": [
+            "15/25",
+            "25/17",
+            "25/27",
+            "17/25"
+          ]
+        },
+        {
+          "date": "08/10/2026",
+          "time": "21.00",
+          "round": 1,
+          "gameNo": 1247,
+          "venue": "PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO",
+          "home": "REMAX CLASS EAGLES",
+          "away": "CASTRONNO VERDE",
+          "result": [
+            3,
+            2
+          ],
+          "partials": [
+            "20/25",
+            "25/23",
+            "23/25",
+            "25/14",
+            "15/9"
+          ]
+        },
+        {
+          "date": "18/10/2026",
+          "time": "18.00",
+          "round": 2,
+          "gameNo": 1248,
+          "venue": "PALESTRA ORAT. DI SACCONAGO - VIA ORTIGARA, 42 - BUSTO ARSIZIO",
+          "home": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "away": "VOLLEY PLUS FVG U21",
+          "result": [
+            0,
+            3
+          ],
+          "partials": [
+            "20/25",
+            "14/25",
+            "17/25"
+          ]
+        },
+        {
+          "date": "17/10/2026",
+          "time": "21.00",
+          "round": 2,
+          "gameNo": 1249,
+          "venue": "PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO",
+          "home": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "away": "GORLA VOLLEY",
+          "result": [
+            1,
+            3
+          ],
+          "partials": [
+            "25/20",
+            "22/25",
+            "14/25",
+            "21/25"
+          ]
+        },
+        {
+          "date": "17/10/2026",
+          "time": "18.00",
+          "round": 2,
+          "gameNo": 1250,
+          "venue": "PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA",
+          "home": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "away": "GERMAN AUTO PANTA REI",
+          "result": [
+            1,
+            3
+          ],
+          "partials": [
+            "25/21",
+            "12/25",
+            "19/25",
+            "14/25"
+          ]
+        },
+        {
+          "date": "18/10/2026",
+          "time": "18.30",
+          "round": 2,
+          "gameNo": 1251,
+          "venue": "PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA",
+          "home": "GAR PALLAVOLO RESCALDINA",
+          "away": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "result": [
+            3,
+            0
+          ],
+          "partials": [
+            "25/21",
+            "25/22",
+            "25/21"
+          ]
+        },
+        {
+          "date": "18/10/2026",
+          "time": "19.00",
+          "round": 2,
+          "gameNo": 1252,
+          "venue": "PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE",
+          "home": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "away": "BLU VOLLEY",
+          "result": [
+            0,
+            3
+          ],
+          "partials": [
+            "16/25",
+            "16/25",
+            "17/25"
+          ]
+        },
+        {
+          "date": "16/10/2026",
+          "time": "21.15",
+          "round": 2,
+          "gameNo": 1253,
+          "venue": "PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA",
+          "home": "CENTRO CAR CAZZARO SARONNO",
+          "away": "REMAX CLASS EAGLES",
+          "result": [
+            0,
+            3
+          ],
+          "partials": [
+            "22/25",
+            "17/25",
+            "20/25"
+          ]
+        },
+        {
+          "date": "13/10/2026",
+          "time": "20.45",
+          "round": 2,
+          "gameNo": 1254,
+          "venue": "TENSOSTRUTTURA - VIA PIAVE - CASTRONNO",
+          "home": "CASTRONNO VERDE",
+          "away": "UNION ORATORI CASTELLANZA ASD",
+          "result": [
+            1,
+            3
+          ],
+          "partials": [
+            "25/22",
+            "22/25",
+            "22/25",
+            "23/25"
+          ]
+        },
+        {
+          "date": "16/10/2026",
+          "time": "21.15",
+          "round": 2,
+          "gameNo": 1255,
+          "venue": "PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA",
+          "home": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "away": "ASD VOLLEY SUMIRAGO",
+          "result": [
+            0,
+            3
+          ],
+          "partials": [
+            "14/25",
+            "22/25",
+            "19/25"
+          ]
+        },
+        {
+          "date": "20/10/2026",
+          "time": "20.30",
+          "round": 3,
+          "gameNo": 1256,
+          "venue": "TENSOSTRUTTURA - VIA PIAVE - CASTRONNO",
+          "home": "CASTRONNO VERDE",
+          "away": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "result": [
+            3,
+            0
+          ],
+          "partials": [
+            "25/23",
+            "25/15",
+            "25/23"
+          ]
+        },
+        {
+          "date": "24/10/2026",
+          "time": "21.00",
+          "round": 3,
+          "gameNo": 1257,
+          "venue": "PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE",
+          "home": "GORLA VOLLEY",
+          "away": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "result": [
+            3,
+            0
+          ],
+          "partials": [
+            "25/23",
+            "25/18",
+            "25/21"
+          ]
+        },
+        {
+          "date": "25/10/2026",
+          "time": "18.00",
+          "round": 3,
+          "gameNo": 1258,
+          "venue": "PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA",
+          "home": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "away": "BLU VOLLEY",
+          "result": [
+            3,
+            0
+          ],
+          "partials": [
+            "25/19",
+            "25/22",
+            "25/20"
+          ]
+        },
+        {
+          "date": "25/10/2026",
+          "time": "18.30",
+          "round": 3,
+          "gameNo": 1259,
+          "venue": "PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA",
+          "home": "GAR PALLAVOLO RESCALDINA",
+          "away": "GERMAN AUTO PANTA REI",
+          "result": [
+            1,
+            3
+          ],
+          "partials": [
+            "25/20",
+            "19/25",
+            "17/25",
+            "21/25"
+          ]
+        },
+        {
+          "date": "24/10/2026",
+          "time": "21.00",
+          "round": 3,
+          "gameNo": 1260,
+          "venue": "PALESTRA ORAT. DI SACCONAGO - VIA ORTIGARA, 42 - BUSTO ARSIZIO",
+          "home": "VOLLEY PLUS FVG U21",
+          "away": "REMAX CLASS EAGLES",
+          "result": [
+            1,
+            3
+          ],
+          "partials": [
+            "15/25",
+            "25/21",
+            "21/25",
+            "18/25"
+          ]
+        },
+        {
+          "date": "25/10/2026",
+          "time": "19.00",
+          "round": 3,
+          "gameNo": 1261,
+          "venue": "PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE",
+          "home": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "away": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "result": [
+            0,
+            3
+          ],
+          "partials": [
+            "14/25",
+            "11/25",
+            "7/25"
+          ]
+        },
+        {
+          "date": "23/10/2026",
+          "time": "21.15",
+          "round": 3,
+          "gameNo": 1262,
+          "venue": "PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA",
+          "home": "CENTRO CAR CAZZARO SARONNO",
+          "away": "ASD VOLLEY SUMIRAGO",
+          "result": [
+            1,
+            3
+          ],
+          "partials": [
+            "25/16",
+            "17/25",
+            "20/25",
+            "14/25"
+          ]
+        },
+        {
+          "date": "23/10/2026",
+          "time": "21.15",
+          "round": 3,
+          "gameNo": 1263,
+          "venue": "PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA",
+          "home": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "away": "UNION ORATORI CASTELLANZA ASD",
+          "result": [
+            1,
+            3
+          ],
+          "partials": [
+            "21/25",
+            "15/25",
+            "25/17",
+            "18/25"
+          ]
+        },
+        {
+          "date": "30/10/2026",
+          "time": "21.15",
+          "round": 4,
+          "gameNo": 1264,
+          "venue": "PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA",
+          "home": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "away": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "result": [
+            0,
+            3
+          ],
+          "partials": [
+            "23/25",
+            "14/25",
+            "12/25"
+          ]
+        },
+        {
+          "date": "30/10/2026",
+          "time": "21.00",
+          "round": 4,
+          "gameNo": 1265,
+          "venue": "PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE",
+          "home": "GERMAN AUTO PANTA REI",
+          "away": "GORLA VOLLEY",
+          "result": [
+            2,
+            3
+          ],
+          "partials": [
+            "25/20",
+            "22/25",
+            "12/25",
+            "25/20",
+            "5/15"
+          ]
+        },
+        {
+          "date": "31/10/2026",
+          "time": "21.00",
+          "round": 4,
+          "gameNo": 1266,
+          "venue": "PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO",
+          "home": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "away": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "result": [
+            3,
+            0
+          ],
+          "partials": [
+            "28/26",
+            "25/15",
+            "25/17"
+          ]
+        },
+        {
+          "date": "29/10/2026",
+          "time": "21.00",
+          "round": 4,
+          "gameNo": 1267,
+          "venue": "PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO",
+          "home": "REMAX CLASS EAGLES",
+          "away": "GAR PALLAVOLO RESCALDINA",
+          "result": [
+            1,
+            3
+          ],
+          "partials": [
+            "21/25",
+            "18/25",
+            "25/9",
+            "24/26"
+          ]
+        },
+        {
+          "date": "30/10/2026",
+          "time": "21.15",
+          "round": 4,
+          "gameNo": 1268,
+          "venue": "CENTRO POLIVALENTE - via fornaci 6 - TERNATE",
+          "home": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "away": "VOLLEY PLUS FVG U21",
+          "result": [
+            2,
+            3
+          ],
+          "partials": [
+            "25/18",
+            "26/24",
+            "21/25",
+            "17/25",
+            "8/15"
+          ]
+        },
+        {
+          "date": "01/11/2026",
+          "time": "20.30",
+          "round": 4,
+          "gameNo": 1269,
+          "venue": "PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA",
+          "home": "UNION ORATORI CASTELLANZA ASD",
+          "away": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "result": [
+            3,
+            0
+          ],
+          "partials": [
+            "25/15",
+            "25/17",
+            "25/16"
+          ]
+        },
+        {
+          "date": "31/10/2026",
+          "time": "19.00",
+          "round": 4,
+          "gameNo": 1270,
+          "venue": "PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO",
+          "home": "BLU VOLLEY",
+          "away": "CENTRO CAR CAZZARO SARONNO",
+          "result": [
+            2,
+            3
+          ],
+          "partials": [
+            "25/20",
+            "23/25",
+            "21/25",
+            "25/22",
+            "10/15"
+          ]
+        },
+        {
+          "date": "30/10/2026",
+          "time": "21.00",
+          "round": 4,
+          "gameNo": 1271,
+          "venue": "PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO",
+          "home": "ASD VOLLEY SUMIRAGO",
+          "away": "CASTRONNO VERDE",
+          "result": [
+            3,
+            0
+          ],
+          "partials": [
+            "25/20",
+            "25/22",
+            "25/22"
+          ]
+        },
+        {
+          "date": "07/11/2026",
+          "time": "20.00",
+          "round": 5,
+          "gameNo": 1272,
+          "venue": "PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA",
+          "home": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "away": "GORLA VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "08/11/2026",
+          "time": "18.30",
+          "round": 5,
+          "gameNo": 1273,
+          "venue": "PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA",
+          "home": "GAR PALLAVOLO RESCALDINA",
+          "away": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "08/11/2026",
+          "time": "17.00",
+          "round": 5,
+          "gameNo": 1274,
+          "venue": "PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA",
+          "home": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "away": "UNION ORATORI CASTELLANZA ASD",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "06/11/2026",
+          "time": "21.00",
+          "round": 5,
+          "gameNo": 1275,
+          "venue": "PALESTRA SCUOLE MEDIE E.FERMI - via enrico fermi 1 - VENEGONO INFERIORE",
+          "home": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "away": "REMAX CLASS EAGLES",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "04/11/2026",
+          "time": "21.00",
+          "round": 5,
+          "gameNo": 1276,
+          "venue": "PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO",
+          "home": "VOLLEY PLUS FVG U21",
+          "away": "ASD VOLLEY SUMIRAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "06/11/2026",
+          "time": "21.15",
+          "round": 5,
+          "gameNo": 1277,
+          "venue": "PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA",
+          "home": "CENTRO CAR CAZZARO SARONNO",
+          "away": "GERMAN AUTO PANTA REI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "06/11/2026",
+          "time": "21.15",
+          "round": 5,
+          "gameNo": 1278,
+          "venue": "PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA",
+          "home": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "away": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "03/11/2026",
+          "time": "20.30",
+          "round": 5,
+          "gameNo": 1279,
+          "venue": "TENSOSTRUTTURA - VIA PIAVE - CASTRONNO",
+          "home": "CASTRONNO VERDE",
+          "away": "BLU VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "15/11/2026",
+          "time": "21.00",
+          "round": 6,
+          "gameNo": 1280,
+          "venue": "PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA",
+          "home": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "away": "GAR PALLAVOLO RESCALDINA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "15/11/2026",
+          "time": "20.30",
+          "round": 6,
+          "gameNo": 1281,
+          "venue": "PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA",
+          "home": "UNION ORATORI CASTELLANZA ASD",
+          "away": "ASD VOLLEY SUMIRAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "13/11/2026",
+          "time": "21.15",
+          "round": 6,
+          "gameNo": 1282,
+          "venue": "PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA",
+          "home": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "away": "GORLA VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "13/11/2026",
+          "time": "21.00",
+          "round": 6,
+          "gameNo": 1283,
+          "venue": "PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO",
+          "home": "REMAX CLASS EAGLES",
+          "away": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "13/11/2026",
+          "time": "21.00",
+          "round": 6,
+          "gameNo": 1284,
+          "venue": "PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE",
+          "home": "GERMAN AUTO PANTA REI",
+          "away": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "14/11/2026",
+          "time": "19.00",
+          "round": 6,
+          "gameNo": 1285,
+          "venue": "PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO",
+          "home": "BLU VOLLEY",
+          "away": "VOLLEY PLUS FVG U21",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "14/11/2026",
+          "time": "17.45",
+          "round": 6,
+          "gameNo": 1286,
+          "venue": "PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA",
+          "home": "CENTRO CAR CAZZARO SARONNO",
+          "away": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "13/11/2026",
+          "time": "21.15",
+          "round": 6,
+          "gameNo": 1287,
+          "venue": "CENTRO POLIVALENTE - via fornaci 6 - TERNATE",
+          "home": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "away": "CASTRONNO VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "20/11/2026",
+          "time": "21.00",
+          "round": 7,
+          "gameNo": 1288,
+          "venue": "PALESTRA SCUOLE MEDIE E.FERMI - via enrico fermi 1 - VENEGONO INFERIORE",
+          "home": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "away": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "22/11/2026",
+          "time": "18.30",
+          "round": 7,
+          "gameNo": 1289,
+          "venue": "PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA",
+          "home": "GAR PALLAVOLO RESCALDINA",
+          "away": "GORLA VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "20/11/2026",
+          "time": "21.00",
+          "round": 7,
+          "gameNo": 1290,
+          "venue": "PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO",
+          "home": "ASD VOLLEY SUMIRAGO",
+          "away": "REMAX CLASS EAGLES",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "18/11/2026",
+          "time": "21.00",
+          "round": 7,
+          "gameNo": 1291,
+          "venue": "PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO",
+          "home": "VOLLEY PLUS FVG U21",
+          "away": "UNION ORATORI CASTELLANZA ASD",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "02/12/2026",
+          "time": "21.15",
+          "round": 7,
+          "gameNo": 1292,
+          "venue": "CENTRO POLIVALENTE - via fornaci 6 - TERNATE",
+          "home": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "away": "CENTRO CAR CAZZARO SARONNO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "20/11/2026",
+          "time": "21.15",
+          "round": 7,
+          "gameNo": 1293,
+          "venue": "PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA",
+          "home": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "away": "BLU VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "20/11/2026",
+          "time": "21.00",
+          "round": 7,
+          "gameNo": 1294,
+          "venue": "PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE",
+          "home": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "away": "GERMAN AUTO PANTA REI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "17/11/2026",
+          "time": "20.30",
+          "round": 7,
+          "gameNo": 1295,
+          "venue": "TENSOSTRUTTURA - VIA PIAVE - CASTRONNO",
+          "home": "CASTRONNO VERDE",
+          "away": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "29/11/2026",
+          "time": "18.30",
+          "round": 8,
+          "gameNo": 1296,
+          "venue": "PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA",
+          "home": "GAR PALLAVOLO RESCALDINA",
+          "away": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "28/11/2026",
+          "time": "21.00",
+          "round": 8,
+          "gameNo": 1297,
+          "venue": "PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA",
+          "home": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "away": "CENTRO CAR CAZZARO SARONNO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "27/11/2026",
+          "time": "21.00",
+          "round": 8,
+          "gameNo": 1298,
+          "venue": "PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO",
+          "home": "REMAX CLASS EAGLES",
+          "away": "UNION ORATORI CASTELLANZA ASD",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "28/11/2026",
+          "time": "19.00",
+          "round": 8,
+          "gameNo": 1299,
+          "venue": "PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO",
+          "home": "BLU VOLLEY",
+          "away": "ASD VOLLEY SUMIRAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "28/11/2026",
+          "time": "21.00",
+          "round": 8,
+          "gameNo": 1300,
+          "venue": "PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE",
+          "home": "GORLA VOLLEY",
+          "away": "VOLLEY PLUS FVG U21",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "27/11/2026",
+          "time": "21.15",
+          "round": 8,
+          "gameNo": 1301,
+          "venue": "CENTRO POLIVALENTE - via fornaci 6 - TERNATE",
+          "home": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "away": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "27/11/2026",
+          "time": "21.00",
+          "round": 8,
+          "gameNo": 1302,
+          "venue": "PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE",
+          "home": "GERMAN AUTO PANTA REI",
+          "away": "CASTRONNO VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "28/11/2026",
+          "time": "21.00",
+          "round": 8,
+          "gameNo": 1303,
+          "venue": "PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO",
+          "home": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "away": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "04/12/2026",
+          "time": "21.15",
+          "round": 9,
+          "gameNo": 1304,
+          "venue": "PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA",
+          "home": "CENTRO CAR CAZZARO SARONNO",
+          "away": "GAR PALLAVOLO RESCALDINA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "01/12/2026",
+          "time": "20.30",
+          "round": 9,
+          "gameNo": 1305,
+          "venue": "TENSOSTRUTTURA - VIA PIAVE - CASTRONNO",
+          "home": "CASTRONNO VERDE",
+          "away": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "04/02/2027",
+          "time": "21.00",
+          "round": 9,
+          "gameNo": 1306,
+          "venue": "PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO",
+          "home": "BLU VOLLEY",
+          "away": "UNION ORATORI CASTELLANZA ASD",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "04/12/2026",
+          "time": "21.00",
+          "round": 9,
+          "gameNo": 1307,
+          "venue": "PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO",
+          "home": "ASD VOLLEY SUMIRAGO",
+          "away": "GORLA VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "02/12/2026",
+          "time": "21.00",
+          "round": 9,
+          "gameNo": 1308,
+          "venue": "PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO",
+          "home": "VOLLEY PLUS FVG U21",
+          "away": "GERMAN AUTO PANTA REI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "06/12/2026",
+          "time": "19.00",
+          "round": 9,
+          "gameNo": 1309,
+          "venue": "PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE",
+          "home": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "away": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "06/12/2026",
+          "time": "21.00",
+          "round": 9,
+          "gameNo": 1310,
+          "venue": "PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO",
+          "home": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "away": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "04/12/2026",
+          "time": "21.15",
+          "round": 9,
+          "gameNo": 1311,
+          "venue": "PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA",
+          "home": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "away": "REMAX CLASS EAGLES",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "13/12/2026",
+          "time": "19.00",
+          "round": 10,
+          "gameNo": 1312,
+          "venue": "PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE",
+          "home": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "away": "CENTRO CAR CAZZARO SARONNO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "13/12/2026",
+          "time": "18.30",
+          "round": 10,
+          "gameNo": 1313,
+          "venue": "PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA",
+          "home": "GAR PALLAVOLO RESCALDINA",
+          "away": "CASTRONNO VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "12/12/2026",
+          "time": "18.00",
+          "round": 10,
+          "gameNo": 1314,
+          "venue": "PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA",
+          "home": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "away": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "10/12/2026",
+          "time": "21.00",
+          "round": 10,
+          "gameNo": 1315,
+          "venue": "PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO",
+          "home": "REMAX CLASS EAGLES",
+          "away": "BLU VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "11/12/2026",
+          "time": "21.00",
+          "round": 10,
+          "gameNo": 1316,
+          "venue": "PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE",
+          "home": "GERMAN AUTO PANTA REI",
+          "away": "UNION ORATORI CASTELLANZA ASD",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "11/12/2026",
+          "time": "21.15",
+          "round": 10,
+          "gameNo": 1317,
+          "venue": "CENTRO POLIVALENTE - via fornaci 6 - TERNATE",
+          "home": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "away": "ASD VOLLEY SUMIRAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "12/12/2026",
+          "time": "21.00",
+          "round": 10,
+          "gameNo": 1318,
+          "venue": "PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE",
+          "home": "GORLA VOLLEY",
+          "away": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "12/12/2026",
+          "time": "21.00",
+          "round": 10,
+          "gameNo": 1319,
+          "venue": "PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO",
+          "home": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "away": "VOLLEY PLUS FVG U21",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "15/12/2026",
+          "time": "20.30",
+          "round": 11,
+          "gameNo": 1320,
+          "venue": "TENSOSTRUTTURA - VIA PIAVE - CASTRONNO",
+          "home": "CASTRONNO VERDE",
+          "away": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "18/12/2026",
+          "time": "21.15",
+          "round": 11,
+          "gameNo": 1321,
+          "venue": "PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA",
+          "home": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "away": "GAR PALLAVOLO RESCALDINA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "16/12/2026",
+          "time": "21.00",
+          "round": 11,
+          "gameNo": 1322,
+          "venue": "PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO",
+          "home": "VOLLEY PLUS FVG U21",
+          "away": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "18/12/2026",
+          "time": "21.00",
+          "round": 11,
+          "gameNo": 1323,
+          "venue": "PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO",
+          "home": "REMAX CLASS EAGLES",
+          "away": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "20/12/2026",
+          "time": "20.30",
+          "round": 11,
+          "gameNo": 1324,
+          "venue": "PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA",
+          "home": "UNION ORATORI CASTELLANZA ASD",
+          "away": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "18/12/2026",
+          "time": "21.15",
+          "round": 11,
+          "gameNo": 1325,
+          "venue": "PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA",
+          "home": "CENTRO CAR CAZZARO SARONNO",
+          "away": "GORLA VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "18/12/2026",
+          "time": "21.00",
+          "round": 11,
+          "gameNo": 1326,
+          "venue": "PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO",
+          "home": "ASD VOLLEY SUMIRAGO",
+          "away": "GERMAN AUTO PANTA REI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "20/12/2026",
+          "time": "19.00",
+          "round": 11,
+          "gameNo": 1327,
+          "venue": "PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO",
+          "home": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "away": "BLU VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "08/01/2027",
+          "time": "21.00",
+          "round": 12,
+          "gameNo": 1328,
+          "venue": "TENSOSTRUTTURA - VIA PIAVE - CASTRONNO",
+          "home": "CASTRONNO VERDE",
+          "away": "CENTRO CAR CAZZARO SARONNO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "10/01/2027",
+          "time": "19.00",
+          "round": 12,
+          "gameNo": 1329,
+          "venue": "PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE",
+          "home": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "away": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "10/01/2027",
+          "time": "18.30",
+          "round": 12,
+          "gameNo": 1330,
+          "venue": "PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA",
+          "home": "GAR PALLAVOLO RESCALDINA",
+          "away": "VOLLEY PLUS FVG U21",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "10/01/2027",
+          "time": "18.00",
+          "round": 12,
+          "gameNo": 1331,
+          "venue": "PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA",
+          "home": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "away": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "08/01/2027",
+          "time": "21.15",
+          "round": 12,
+          "gameNo": 1332,
+          "venue": "CENTRO POLIVALENTE - via fornaci 6 - TERNATE",
+          "home": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "away": "BLU VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "08/01/2027",
+          "time": "21.00",
+          "round": 12,
+          "gameNo": 1333,
+          "venue": "PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE",
+          "home": "GERMAN AUTO PANTA REI",
+          "away": "REMAX CLASS EAGLES",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "09/01/2027",
+          "time": "21.00",
+          "round": 12,
+          "gameNo": 1334,
+          "venue": "PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE",
+          "home": "GORLA VOLLEY",
+          "away": "UNION ORATORI CASTELLANZA ASD",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "09/01/2027",
+          "time": "21.00",
+          "round": 12,
+          "gameNo": 1335,
+          "venue": "PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO",
+          "home": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "away": "ASD VOLLEY SUMIRAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "15/01/2027",
+          "time": "21.15",
+          "round": 13,
+          "gameNo": 1336,
+          "venue": "PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA",
+          "home": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "away": "CENTRO CAR CAZZARO SARONNO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "13/01/2027",
+          "time": "21.00",
+          "round": 13,
+          "gameNo": 1337,
+          "venue": "PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO",
+          "home": "VOLLEY PLUS FVG U21",
+          "away": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "15/01/2027",
+          "time": "20.30",
+          "round": 13,
+          "gameNo": 1338,
+          "venue": "E-WORK ARENA - viale gabardi, 43 - BUSTO ARSIZIO",
+          "home": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "away": "GAR PALLAVOLO RESCALDINA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "16/01/2027",
+          "time": "19.00",
+          "round": 13,
+          "gameNo": 1339,
+          "venue": "PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO",
+          "home": "BLU VOLLEY",
+          "away": "GERMAN AUTO PANTA REI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "15/01/2027",
+          "time": "21.00",
+          "round": 13,
+          "gameNo": 1340,
+          "venue": "PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO",
+          "home": "REMAX CLASS EAGLES",
+          "away": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "15/01/2027",
+          "time": "21.00",
+          "round": 13,
+          "gameNo": 1341,
+          "venue": "PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO",
+          "home": "ASD VOLLEY SUMIRAGO",
+          "away": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "17/01/2027",
+          "time": "20.30",
+          "round": 13,
+          "gameNo": 1342,
+          "venue": "PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA",
+          "home": "UNION ORATORI CASTELLANZA ASD",
+          "away": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "12/01/2027",
+          "time": "20.30",
+          "round": 13,
+          "gameNo": 1343,
+          "venue": "TENSOSTRUTTURA - VIA PIAVE - CASTRONNO",
+          "home": "CASTRONNO VERDE",
+          "away": "GORLA VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "19/01/2027",
+          "time": "20.30",
+          "round": 14,
+          "gameNo": 1344,
+          "venue": "TENSOSTRUTTURA - VIA PIAVE - CASTRONNO",
+          "home": "CASTRONNO VERDE",
+          "away": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "20/01/2027",
+          "time": "21.00",
+          "round": 14,
+          "gameNo": 1345,
+          "venue": "PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO",
+          "home": "VOLLEY PLUS FVG U21",
+          "away": "CENTRO CAR CAZZARO SARONNO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "24/01/2027",
+          "time": "19.00",
+          "round": 14,
+          "gameNo": 1346,
+          "venue": "PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE",
+          "home": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "away": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "22/01/2027",
+          "time": "21.00",
+          "round": 14,
+          "gameNo": 1347,
+          "venue": "PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE",
+          "home": "GERMAN AUTO PANTA REI",
+          "away": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "23/01/2027",
+          "time": "21.00",
+          "round": 14,
+          "gameNo": 1348,
+          "venue": "PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO",
+          "home": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "away": "BLU VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "23/01/2027",
+          "time": "21.00",
+          "round": 14,
+          "gameNo": 1349,
+          "venue": "PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE",
+          "home": "GORLA VOLLEY",
+          "away": "REMAX CLASS EAGLES",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "24/01/2027",
+          "time": "21.00",
+          "round": 14,
+          "gameNo": 1350,
+          "venue": "PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA",
+          "home": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "away": "UNION ORATORI CASTELLANZA ASD",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "24/01/2027",
+          "time": "18.30",
+          "round": 14,
+          "gameNo": 1351,
+          "venue": "PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA",
+          "home": "GAR PALLAVOLO RESCALDINA",
+          "away": "ASD VOLLEY SUMIRAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "27/01/2027",
+          "time": "21.00",
+          "round": 15,
+          "gameNo": 1352,
+          "venue": "PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO",
+          "home": "VOLLEY PLUS FVG U21",
+          "away": "CASTRONNO VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "29/01/2027",
+          "time": "21.15",
+          "round": 15,
+          "gameNo": 1353,
+          "venue": "PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA",
+          "home": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "away": "CENTRO CAR CAZZARO SARONNO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "29/01/2027",
+          "time": "21.15",
+          "round": 15,
+          "gameNo": 1354,
+          "venue": "CENTRO POLIVALENTE - via fornaci 6 - TERNATE",
+          "home": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "away": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "30/01/2027",
+          "time": "19.00",
+          "round": 15,
+          "gameNo": 1355,
+          "venue": "PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO",
+          "home": "BLU VOLLEY",
+          "away": "GORLA VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "29/01/2027",
+          "time": "21.00",
+          "round": 15,
+          "gameNo": 1356,
+          "venue": "PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO",
+          "home": "REMAX CLASS EAGLES",
+          "away": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "31/01/2027",
+          "time": "20.30",
+          "round": 15,
+          "gameNo": 1357,
+          "venue": "PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA",
+          "home": "UNION ORATORI CASTELLANZA ASD",
+          "away": "GAR PALLAVOLO RESCALDINA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "29/01/2027",
+          "time": "21.00",
+          "round": 15,
+          "gameNo": 1358,
+          "venue": "PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO",
+          "home": "ASD VOLLEY SUMIRAGO",
+          "away": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "29/01/2027",
+          "time": "21.15",
+          "round": 15,
+          "gameNo": 1359,
+          "venue": "PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA",
+          "home": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "away": "GERMAN AUTO PANTA REI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "05/02/2027",
+          "time": "21.15",
+          "round": 16,
+          "gameNo": 1360,
+          "venue": "PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA",
+          "home": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "away": "VOLLEY PLUS FVG U21",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "06/02/2027",
+          "time": "21.00",
+          "round": 16,
+          "gameNo": 1361,
+          "venue": "PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO",
+          "home": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "away": "GERMAN AUTO PANTA REI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "07/02/2027",
+          "time": "18.00",
+          "round": 16,
+          "gameNo": 1362,
+          "venue": "PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA",
+          "home": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "away": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "07/02/2027",
+          "time": "18.30",
+          "round": 16,
+          "gameNo": 1363,
+          "venue": "PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA",
+          "home": "GAR PALLAVOLO RESCALDINA",
+          "away": "BLU VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "07/02/2027",
+          "time": "19.00",
+          "round": 16,
+          "gameNo": 1364,
+          "venue": "PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE",
+          "home": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "away": "GORLA VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "05/02/2027",
+          "time": "20.30",
+          "round": 16,
+          "gameNo": 1365,
+          "venue": "E-WORK ARENA - viale gabardi, 43 - BUSTO ARSIZIO",
+          "home": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "away": "ASD VOLLEY SUMIRAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "07/02/2027",
+          "time": "20.30",
+          "round": 16,
+          "gameNo": 1366,
+          "venue": "PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA",
+          "home": "UNION ORATORI CASTELLANZA ASD",
+          "away": "CENTRO CAR CAZZARO SARONNO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "02/02/2027",
+          "time": "20.30",
+          "round": 16,
+          "gameNo": 1367,
+          "venue": "TENSOSTRUTTURA - VIA PIAVE - CASTRONNO",
+          "home": "CASTRONNO VERDE",
+          "away": "REMAX CLASS EAGLES",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "10/02/2027",
+          "time": "21.00",
+          "round": 17,
+          "gameNo": 1368,
+          "venue": "PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO",
+          "home": "VOLLEY PLUS FVG U21",
+          "away": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "13/02/2027",
+          "time": "21.00",
+          "round": 17,
+          "gameNo": 1369,
+          "venue": "PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE",
+          "home": "GORLA VOLLEY",
+          "away": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "12/02/2027",
+          "time": "21.00",
+          "round": 17,
+          "gameNo": 1370,
+          "venue": "PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE",
+          "home": "GERMAN AUTO PANTA REI",
+          "away": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "12/02/2027",
+          "time": "21.15",
+          "round": 17,
+          "gameNo": 1371,
+          "venue": "CENTRO POLIVALENTE - via fornaci 6 - TERNATE",
+          "home": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "away": "GAR PALLAVOLO RESCALDINA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "13/02/2027",
+          "time": "19.00",
+          "round": 17,
+          "gameNo": 1372,
+          "venue": "PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO",
+          "home": "BLU VOLLEY",
+          "away": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "12/02/2027",
+          "time": "21.00",
+          "round": 17,
+          "gameNo": 1373,
+          "venue": "PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO",
+          "home": "REMAX CLASS EAGLES",
+          "away": "CENTRO CAR CAZZARO SARONNO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "14/02/2027",
+          "time": "20.30",
+          "round": 17,
+          "gameNo": 1374,
+          "venue": "PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA",
+          "home": "UNION ORATORI CASTELLANZA ASD",
+          "away": "CASTRONNO VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "12/02/2027",
+          "time": "21.00",
+          "round": 17,
+          "gameNo": 1375,
+          "venue": "PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO",
+          "home": "ASD VOLLEY SUMIRAGO",
+          "away": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "16/02/2027",
+          "time": "20.30",
+          "round": 18,
+          "gameNo": 1376,
+          "venue": "E-WORK ARENA - viale gabardi, 43 - BUSTO ARSIZIO",
+          "home": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "away": "CASTRONNO VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "19/02/2027",
+          "time": "21.15",
+          "round": 18,
+          "gameNo": 1377,
+          "venue": "CENTRO POLIVALENTE - via fornaci 6 - TERNATE",
+          "home": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "away": "GORLA VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "20/02/2027",
+          "time": "19.00",
+          "round": 18,
+          "gameNo": 1378,
+          "venue": "PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO",
+          "home": "BLU VOLLEY",
+          "away": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "19/02/2027",
+          "time": "21.00",
+          "round": 18,
+          "gameNo": 1379,
+          "venue": "PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE",
+          "home": "GERMAN AUTO PANTA REI",
+          "away": "GAR PALLAVOLO RESCALDINA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "18/02/2027",
+          "time": "21.00",
+          "round": 18,
+          "gameNo": 1380,
+          "venue": "PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO",
+          "home": "REMAX CLASS EAGLES",
+          "away": "VOLLEY PLUS FVG U21",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "20/02/2027",
+          "time": "21.00",
+          "round": 18,
+          "gameNo": 1381,
+          "venue": "PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO",
+          "home": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "away": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "19/02/2027",
+          "time": "21.00",
+          "round": 18,
+          "gameNo": 1382,
+          "venue": "PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO",
+          "home": "ASD VOLLEY SUMIRAGO",
+          "away": "CENTRO CAR CAZZARO SARONNO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "20/02/2027",
+          "time": "20.30",
+          "round": 18,
+          "gameNo": 1383,
+          "venue": "PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA",
+          "home": "UNION ORATORI CASTELLANZA ASD",
+          "away": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "26/02/2027",
+          "time": "21.15",
+          "round": 19,
+          "gameNo": 1384,
+          "venue": "PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA",
+          "home": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "away": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "27/02/2027",
+          "time": "21.00",
+          "round": 19,
+          "gameNo": 1385,
+          "venue": "PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE",
+          "home": "GORLA VOLLEY",
+          "away": "GERMAN AUTO PANTA REI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "28/02/2027",
+          "time": "18.00",
+          "round": 19,
+          "gameNo": 1386,
+          "venue": "PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA",
+          "home": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "away": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "27/02/2027",
+          "time": "20.15",
+          "round": 19,
+          "gameNo": 1387,
+          "venue": "PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA",
+          "home": "GAR PALLAVOLO RESCALDINA",
+          "away": "REMAX CLASS EAGLES",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "24/02/2027",
+          "time": "21.00",
+          "round": 19,
+          "gameNo": 1388,
+          "venue": "PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO",
+          "home": "VOLLEY PLUS FVG U21",
+          "away": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "28/02/2027",
+          "time": "19.00",
+          "round": 19,
+          "gameNo": 1389,
+          "venue": "PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE",
+          "home": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "away": "UNION ORATORI CASTELLANZA ASD",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "26/02/2027",
+          "time": "21.15",
+          "round": 19,
+          "gameNo": 1390,
+          "venue": "PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA",
+          "home": "CENTRO CAR CAZZARO SARONNO",
+          "away": "BLU VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "23/02/2027",
+          "time": "20.30",
+          "round": 19,
+          "gameNo": 1391,
+          "venue": "TENSOSTRUTTURA - VIA PIAVE - CASTRONNO",
+          "home": "CASTRONNO VERDE",
+          "away": "ASD VOLLEY SUMIRAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "06/03/2027",
+          "time": "21.00",
+          "round": 20,
+          "gameNo": 1392,
+          "venue": "PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE",
+          "home": "GORLA VOLLEY",
+          "away": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "06/03/2027",
+          "time": "21.00",
+          "round": 20,
+          "gameNo": 1393,
+          "venue": "PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO",
+          "home": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "away": "GAR PALLAVOLO RESCALDINA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "07/03/2027",
+          "time": "20.30",
+          "round": 20,
+          "gameNo": 1394,
+          "venue": "PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA",
+          "home": "UNION ORATORI CASTELLANZA ASD",
+          "away": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "04/03/2027",
+          "time": "21.00",
+          "round": 20,
+          "gameNo": 1395,
+          "venue": "PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO",
+          "home": "REMAX CLASS EAGLES",
+          "away": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "05/03/2027",
+          "time": "21.00",
+          "round": 20,
+          "gameNo": 1396,
+          "venue": "PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO",
+          "home": "ASD VOLLEY SUMIRAGO",
+          "away": "VOLLEY PLUS FVG U21",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "05/03/2027",
+          "time": "21.00",
+          "round": 20,
+          "gameNo": 1397,
+          "venue": "PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE",
+          "home": "GERMAN AUTO PANTA REI",
+          "away": "CENTRO CAR CAZZARO SARONNO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "05/03/2027",
+          "time": "21.15",
+          "round": 20,
+          "gameNo": 1398,
+          "venue": "CENTRO POLIVALENTE - via fornaci 6 - TERNATE",
+          "home": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "away": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "06/03/2027",
+          "time": "19.00",
+          "round": 20,
+          "gameNo": 1399,
+          "venue": "PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO",
+          "home": "BLU VOLLEY",
+          "away": "CASTRONNO VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "14/03/2027",
+          "time": "18.30",
+          "round": 21,
+          "gameNo": 1400,
+          "venue": "PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA",
+          "home": "GAR PALLAVOLO RESCALDINA",
+          "away": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "12/03/2027",
+          "time": "21.00",
+          "round": 21,
+          "gameNo": 1401,
+          "venue": "PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO",
+          "home": "ASD VOLLEY SUMIRAGO",
+          "away": "UNION ORATORI CASTELLANZA ASD",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "14/03/2027",
+          "time": "18.00",
+          "round": 21,
+          "gameNo": 1402,
+          "venue": "PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE",
+          "home": "GORLA VOLLEY",
+          "away": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "12/03/2027",
+          "time": "20.30",
+          "round": 21,
+          "gameNo": 1403,
+          "venue": "E-WORK ARENA - viale gabardi, 43 - BUSTO ARSIZIO",
+          "home": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "away": "REMAX CLASS EAGLES",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "14/03/2027",
+          "time": "19.00",
+          "round": 21,
+          "gameNo": 1404,
+          "venue": "PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE",
+          "home": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "away": "GERMAN AUTO PANTA REI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "10/03/2027",
+          "time": "21.00",
+          "round": 21,
+          "gameNo": 1405,
+          "venue": "PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO",
+          "home": "VOLLEY PLUS FVG U21",
+          "away": "BLU VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "12/03/2027",
+          "time": "21.00",
+          "round": 21,
+          "gameNo": 1406,
+          "venue": "PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO",
+          "home": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "away": "CENTRO CAR CAZZARO SARONNO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "09/03/2027",
+          "time": "20.30",
+          "round": 21,
+          "gameNo": 1407,
+          "venue": "TENSOSTRUTTURA - VIA PIAVE - CASTRONNO",
+          "home": "CASTRONNO VERDE",
+          "away": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "21/03/2027",
+          "time": "18.00",
+          "round": 22,
+          "gameNo": 1408,
+          "venue": "PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA",
+          "home": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "away": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "20/03/2027",
+          "time": "21.00",
+          "round": 22,
+          "gameNo": 1409,
+          "venue": "PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE",
+          "home": "GORLA VOLLEY",
+          "away": "GAR PALLAVOLO RESCALDINA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "18/03/2027",
+          "time": "21.00",
+          "round": 22,
+          "gameNo": 1410,
+          "venue": "PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO",
+          "home": "REMAX CLASS EAGLES",
+          "away": "ASD VOLLEY SUMIRAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "21/03/2027",
+          "time": "20.30",
+          "round": 22,
+          "gameNo": 1411,
+          "venue": "PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA",
+          "home": "UNION ORATORI CASTELLANZA ASD",
+          "away": "VOLLEY PLUS FVG U21",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "20/03/2027",
+          "time": "21.00",
+          "round": 22,
+          "gameNo": 1412,
+          "venue": "PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA",
+          "home": "CENTRO CAR CAZZARO SARONNO",
+          "away": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "20/03/2027",
+          "time": "19.00",
+          "round": 22,
+          "gameNo": 1413,
+          "venue": "PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO",
+          "home": "BLU VOLLEY",
+          "away": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "19/03/2027",
+          "time": "21.00",
+          "round": 22,
+          "gameNo": 1414,
+          "venue": "PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE",
+          "home": "GERMAN AUTO PANTA REI",
+          "away": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "20/03/2027",
+          "time": "21.00",
+          "round": 22,
+          "gameNo": 1415,
+          "venue": "PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO",
+          "home": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "away": "CASTRONNO VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "04/04/2027",
+          "time": "19.00",
+          "round": 23,
+          "gameNo": 1416,
+          "venue": "PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE",
+          "home": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "away": "GAR PALLAVOLO RESCALDINA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "02/04/2027",
+          "time": "21.15",
+          "round": 23,
+          "gameNo": 1417,
+          "venue": "PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA",
+          "home": "CENTRO CAR CAZZARO SARONNO",
+          "away": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "03/04/2027",
+          "time": "21.00",
+          "round": 23,
+          "gameNo": 1418,
+          "venue": "PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA",
+          "home": "UNION ORATORI CASTELLANZA ASD",
+          "away": "REMAX CLASS EAGLES",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "02/04/2027",
+          "time": "21.00",
+          "round": 23,
+          "gameNo": 1419,
+          "venue": "PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO",
+          "home": "ASD VOLLEY SUMIRAGO",
+          "away": "BLU VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "31/03/2027",
+          "time": "21.00",
+          "round": 23,
+          "gameNo": 1420,
+          "venue": "PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO",
+          "home": "VOLLEY PLUS FVG U21",
+          "away": "GORLA VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "02/04/2027",
+          "time": "20.30",
+          "round": 23,
+          "gameNo": 1421,
+          "venue": "E-WORK ARENA - viale gabardi, 43 - BUSTO ARSIZIO",
+          "home": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "away": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "30/03/2027",
+          "time": "20.30",
+          "round": 23,
+          "gameNo": 1422,
+          "venue": "TENSOSTRUTTURA - VIA PIAVE - CASTRONNO",
+          "home": "CASTRONNO VERDE",
+          "away": "GERMAN AUTO PANTA REI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "02/04/2027",
+          "time": "21.15",
+          "round": 23,
+          "gameNo": 1423,
+          "venue": "PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA",
+          "home": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "away": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "11/04/2027",
+          "time": "18.30",
+          "round": 24,
+          "gameNo": 1424,
+          "venue": "PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA",
+          "home": "GAR PALLAVOLO RESCALDINA",
+          "away": "CENTRO CAR CAZZARO SARONNO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "11/04/2027",
+          "time": "18.00",
+          "round": 24,
+          "gameNo": 1425,
+          "venue": "PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA",
+          "home": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "away": "CASTRONNO VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "11/04/2027",
+          "time": "17.00",
+          "round": 24,
+          "gameNo": 1426,
+          "venue": "PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA",
+          "home": "UNION ORATORI CASTELLANZA ASD",
+          "away": "BLU VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "10/04/2027",
+          "time": "21.00",
+          "round": 24,
+          "gameNo": 1427,
+          "venue": "PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE",
+          "home": "GORLA VOLLEY",
+          "away": "ASD VOLLEY SUMIRAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "09/04/2027",
+          "time": "21.00",
+          "round": 24,
+          "gameNo": 1428,
+          "venue": "PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE",
+          "home": "GERMAN AUTO PANTA REI",
+          "away": "VOLLEY PLUS FVG U21",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "09/04/2027",
+          "time": "21.15",
+          "round": 24,
+          "gameNo": 1429,
+          "venue": "CENTRO POLIVALENTE - via fornaci 6 - TERNATE",
+          "home": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "away": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "10/04/2027",
+          "time": "21.00",
+          "round": 24,
+          "gameNo": 1430,
+          "venue": "PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO",
+          "home": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "away": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "09/04/2027",
+          "time": "21.00",
+          "round": 24,
+          "gameNo": 1431,
+          "venue": "PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO",
+          "home": "REMAX CLASS EAGLES",
+          "away": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "16/04/2027",
+          "time": "21.15",
+          "round": 25,
+          "gameNo": 1432,
+          "venue": "PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA",
+          "home": "CENTRO CAR CAZZARO SARONNO",
+          "away": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "13/04/2027",
+          "time": "20.30",
+          "round": 25,
+          "gameNo": 1433,
+          "venue": "TENSOSTRUTTURA - VIA PIAVE - CASTRONNO",
+          "home": "CASTRONNO VERDE",
+          "away": "GAR PALLAVOLO RESCALDINA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "16/04/2027",
+          "time": "21.15",
+          "round": 25,
+          "gameNo": 1434,
+          "venue": "PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA",
+          "home": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "away": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "18/04/2027",
+          "time": "20.30",
+          "round": 25,
+          "gameNo": 1435,
+          "venue": "PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO",
+          "home": "BLU VOLLEY",
+          "away": "REMAX CLASS EAGLES",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "18/04/2027",
+          "time": "20.30",
+          "round": 25,
+          "gameNo": 1436,
+          "venue": "PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA",
+          "home": "UNION ORATORI CASTELLANZA ASD",
+          "away": "GERMAN AUTO PANTA REI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "16/04/2027",
+          "time": "21.00",
+          "round": 25,
+          "gameNo": 1437,
+          "venue": "PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO",
+          "home": "ASD VOLLEY SUMIRAGO",
+          "away": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "16/04/2027",
+          "time": "20.30",
+          "round": 25,
+          "gameNo": 1438,
+          "venue": "E-WORK ARENA - viale gabardi, 43 - BUSTO ARSIZIO",
+          "home": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "away": "GORLA VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "14/04/2027",
+          "time": "21.00",
+          "round": 25,
+          "gameNo": 1439,
+          "venue": "PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO",
+          "home": "VOLLEY PLUS FVG U21",
+          "away": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "25/04/2027",
+          "time": "19.00",
+          "round": 26,
+          "gameNo": 1440,
+          "venue": "PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE",
+          "home": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "away": "CASTRONNO VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "24/04/2027",
+          "time": "18.30",
+          "round": 26,
+          "gameNo": 1441,
+          "venue": "PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA",
+          "home": "GAR PALLAVOLO RESCALDINA",
+          "away": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "25/04/2027",
+          "time": "18.00",
+          "round": 26,
+          "gameNo": 1442,
+          "venue": "PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA",
+          "home": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "away": "VOLLEY PLUS FVG U21",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "23/04/2027",
+          "time": "21.15",
+          "round": 26,
+          "gameNo": 1443,
+          "venue": "CENTRO POLIVALENTE - via fornaci 6 - TERNATE",
+          "home": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "away": "REMAX CLASS EAGLES",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "24/04/2027",
+          "time": "20.30",
+          "round": 26,
+          "gameNo": 1444,
+          "venue": "PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO",
+          "home": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "away": "UNION ORATORI CASTELLANZA ASD",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "24/04/2027",
+          "time": "21.00",
+          "round": 26,
+          "gameNo": 1445,
+          "venue": "PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE",
+          "home": "GORLA VOLLEY",
+          "away": "CENTRO CAR CAZZARO SARONNO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "23/04/2027",
+          "time": "21.00",
+          "round": 26,
+          "gameNo": 1446,
+          "venue": "PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE",
+          "home": "GERMAN AUTO PANTA REI",
+          "away": "ASD VOLLEY SUMIRAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "24/04/2027",
+          "time": "19.00",
+          "round": 26,
+          "gameNo": 1447,
+          "venue": "PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO",
+          "home": "BLU VOLLEY",
+          "away": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "30/04/2027",
+          "time": "21.15",
+          "round": 27,
+          "gameNo": 1448,
+          "venue": "PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA",
+          "home": "CENTRO CAR CAZZARO SARONNO",
+          "away": "CASTRONNO VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "30/04/2027",
+          "time": "21.15",
+          "round": 27,
+          "gameNo": 1449,
+          "venue": "PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA",
+          "home": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "away": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "28/04/2027",
+          "time": "21.00",
+          "round": 27,
+          "gameNo": 1450,
+          "venue": "PALA FERRINI - CAMPO B - via ferrini - BUSTO ARSIZIO",
+          "home": "VOLLEY PLUS FVG U21",
+          "away": "GAR PALLAVOLO RESCALDINA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "30/04/2027",
+          "time": "20.30",
+          "round": 27,
+          "gameNo": 1451,
+          "venue": "E-WORK ARENA - viale gabardi, 43 - BUSTO ARSIZIO",
+          "home": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "away": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "01/05/2027",
+          "time": "19.00",
+          "round": 27,
+          "gameNo": 1452,
+          "venue": "PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO",
+          "home": "BLU VOLLEY",
+          "away": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "30/04/2027",
+          "time": "21.00",
+          "round": 27,
+          "gameNo": 1453,
+          "venue": "PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO",
+          "home": "REMAX CLASS EAGLES",
+          "away": "GERMAN AUTO PANTA REI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "02/05/2027",
+          "time": "20.30",
+          "round": 27,
+          "gameNo": 1454,
+          "venue": "PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA",
+          "home": "UNION ORATORI CASTELLANZA ASD",
+          "away": "GORLA VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "30/04/2027",
+          "time": "21.00",
+          "round": 27,
+          "gameNo": 1455,
+          "venue": "PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO",
+          "home": "ASD VOLLEY SUMIRAGO",
+          "away": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "08/05/2027",
+          "time": "21.00",
+          "round": 28,
+          "gameNo": 1456,
+          "venue": "PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA",
+          "home": "CENTRO CAR CAZZARO SARONNO",
+          "away": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "09/05/2027",
+          "time": "19.00",
+          "round": 28,
+          "gameNo": 1457,
+          "venue": "PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE",
+          "home": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "away": "VOLLEY PLUS FVG U21",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "09/05/2027",
+          "time": "18.30",
+          "round": 28,
+          "gameNo": 1458,
+          "venue": "PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA",
+          "home": "GAR PALLAVOLO RESCALDINA",
+          "away": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "07/05/2027",
+          "time": "21.00",
+          "round": 28,
+          "gameNo": 1459,
+          "venue": "PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE",
+          "home": "GERMAN AUTO PANTA REI",
+          "away": "BLU VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "08/05/2027",
+          "time": "21.00",
+          "round": 28,
+          "gameNo": 1460,
+          "venue": "PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO",
+          "home": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "away": "REMAX CLASS EAGLES",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "09/05/2027",
+          "time": "18.00",
+          "round": 28,
+          "gameNo": 1461,
+          "venue": "PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA",
+          "home": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "away": "ASD VOLLEY SUMIRAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "07/05/2027",
+          "time": "21.15",
+          "round": 28,
+          "gameNo": 1462,
+          "venue": "CENTRO POLIVALENTE - via fornaci 6 - TERNATE",
+          "home": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "away": "UNION ORATORI CASTELLANZA ASD",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "08/05/2027",
+          "time": "21.00",
+          "round": 28,
+          "gameNo": 1463,
+          "venue": "PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE",
+          "home": "GORLA VOLLEY",
+          "away": "CASTRONNO VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "14/05/2027",
+          "time": "21.15",
+          "round": 29,
+          "gameNo": 1464,
+          "venue": "PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA",
+          "home": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "away": "CASTRONNO VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "14/05/2027",
+          "time": "21.15",
+          "round": 29,
+          "gameNo": 1465,
+          "venue": "PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA",
+          "home": "CENTRO CAR CAZZARO SARONNO",
+          "away": "VOLLEY PLUS FVG U21",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "14/05/2027",
+          "time": "20.30",
+          "round": 29,
+          "gameNo": 1466,
+          "venue": "E-WORK ARENA - viale gabardi, 43 - BUSTO ARSIZIO",
+          "home": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "away": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "14/05/2027",
+          "time": "21.15",
+          "round": 29,
+          "gameNo": 1467,
+          "venue": "CENTRO POLIVALENTE - via fornaci 6 - TERNATE",
+          "home": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "away": "GERMAN AUTO PANTA REI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "15/05/2027",
+          "time": "19.00",
+          "round": 29,
+          "gameNo": 1468,
+          "venue": "PALESTRA COMUNALE - VIA CURTI, 8 - GEMONIO",
+          "home": "BLU VOLLEY",
+          "away": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "14/05/2027",
+          "time": "21.00",
+          "round": 29,
+          "gameNo": 1469,
+          "venue": "PALASPORT C. SPORTIVO - VIA LEOPARDI - CARNAGO",
+          "home": "REMAX CLASS EAGLES",
+          "away": "GORLA VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "16/05/2027",
+          "time": "20.30",
+          "round": 29,
+          "gameNo": 1470,
+          "venue": "PALESTRA ORATORIO SACRO CUORE - VIA ADUA, 2 - CASTELLANZA",
+          "home": "UNION ORATORI CASTELLANZA ASD",
+          "away": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "14/05/2027",
+          "time": "21.00",
+          "round": 29,
+          "gameNo": 1471,
+          "venue": "PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO",
+          "home": "ASD VOLLEY SUMIRAGO",
+          "away": "GAR PALLAVOLO RESCALDINA",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "18/05/2027",
+          "time": "20.30",
+          "round": 30,
+          "gameNo": 1472,
+          "venue": "TENSOSTRUTTURA - VIA PIAVE - CASTRONNO",
+          "home": "CASTRONNO VERDE",
+          "away": "VOLLEY PLUS FVG U21",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "21/05/2027",
+          "time": "21.15",
+          "round": 30,
+          "gameNo": 1473,
+          "venue": "PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA",
+          "home": "CENTRO CAR CAZZARO SARONNO",
+          "away": "CO-BIT UYBA BUSTO ARSIZIO U19",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "22/05/2027",
+          "time": "21.00",
+          "round": 30,
+          "gameNo": 1474,
+          "venue": "PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO",
+          "home": "VOLLEY NETWORK'S SATINOX ACCIAI",
+          "away": "SEVEN LAKES - PRO BODIO LOMNAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "22/05/2027",
+          "time": "21.00",
+          "round": 30,
+          "gameNo": 1475,
+          "venue": "PALAZZETTO - VIA GRAZIA DELEDDA 20 - GORLA MINORE",
+          "home": "GORLA VOLLEY",
+          "away": "BLU VOLLEY",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "23/05/2027",
+          "time": "18.00",
+          "round": 30,
+          "gameNo": 1476,
+          "venue": "PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA",
+          "home": "DUO VOLLEY GOBBO ALLESTIMENTI VERDE",
+          "away": "REMAX CLASS EAGLES",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "23/05/2027",
+          "time": "18.30",
+          "round": 30,
+          "gameNo": 1477,
+          "venue": "PALESTRA OTTOLINI SCUOLE MEDIE DI RESCALDINA - VIA mazzini 5 - RESCALDINA",
+          "home": "GAR PALLAVOLO RESCALDINA",
+          "away": "UNION ORATORI CASTELLANZA ASD",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "23/05/2027",
+          "time": "19.00",
+          "round": 30,
+          "gameNo": 1478,
+          "venue": "PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE",
+          "home": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
+          "away": "ASD VOLLEY SUMIRAGO",
+          "result": null,
+          "partials": []
+        },
+        {
+          "date": "21/05/2027",
+          "time": "21.00",
+          "round": 30,
+          "gameNo": 1479,
+          "venue": "PAL. COMUNALE ARNATE - VIA P. BELLORA - GALLARATE",
+          "home": "GERMAN AUTO PANTA REI",
+          "away": "ROSSELLA ETS CARONNO PERTUSELLA",
+          "result": null,
+          "partials": []
+        }
+      ],
+      "counts": {
+        "totalMatches": 240,
+        "completedMatches": 32,
+        "upcomingMatches": 208,
+        "rounds": 30
+      },
+      "teamLogos": {
+        "VOLLEY PLUS FVG U21": "https://app.fipavonline.it/img/loghi_societa/040200273/logo.jpg?v=1539034728",
+        "ASD VOLLEY SUMIRAGO": "https://app.fipavonline.it/img/loghi_societa/040200300/logo.jpg?v=1622016434",
+        "BLU VOLLEY": "https://app.fipavonline.it/img/loghi_societa/040200279/logo.jpg?v=1566297747",
+        "UNION ORATORI CASTELLANZA ASD": "https://app.fipavonline.it/img/loghi_societa/040200291/logo.jpg?v=1537903596",
+        "GORLA VOLLEY": "https://app.fipavonline.it/img/loghi_societa/040200164/logo.jpg?v=1666693175",
+        "VOLLEY NETWORK'S SATINOX ACCIAI": "https://app.fipavonline.it/img/loghi_societa/040200328/logo.jpg?v=1570010653",
+        "DUO VOLLEY GOBBO ALLESTIMENTI VERDE": "https://app.fipavonline.it/img/loghi_societa/040200048/logo.png?v=1727936065",
+        "GAR PALLAVOLO RESCALDINA": "https://app.fipavonline.it/img/loghi_societa/040200353/logo.jpg?v=1789571354",
+        "FULL VOLLEY ARCOBALENO-CISTELLUM U19": "https://app.fipavonline.it/img/loghi_societa/040200068/logo.jpg?v=1533054001",
+        "CENTRO CAR CAZZARO SARONNO": "https://app.fipavonline.it/img/loghi_societa/040200125/logo.jpg?v=1537877269",
+        "CASTRONNO VERDE": "https://app.fipavonline.it/img/loghi_societa/040200135/logo.jpg?v=1666182965",
+        "ROSSELLA ETS CARONNO PERTUSELLA": "https://app.fipavonline.it/img/loghi_societa/040200015/logo.jpg?v=1769764407",
+        "CO-BIT UYBA BUSTO ARSIZIO U19": "https://app.fipavonline.it/img/loghi_societa/040200348/logo.png?v=1755868054",
+        "REMAX CLASS EAGLES": "https://app.fipavonline.it/img/loghi_societa/040200336/logo.jpg",
+        "GERMAN AUTO PANTA REI": "https://app.fipavonline.it/img/loghi_societa/040200219/logo.jpg?v=1533054001",
+        "SEVEN LAKES - PRO BODIO LOMNAGO": "https://app.fipavonline.it/img/loghi_societa/040200244/logo.png?v=1725627384"
+      }
+    }
+  }
+}
