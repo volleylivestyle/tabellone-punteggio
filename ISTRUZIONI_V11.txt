@@ -1,0 +1,36 @@
+VOLLEY LIVE V11.0 — PROVA GITHUB PAGES (SOSTITUZIONE INDEX)
+=============================================================
+
+CONTENUTO DEL PACCHETTO — caricare TUTTI questi file nella ROOT della repository:
+1) index.html                         -> sostituisce la V10.8 con la prova V11
+2) catalogo-fipav-v11.json             -> catalogo statico necessario alla selezione
+3) index_V10_8_RIPRISTINO.html         -> copia della V10.8 originale per tornare indietro
+
+IMPORTANTE
+- Questa V11.0 è una prova della selezione gara e dell'importazione nel tabellone Firebase.
+- Il catalogo è uno snapshot acquisito il 02/11/2026: 13 campionati, 40 gironi e calendario completo del solo girone 63719 (240 gare / 30 giornate).
+- NON legge automaticamente il sito FIPAVOnline. GitHub Pages è statico e il test CORS precedente ha restituito Failed to fetch.
+- Gli altri gironi sono visibili nel menu, ma il loro calendario non è disponibile in questa prova.
+- Non sono mappati automaticamente i loghi FIPAV per le 16 squadre: i loghi già presenti vengono mantenuti solo se il nome coincide esattamente.
+- Non modificare le regole Firebase né la configurazione Firebase.
+- Il collegamento LIVE continua a usare il Firebase esistente e le credenziali amministratore esistenti.
+
+PUBBLICAZIONE
+1. Estrarre lo ZIP sul PC.
+2. Aprire la repository GitHub "tabellone-punteggio" e la cartella principale (root).
+3. Selezionare Add file > Upload files.
+4. Trascinare index.html, catalogo-fipav-v11.json e index_V10_8_RIPRISTINO.html.
+5. GitHub chiederà di aggiornare il file index.html già esistente: confermare la sostituzione.
+6. Fare Commit changes.
+7. Aprire https://volleylivestyle.github.io/tabellone-punteggio/?admin=1
+8. Se non compare subito la nuova versione, fare Ctrl+F5.
+
+RIPRISTINO V10.8
+Per tornare indietro, nella root della repository caricare il file index_V10_8_RIPRISTINO.html rinominandolo index.html e confermare la sostituzione. Il catalogo JSON può rimanere nella root: la V10.8 lo ignora.
+
+URL DELLA PROVA DOPO LA PUBBLICAZIONE
+- Amministratore: https://volleylivestyle.github.io/tabellone-punteggio/?admin=1
+- Spettatori: https://volleylivestyle.github.io/tabellone-punteggio/
+
+PRIMA DI IMPORTARE UNA PARTITA
+L'importazione richiede login amministratore e una conferma esplicita. Azzererà il punteggio, i set, i time-out e lo stato della partita attualmente attiva nel Firebase condiviso: fare la prima prova quando non si sta disputando una gara reale.

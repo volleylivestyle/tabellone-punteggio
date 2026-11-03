@@ -1,0 +1,927 @@
+<!--
+  VOLLEY LIVE — ATTRIBUZIONE E DIRITTI
+  © 2026 Fabio Marsico. Ideazione del progetto, specifiche funzionali, scelte progettuali
+  e contributi originali all'interfaccia e al codice, nei limiti della titolarità riconoscibile.
+  Implementazione realizzata con supporto di strumenti di intelligenza artificiale sulla base
+  delle specifiche, decisioni, prove e revisioni curate da Fabio Marsico.
+  Tutti i diritti riservati nei limiti consentiti dalla legge. Marchi, loghi caricati dagli utenti,
+  SDK e componenti di terzi restano di proprietà dei rispettivi titolari.
+-->
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827">
+<meta name="description" content="Tabellone pallavolo live con punteggio sincronizzato in tempo reale e anteprima della partita."><meta name="author" content="Fabio Marsico"><meta name="copyright" content="© 2026 Fabio Marsico — Volley Live. Tutti i diritti riservati nei limiti consentiti dalla legge."><title>Volley Live — Tabellone v10.8</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #05080d;
+  --panel: #0a111b;
+  --panel2: #101d2b;
+  --line: #25384d;
+  --muted: #9aafc3;
+  --white: #f4f8ff;
+  --green: #b1ffbd;
+  --green2: #48f18a;
+  --amber: #ffd073;
+  --blue: #63a2ff;
+  --red: #ff6578;
+}
+* { box-sizing: border-box; }
+html { min-height: 100%; background: var(--bg); }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--white);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background:
+    radial-gradient(ellipse at 50% -15%, rgba(31, 72, 103, .55), transparent 47%),
+    radial-gradient(ellipse at 50% 60%, rgba(12, 34, 48, .32), transparent 60%),
+    #05080d;
+}
+button, input, select { font: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+.wrap { width: min(100%, 1320px); margin: auto; padding: 22px 20px 28px; }
+.top { display:flex; align-items:center; justify-content:space-between; gap:16px; padding: 5px 2px 18px; border-bottom:1px solid rgba(149,176,201,.16); }
+.brandline { display:flex; align-items:center; gap:12px; min-width:0; }
+.brandmark { display:grid; place-items:center; width:48px; height:48px; flex:none; border-radius:13px; color:#06140b; background:linear-gradient(140deg,var(--green),var(--green2)); font-weight:1000; font-size:1.05rem; letter-spacing:-.08em; box-shadow:0 0 25px rgba(72,241,138,.2), inset 0 1px rgba(255,255,255,.65); }
+.eyebrow { font-size:.67rem; letter-spacing:.23em; color:var(--muted); font-weight:900; }
+.brand { font-size:clamp(1.15rem,3.4vw,1.85rem); font-weight:1000; letter-spacing:.08em; line-height:1.18; }
+.brand span { color:var(--green); }
+.header-actions { display:flex; align-items:center; justify-content:flex-end; gap:9px; }
+.live { display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(72,241,138,.42); color:#d5ffe0; background:rgba(22,83,48,.34); padding:9px 12px; border-radius:8px; font-weight:950; font-size:.7rem; letter-spacing:.14em; white-space:nowrap; box-shadow:0 0 20px rgba(72,241,138,.06); }
+.dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--green2); box-shadow:0 0 10px var(--green2); flex:none; }
+.live.state-connected, .live.state-finale { border-color:rgba(72,241,138,.42); color:#d5ffe0; background:rgba(22,83,48,.34); }
+.live.state-disconnected { border-color:rgba(255,101,120,.58); color:#ffdce0; background:rgba(75,32,42,.48); box-shadow:0 0 20px rgba(255,101,120,.09); }
+.live.state-disconnected .dot { background:var(--red); box-shadow:0 0 10px var(--red); }
+.live.state-connecting { border-color:rgba(255,208,115,.5); color:#ffe8b1; background:rgba(74,54,18,.38); }
+.live.state-connecting .dot { background:var(--amber); box-shadow:0 0 10px var(--amber); animation:livePulse 1.05s ease-in-out infinite; }
+@keyframes livePulse { 0%,100% { opacity:.45; transform:scale(.85); } 50% { opacity:1; transform:scale(1.15); } }
+@media (prefers-reduced-motion:reduce) { .live.state-connecting .dot { animation:none; } }
+.fullscreen-btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; border:1px solid #2e4358; background:rgba(14,27,41,.9); color:#d4e2f1; border-radius:8px; padding:9px 11px; cursor:pointer; font-size:.7rem; font-weight:900; letter-spacing:.08em; white-space:nowrap; }
+.fullscreen-btn:hover { border-color:#56738f; background:#152639; }
+.fullscreen-icon { font-size:1rem; line-height:1; }
+.spectator-prompt { position:fixed; z-index:10001; inset:0; width:100%; min-height:100vh; min-height:100dvh; overflow-y:auto; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:15px; padding:max(20px,env(safe-area-inset-top)) max(15px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(15px,env(safe-area-inset-left)); border:0; border-radius:0; background:radial-gradient(ellipse at 50% 42%,rgba(22,57,82,.91),rgba(5,8,13,.99) 70%); color:#f4f8ff; text-align:center; cursor:default; box-shadow:none; transform:none; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+.spectator-prompt:hover { background:radial-gradient(ellipse at 50% 42%,rgba(27,72,103,.94),rgba(5,8,13,.995) 70%); }
+.spectator-prompt:focus-visible { outline:3px solid #83d4ff; outline-offset:-8px; }
+.spectator-prompt-icon { display:grid; place-items:center; width:clamp(48px,8vw,68px); height:clamp(48px,8vw,68px); flex:none; border:1px solid rgba(99,194,255,.52); border-radius:18px; background:linear-gradient(145deg,rgba(67,185,255,.24),rgba(13,34,51,.72)); color:#8bd8ff; font-size:clamp(1.8rem,5vw,2.7rem); line-height:1; box-shadow:0 0 45px rgba(67,185,255,.19),inset 0 1px rgba(255,255,255,.12); }
+.spectator-prompt-copy { display:flex; width:min(94vw,470px); min-width:0; flex-direction:column; align-items:center; gap:9px; }
+.spectator-prompt-kicker { color:#83d4ff; font-size:.7rem; font-weight:950; letter-spacing:.25em; }
+.spectator-prompt-copy > strong { font-size:clamp(1.45rem,4.8vw,2.15rem); line-height:1.12; font-weight:1000; letter-spacing:.035em; text-shadow:0 0 24px rgba(67,185,255,.22); }
+.spectator-prompt-copy small { max-width:390px; color:#b7cada; font-size:clamp(.78rem,2.15vw,.92rem); line-height:1.45; font-weight:600; }
+.spectator-prompt-arrow { display:inline-flex; align-items:center; justify-content:center; margin-top:1px; padding:13px 22px; border:1px solid #43b9ff; border-radius:12px; background:linear-gradient(135deg,#14618e,#0b3c5d); color:#fff; font-size:.8rem; font-weight:1000; letter-spacing:.14em; box-shadow:0 0 28px rgba(67,185,255,.17),inset 0 1px rgba(255,255,255,.16); cursor:pointer; }
+.spectator-prompt-arrow:hover { background:linear-gradient(135deg,#1b78ac,#104e73); box-shadow:0 0 34px rgba(67,185,255,.24),inset 0 1px rgba(255,255,255,.2); }
+.spectator-preview { display:flex; flex-direction:column; gap:13px; width:min(94vw,850px); flex:none; padding:clamp(12px,2.4vw,22px); border:1px solid rgba(99,162,255,.32); border-radius:20px; background:linear-gradient(145deg,rgba(12,26,40,.92),rgba(5,11,18,.93)); box-shadow:0 22px 65px rgba(0,0,0,.36),inset 0 1px rgba(255,255,255,.055),0 0 35px rgba(67,185,255,.075); cursor:default; }
+.spectator-preview-heading { display:flex; flex-direction:column; align-items:center; gap:7px; }
+.spectator-preview-caption { color:#7897b3; font-size:.62rem; font-weight:950; letter-spacing:.22em; }
+.spectator-preview-event { max-width:100%; color:#c9eeff; font-size:clamp(.8rem,2.2vw,1.12rem); line-height:1.25; font-weight:1000; letter-spacing:.075em; text-transform:uppercase; overflow-wrap:anywhere; }
+.spectator-preview-teams { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:clamp(6px,2vw,19px); width:100%; }
+.spectator-preview-team { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; min-width:0; padding:10px 6px; border:1px solid rgba(72,241,138,.2); border-radius:13px; background:linear-gradient(155deg,rgba(20,45,36,.58),rgba(5,12,15,.58)); }
+.spectator-preview-team.away-preview { border-color:rgba(255,208,115,.22); background:linear-gradient(155deg,rgba(54,39,18,.52),rgba(14,10,5,.58)); }
+.spectator-preview-mark { position:relative; display:grid; place-items:center; flex:none; width:clamp(44px,7.4vw,70px); height:clamp(44px,7.4vw,70px); overflow:hidden; border-radius:15px; border:1px solid rgba(72,241,138,.5); background:linear-gradient(145deg,rgba(72,241,138,.22),rgba(4,14,10,.92)); color:#b1ffbd; font-size:clamp(.72rem,2vw,1.05rem); font-weight:1000; letter-spacing:.05em; }
+.spectator-preview-team.away-preview .spectator-preview-mark { border-color:rgba(255,208,115,.5); background:linear-gradient(145deg,rgba(255,208,115,.2),rgba(22,14,4,.92)); color:#ffd073; }
+.spectator-preview-mark .team-logo { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; padding:3px; }
+.spectator-preview-initials { padding:2px; }
+.spectator-preview-name { width:100%; color:#f4f8ff; font-size:clamp(.68rem,2vw,1.1rem); font-weight:1000; letter-spacing:.035em; line-height:1.2; text-transform:uppercase; overflow-wrap:anywhere; }
+.spectator-preview-vs { color:#6886a2; font-size:clamp(.63rem,1.9vw,.85rem); font-weight:1000; letter-spacing:.13em; }
+.spectator-preview-footer { display:flex; align-items:center; justify-content:center; gap:8px; color:#7592a9; font-size:.59rem; font-weight:900; letter-spacing:.12em; line-height:1.3; }
+.spectator-preview-footer::before { content:""; width:6px; height:6px; flex:none; border-radius:50%; background:#48f18a; box-shadow:0 0 9px #48f18a; }
+body.focus-mode .spectator-prompt { display:none!important; }
+@media (max-width:480px) { .spectator-prompt { gap:12px; justify-content:center; padding-left:12px; padding-right:12px; } .spectator-prompt-copy { gap:7px; } .spectator-prompt-copy > strong { letter-spacing:.01em; } .spectator-preview { gap:9px; padding:10px; border-radius:15px; } .spectator-preview-teams { gap:5px; } .spectator-preview-team { padding:8px 4px; gap:6px; border-radius:10px; } .spectator-preview-mark { border-radius:11px; } .spectator-preview-name { letter-spacing:0; } .spectator-preview-footer { letter-spacing:.045em; font-size:.52rem; } }
+@media (max-height:720px) { .spectator-prompt { justify-content:flex-start; gap:10px; } .spectator-prompt-icon { width:44px; height:44px; border-radius:13px; font-size:1.6rem; } .spectator-preview { gap:8px; padding:10px; } .spectator-preview-team { padding:7px 5px; gap:5px; } .spectator-preview-mark { width:44px; height:44px; } .spectator-prompt-arrow { padding:10px 18px; } }
+.meta-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:18px 2px 20px; }
+.meta { min-width:0; margin:0; color:#e4effb; font-size:clamp(.9rem,2.4vw,1.1rem); font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+.time-meta { display:flex; flex-direction:column; align-items:flex-end; justify-content:center; gap:4px; flex:none; max-width:56%; }
+.current-time { color:#b9d3e9; font-size:.72rem; font-weight:950; text-align:right; font-variant-numeric:tabular-nums; letter-spacing:.08em; white-space:nowrap; }
+.updated { color:#7189a0; font-size:.65rem; font-weight:750; text-align:right; font-variant-numeric:tabular-nums; letter-spacing:.045em; }
+.scoreboard { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; }
+.team { min-width:0; position:relative; overflow:hidden; isolation:isolate; padding:clamp(16px,2.9vw,30px) clamp(10px,2vw,24px) 20px; border:1px solid #2a4055; border-radius:16px; text-align:center; background:linear-gradient(155deg,rgba(19,34,49,.98),rgba(6,11,18,.99) 68%); box-shadow:0 20px 45px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.045); transition:border-color .2s,box-shadow .2s; }
+.team::before { content:""; position:absolute; inset:0; z-index:-1; opacity:.5; pointer-events:none; background:linear-gradient(130deg,rgba(72,241,138,.055),transparent 48%); }
+.team::after { content:""; position:absolute; left:0; right:0; top:0; height:4px; background:var(--green2); box-shadow:0 0 18px rgba(72,241,138,.4); }
+.team.away::after { background:var(--amber); box-shadow:0 0 18px rgba(255,208,115,.36); }
+.team.away::before { background:linear-gradient(130deg,rgba(255,208,115,.06),transparent 48%); }
+.team.leading { border-color:rgba(177,255,189,.68); box-shadow:0 0 0 1px rgba(72,241,138,.12),0 22px 50px rgba(0,0,0,.3),0 0 35px rgba(72,241,138,.07); }
+.team.away.leading { border-color:rgba(255,208,115,.68); box-shadow:0 0 0 1px rgba(255,208,115,.1),0 22px 50px rgba(0,0,0,.3),0 0 35px rgba(255,208,115,.07); }
+.team-head { display:flex; align-items:center; justify-content:center; gap:12px; min-height:54px; }
+.teammark { position:relative; display:grid; place-items:center; flex:none; width:46px; height:46px; overflow:hidden; border-radius:13px; border:1px solid rgba(72,241,138,.35); background:linear-gradient(145deg,rgba(72,241,138,.19),rgba(4,14,10,.92)); color:var(--green); font-size:.78rem; font-weight:1000; letter-spacing:.06em; box-shadow:inset 0 0 15px rgba(72,241,138,.08); }
+.team-logo { width:100%; height:100%; object-fit:contain; padding:3px; background:#f5f8fc; border-radius:inherit; }
+.team.away .team-logo { background:#fff8e9; }
+.team.away .teammark { border-color:rgba(255,208,115,.38); background:linear-gradient(145deg,rgba(255,208,115,.18),rgba(22,14,4,.92)); color:var(--amber); box-shadow:inset 0 0 15px rgba(255,208,115,.08); }
+.team-info { min-width:0; flex:1; display:flex; flex-direction:column; align-items:flex-start; gap:7px; }
+.teamname { min-width:0; overflow-wrap:anywhere; font-size:clamp(.88rem,2.4vw,1.32rem); line-height:1.16; font-weight:1000; letter-spacing:.055em; text-transform:uppercase; color:#f1f6fd; text-align:left; }
+.service-admin { margin-top:16px; padding:13px; border:1px solid #2a4055; border-radius:10px; background:rgba(4,11,18,.55); }
+.service-admin h3 { margin:0 0 7px; font-size:.88rem; color:#eff6ff; }
+.service-admin .note { margin:0; }
+.service-admin .btn.active { border-color:var(--green2); box-shadow:inset 0 0 0 1px rgba(72,241,138,.35),0 0 15px rgba(72,241,138,.08); }
+.service-admin .btn.active.away-active { border-color:var(--amber); box-shadow:inset 0 0 0 1px rgba(255,208,115,.35),0 0 15px rgba(255,208,115,.08); }
+.point-alert { display:flex; align-items:center; justify-content:center; gap:8px; min-height:30px; margin:10px 0 -8px; padding:5px 9px; border:1px solid transparent; border-radius:7px; visibility:hidden; opacity:0; font-size:.74rem; font-weight:1000; letter-spacing:.17em; text-align:center; line-height:1.1; }
+.point-alert.active { visibility:visible; opacity:1; }
+.point-alert::before { content:""; width:7px; height:7px; flex:none; border-radius:50%; background:currentColor; box-shadow:0 0 10px currentColor; }
+.team.home .point-alert.set-point { color:var(--green); background:rgba(17,66,37,.5); border-color:rgba(72,241,138,.42); box-shadow:0 0 16px rgba(72,241,138,.10); }
+.team.away .point-alert.set-point { color:var(--amber); background:rgba(75,47,9,.5); border-color:rgba(255,208,115,.42); box-shadow:0 0 16px rgba(255,208,115,.10); }
+.point-alert.match-point { color:#ff8490; background:rgba(91,18,31,.54); border-color:rgba(255,80,103,.65); box-shadow:0 0 18px rgba(255,80,103,.18),inset 0 0 12px rgba(255,80,103,.08); }
+/* Il messaggio resta nel suo spazio ma viene temporaneamente nascosto mentre la versione grande vi si anima dentro. */
+.point-alert.arriving { visibility:hidden !important; opacity:0 !important; }
+.point-alert-arrival-stage { position:fixed; inset:0; z-index:9998; pointer-events:none; display:block; opacity:1; background:transparent; }
+.point-alert-flight { position:fixed; z-index:9999; display:flex; align-items:center; justify-content:center; gap:.24em; margin:0; box-sizing:border-box; overflow:hidden; border:2px solid currentColor; text-align:center; white-space:nowrap; font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif; font-weight:1000; line-height:1; text-transform:uppercase; letter-spacing:.12em; text-shadow:0 0 9px currentColor,0 0 28px currentColor; backdrop-filter:blur(7px); -webkit-backdrop-filter:blur(7px); pointer-events:none; will-change:left,top,width,height,font-size,padding,opacity,transform; }
+.point-alert-flight::before { content:""; display:block; width:.42em; height:.42em; flex:none; border-radius:50%; background:currentColor; box-shadow:0 0 12px currentColor,0 0 28px currentColor; }
+.point-alert-flight.home.set-point { color:var(--green); background:rgba(17,66,37,.91); border-color:rgba(72,241,138,.92); box-shadow:0 0 40px rgba(72,241,138,.42),inset 0 0 24px rgba(72,241,138,.18); }
+.point-alert-flight.away.set-point { color:var(--amber); background:rgba(75,47,9,.92); border-color:rgba(255,208,115,.95); box-shadow:0 0 40px rgba(255,208,115,.38),inset 0 0 24px rgba(255,208,115,.16); }
+.point-alert-flight.match-point { color:#ff8490; background:rgba(91,18,31,.94); border-color:rgba(255,80,103,.98); box-shadow:0 0 48px rgba(255,80,103,.5),inset 0 0 26px rgba(255,80,103,.2); }
+@media (prefers-reduced-motion:no-preference) { .point-alert.match-point.active { animation:matchPointPulse 1.25s ease-in-out infinite; } @keyframes matchPointPulse { 0%,100% { box-shadow:0 0 12px rgba(255,80,103,.15),inset 0 0 8px rgba(255,80,103,.06); } 50% { box-shadow:0 0 24px rgba(255,80,103,.36),inset 0 0 14px rgba(255,80,103,.13); } } }
+@media (prefers-reduced-motion:reduce) { .point-alert-arrival-stage,.point-alert-flight { display:none !important; } .point-alert.arriving { visibility:visible !important; opacity:1 !important; } }
+.points { position:relative; isolation:isolate; display:flex; align-items:center; justify-content:center; min-height:clamp(142px,21vw,252px); margin:18px 0 16px; padding:0 6px; overflow:hidden; border:1px solid #253a4e; border-radius:10px; background:repeating-linear-gradient(0deg,transparent 0,transparent 4px,rgba(132,255,168,.055) 5px,transparent 6px),linear-gradient(180deg,#020609,#07110d 55%,#050b09); color:var(--green); font-family:"DS-Digital", "Arial Narrow", ui-monospace, "Cascadia Code", "Roboto Mono", Consolas, monospace; font-size:clamp(6rem,17vw,12.5rem); line-height:.95; font-weight:1000; letter-spacing:-.085em; font-variant-numeric:tabular-nums; text-shadow:0 0 5px rgba(177,255,189,.85),0 0 15px rgba(72,241,138,.35),0 0 42px rgba(72,241,138,.12); box-shadow:inset 0 0 28px rgba(0,0,0,.85),0 0 22px rgba(0,0,0,.17); }
+.team.away .points { color:var(--amber); background:repeating-linear-gradient(0deg,transparent 0,transparent 4px,rgba(255,211,120,.05) 5px,transparent 6px),linear-gradient(180deg,#080604,#181107 55%,#0b0804); text-shadow:0 0 5px rgba(255,208,115,.82),0 0 15px rgba(255,179,61,.34),0 0 42px rgba(255,179,61,.12); }
+/* La squadra al servizio viene evidenziata direttamente sul tabellone: il box del punteggio cresce e si illumina. */
+.points { transform:scale(1); transform-origin:center; transition:transform .24s cubic-bezier(.2,.8,.2,1), border-color .24s ease, box-shadow .24s ease, filter .24s ease; }
+.points.serving-score { transform:scale(1.045); border:3px solid var(--green2); border-radius:15px; box-shadow:inset 0 0 28px rgba(0,0,0,.78), inset 0 0 22px rgba(72,241,138,.13), 0 0 0 3px rgba(72,241,138,.16), 0 0 28px rgba(72,241,138,.29); filter:brightness(1.12); }
+.team.away .points.serving-score { border-color:var(--amber); box-shadow:inset 0 0 28px rgba(0,0,0,.78), inset 0 0 22px rgba(255,208,115,.13), 0 0 0 3px rgba(255,208,115,.16), 0 0 28px rgba(255,208,115,.28); }
+@media (prefers-reduced-motion:reduce) { .points { transition:none; } }
+.sets-footer { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 3px; }
+.setslabel { color:#8da3b8; font-size:.67rem; letter-spacing:.18em; font-weight:950; }
+.setsvalue { display:flex; align-items:baseline; gap:8px; }
+.setsvalue small { color:#667d93; font-size:.62rem; font-weight:850; letter-spacing:.1em; }
+.setwins { color:#f5f9ff; font-family:ui-monospace,"Roboto Mono",Consolas,monospace; font-size:2rem; line-height:1; font-weight:1000; font-variant-numeric:tabular-nums; text-shadow:0 0 18px rgba(255,255,255,.07); }
+.team.home .setwins { color:var(--green); }
+.team.away .setwins { color:var(--amber); }
+.timeout-panel { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:14px; padding:10px 11px; border:1px solid #21374b; border-radius:9px; background:rgba(3,8,13,.72); }
+.timeout-label { color:#8197ac; font-size:.62rem; font-weight:950; letter-spacing:.14em; white-space:nowrap; }
+.timeout-lamps { display:flex; align-items:center; gap:6px; }
+.timeout-lamp { display:inline-block; width:10px; height:10px; flex:none; border:1px solid #3a5065; border-radius:50%; background:#172331; }
+.team.home .timeout-lamp.available { background:var(--green2); border-color:var(--green); box-shadow:0 0 9px rgba(72,241,138,.35); }
+.team.away .timeout-lamp.available { background:var(--amber); border-color:#ffe1a5; box-shadow:0 0 9px rgba(255,208,115,.3); }
+.timeout-control { width:100%; margin-top:9px; padding:9px 10px; font-size:.72rem; letter-spacing:.035em; }
+.team.home .timeout-control { border-color:rgba(72,241,138,.25); }
+.team.away .timeout-control { border-color:rgba(255,208,115,.28); }
+.scorecontrols { display:flex; justify-content:center; gap:8px; margin-top:14px; }
+.btn { border:1px solid var(--line); background:#20344a; color:var(--white); border-radius:9px; padding:11px 13px; font:inherit; font-weight:850; cursor:pointer; }
+.btn:active { transform:scale(.98); }
+.btn.plus { background:var(--green2); color:#06170c; border:0; min-width:75px; font-size:1rem; }
+.btn.orange { background:var(--amber); color:#241606; border:0; min-width:75px; font-size:1rem; }
+.btn.primary { background:#426fe0; border:0; color:white; }
+.btn.whatsapp-btn { display:inline-flex; align-items:center; justify-content:center; gap:9px; background:#25D366; border-color:#25D366; color:#062811; font-weight:950; }
+.btn.whatsapp-btn:hover { background:#1fbd5b; border-color:#1fbd5b; }
+.whatsapp-icon { display:block; width:23px; height:23px; flex:none; }
+.btn.copy-public-btn { display:inline-flex; align-items:center; justify-content:center; gap:9px; background:#101b2b; border:1px solid #43b9ff; color:#f4f8ff; font-weight:950; box-shadow:inset 0 0 0 1px rgba(67,185,255,.08),0 0 14px rgba(67,185,255,.08); transition:background .18s,border-color .18s,color .18s,box-shadow .18s,transform .18s; }
+.btn.copy-public-btn:hover { background:#15283d; border-color:#78ceff; box-shadow:inset 0 0 0 1px rgba(67,185,255,.18),0 0 18px rgba(67,185,255,.16); }
+.copy-public-icon { display:block; width:21px; height:21px; flex:none; color:#43b9ff; }
+.copy-public-icon.success-icon { display:none; }
+.btn.copy-public-btn.copied { background:rgba(20,83,45,.92); border-color:#48f18a; color:#b1ffbd; box-shadow:inset 0 0 0 1px rgba(72,241,138,.24),0 0 20px rgba(72,241,138,.18); }
+.btn.copy-public-btn.copied .copy-icon { display:none; }
+.btn.copy-public-btn.copied .success-icon { display:block; color:#b1ffbd; }
+.btn.danger { background:#4b202a; border-color:#85404d; color:#ffdce0; }
+.btn:disabled { opacity:.35; cursor:not-allowed; }
+.panel { margin-top:16px; padding:18px; border:1px solid #23394d; border-radius:13px; background:linear-gradient(150deg,rgba(13,24,37,.97),rgba(6,11,18,.98)); box-shadow:0 14px 35px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.025); }
+.panel h2 { margin:0 0 12px; font-size:1rem; }
+.statusline { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; color:var(--muted); font-size:.82rem; }
+.statusline strong { color:#f4f8ff; letter-spacing:.14em; font-size:.95rem; }
+#setTitle { color:var(--green); }
+.setstrip { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:9px; margin-top:14px; }
+.setbox { min-width:0; border:1px solid #23374b; border-radius:9px; background:linear-gradient(180deg,#050a10,#0a1119); text-align:center; padding:13px 4px; }
+.setbox small { display:block; color:#8399ad; font-size:.65rem; letter-spacing:.14em; font-weight:900; }
+.setbox strong { display:block; margin-top:6px; color:#edf4fc; font-size:clamp(.95rem,2vw,1.22rem); font-family:ui-monospace,"Roboto Mono",Consolas,monospace; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.setbox strong .set-winning-score { color:var(--red); text-shadow:0 0 10px rgba(255,101,120,.18); }
+.setbox.current { border-color:var(--green2); background:linear-gradient(180deg,rgba(33,88,53,.28),rgba(4,13,9,.9)); box-shadow:inset 0 0 0 1px rgba(72,241,138,.27),0 0 18px rgba(72,241,138,.07); }
+.setbox.current small { color:var(--green); }
+.formgrid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.field { display:flex; flex-direction:column; gap:5px; color:var(--muted); font-size:.8rem; }
+.field input,.field select { width:100%; background:#070e16; color:var(--white); border:1px solid var(--line); border-radius:8px; padding:11px; font:inherit; }
+.file-input { font-size:.76rem !important; padding:8px !important; }
+.file-input::file-selector-button { margin-right:9px; border:0; border-radius:6px; padding:7px 9px; background:#203b50; color:#eaf4ff; font:inherit; font-weight:800; cursor:pointer; }
+.logo-file-row { display:flex; align-items:center; justify-content:space-between; gap:8px; min-height:30px; }
+.logo-status { min-width:0; font-size:.72rem; line-height:1.3; color:#a7bdcf; overflow-wrap:anywhere; }
+.small-btn { flex:none; padding:6px 8px; font-size:.72rem; }
+.logo-note { color:#a7bdcf; font-size:.76rem; line-height:1.5; margin:10px 0 0; }
+.actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+.note { font-size:.8rem; color:var(--muted); line-height:1.5; }
+.hide { display:none!important; }
+.notice { margin:12px 0; padding:11px 13px; background:#182c3b; border:1px solid #34596b; border-radius:9px; color:#d7f7ff; font-size:.86rem; line-height:1.45; }
+.notice.error { background:#3b1d26; border-color:#793847; color:#ffdce0; }
+.notice.ok { background:#18382e; border-color:#2f7259; color:#d9fff0; }
+.winner { color:var(--green); font-weight:1000; text-align:center; text-transform:uppercase; letter-spacing:.13em; margin-top:14px; text-shadow:0 0 16px rgba(72,241,138,.22); }
+.foot { text-align:center; color:#657b90; font-size:.64rem; letter-spacing:.19em; font-weight:850; margin-top:22px; }
+.copyright-notice { margin-top:7px; color:#526679; font-size:.56rem; line-height:1.4; letter-spacing:.035em; font-weight:600; text-align:center; }
+.authrow { display:flex; gap:8px; align-items:end; flex-wrap:wrap; }
+.authrow .field { flex:1; min-width:180px; }
+.authstate { font-size:.82rem; color:var(--muted); margin-top:10px; }
+.admin-only { display:none; }
+.admin-only.show { display:block; }
+.scorecontrols.admin-only.show { display:flex; }
+.auth-panel { margin-bottom:16px; }
+.small { font-size:.75rem; color:var(--muted); }
+.board-caption { display:flex; justify-content:center; gap:9px; align-items:center; color:#72899e; font-size:.67rem; letter-spacing:.17em; font-weight:900; text-transform:uppercase; margin-top:20px; }
+.board-caption::before,.board-caption::after { content:""; height:1px; width:38px; background:#2a4055; }
+.event-hidden { display:none; }
+body.focus-mode .wrap { width:100%; max-width:none; min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:clamp(12px,2vw,32px); }
+body.focus-mode .team { padding-top:clamp(22px,5vh,50px); padding-bottom:clamp(22px,5vh,50px); }
+body.focus-mode .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7rem,22vw,16rem); }
+html:fullscreen { overflow:auto; background:#05080d; }
+html:fullscreen .wrap { width:100%; max-width:1500px; min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:clamp(12px,2vw,32px); }
+html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7rem,22vw,16rem); }
+@media (min-width:900px) {
+  .wrap { padding-top:30px; }
+  .scoreboard { gap:20px; }
+  .team { padding:30px; }
+  .points { margin:22px 0 20px; }
+  .panel { padding:22px; }
+}
+@media (max-width:620px) {
+  .wrap { padding:13px 10px 20px; }
+  .top { align-items:flex-start; gap:9px; padding-bottom:14px; }
+  .brandline { gap:8px; }
+  .brandmark { width:38px; height:38px; border-radius:10px; font-size:.9rem; }
+  .eyebrow { font-size:.56rem; letter-spacing:.13em; }
+  .brand { font-size:1.15rem; letter-spacing:.04em; }
+  .header-actions { gap:6px; }
+  .live { padding:8px 9px; font-size:.62rem; letter-spacing:.08em; }
+  .fullscreen-btn { padding:8px 9px; font-size:.62rem; letter-spacing:.03em; }
+  .fullscreen-label { display:none; }
+  .meta-row { margin:14px 2px 13px; align-items:flex-start; }
+  .meta { font-size:.84rem; }
+  .time-meta { max-width:48%; gap:3px; }
+  .current-time { font-size:.62rem; letter-spacing:.045em; }
+  .updated { font-size:.54rem; max-width:100%; letter-spacing:.015em; }
+  .scoreboard { gap:8px; }
+  .team { padding:14px 7px 14px; border-radius:11px; }
+  .team-head { gap:6px; min-height:42px; flex-direction:column; }
+  .teammark { width:30px; height:30px; border-radius:8px; font-size:.58rem; }
+  .team-info { align-items:center; width:100%; gap:5px; }
+  .teamname { width:100%; font-size:clamp(.65rem,3.2vw,.9rem); letter-spacing:.015em; line-height:1.12; text-align:center; min-height:2.25em; display:flex; align-items:center; justify-content:center; }
+      .points { min-height:clamp(100px,29vw,155px); font-size:clamp(3.65rem,16vw,6.6rem); letter-spacing:-.09em; margin:12px 0 12px; padding:0 1px; border-radius:7px; }
+  .point-alert { min-height:23px; margin:6px 0 -5px; padding:4px 4px; gap:5px; font-size:clamp(.52rem,2.55vw,.68rem); letter-spacing:.08em; border-radius:5px; }
+  .point-alert::before { width:5px; height:5px; }
+  .sets-footer { flex-direction:column; gap:5px; }
+  .setslabel { font-size:.55rem; letter-spacing:.11em; }
+  .setwins { font-size:1.5rem; }
+  .timeout-panel { margin-top:10px; padding:8px 5px; flex-wrap:wrap; justify-content:center; gap:6px; }
+  .timeout-label { font-size:.5rem; letter-spacing:.08em; }
+  .timeout-lamps { gap:4px; }
+  .timeout-lamp { width:8px; height:8px; }
+  .timeout-control { margin-top:7px; padding:8px 4px; font-size:.61rem; }
+  .setsvalue { gap:5px; }
+  .setsvalue small { font-size:.53rem; }
+  .setstrip { gap:4px; margin-top:11px; }
+  .setbox { padding:9px 1px; border-radius:6px; }
+  .setbox small { font-size:.55rem; letter-spacing:.04em; }
+  .setbox strong { font-size:clamp(.68rem,3vw,.9rem); margin-top:5px; letter-spacing:-.04em; }
+  .panel { padding:12px; margin-top:10px; }
+  .statusline { font-size:.71rem; }
+  .statusline strong { font-size:.83rem; }
+  .winner { font-size:.8rem; line-height:1.35; }
+  .board-caption { margin-top:15px; font-size:.56rem; letter-spacing:.11em; gap:6px; }
+  .board-caption::before,.board-caption::after { width:18px; }
+  .foot { margin-top:16px; font-size:.57rem; }
+  .formgrid { grid-template-columns:1fr; }
+}
+@media (max-width:360px) {
+  .wrap { padding-left:7px; padding-right:7px; }
+  .brandmark { display:none; }
+  .live { padding:7px; }
+  .team { padding-left:5px; padding-right:5px; }
+  .points { font-size:clamp(3.3rem,15.5vw,4.5rem); }
+  .teamname { font-size:.65rem; }
+}
+@media (prefers-reduced-motion:no-preference) { .dot { animation:pulse 1.8s infinite; } @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.45;} } }
+
+/* Schermata finale: vittoria, risultato complessivo e parziali dei set. */
+.match-finale-overlay {
+  position:fixed; inset:0; z-index:10020; display:flex; align-items:center; justify-content:center;
+  width:100%; min-height:100vh; min-height:100dvh; overflow-y:auto;
+  padding:max(16px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));
+  background:radial-gradient(ellipse at 50% 20%,rgba(31,89,63,.34),transparent 44%),radial-gradient(ellipse at 50% 65%,rgba(31,72,103,.45),transparent 60%),rgba(2,5,9,.96);
+  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+}
+.match-finale-card {
+  position:relative; isolation:isolate; width:min(96vw,900px); display:flex; flex-direction:column; align-items:center; gap:clamp(10px,2.2vh,18px);
+  padding:clamp(18px,3.3vw,34px); border:1px solid rgba(255,208,115,.48); border-radius:22px;
+  background:linear-gradient(150deg,rgba(17,31,43,.98),rgba(4,9,15,.98) 72%);
+  box-shadow:0 26px 90px rgba(0,0,0,.5),0 0 45px rgba(72,241,138,.09),inset 0 1px rgba(255,255,255,.07); overflow:hidden;
+}
+.match-finale-card::before { content:""; position:absolute; inset:-35%; z-index:-1; pointer-events:none; background:conic-gradient(from 0deg,transparent 0 10%,rgba(255,208,115,.055) 13%,transparent 18% 32%,rgba(72,241,138,.045) 36%,transparent 42% 63%,rgba(99,162,255,.05) 67%,transparent 73%); animation:finaleHalo 16s linear infinite; }
+.finale-event { max-width:100%; color:#a7c4d9; font-size:clamp(.62rem,1.8vw,.82rem); font-weight:950; letter-spacing:.2em; text-transform:uppercase; text-align:center; overflow-wrap:anywhere; }
+.finale-title { margin:0; color:#ffd073; font-size:clamp(2.3rem,8.5vw,5.6rem); line-height:.98; font-weight:1000; letter-spacing:.055em; text-align:center; text-shadow:0 0 10px rgba(255,208,115,.7),0 0 34px rgba(255,168,45,.32); }
+.finale-title .trophy { display:inline-block; margin-right:.16em; filter:drop-shadow(0 0 13px rgba(255,208,115,.32)); }
+.finale-subtitle { color:#d0e0ec; font-size:clamp(.68rem,2vw,.9rem); font-weight:950; letter-spacing:.24em; text-align:center; }
+.finale-winner { display:flex; flex-direction:column; align-items:center; gap:10px; max-width:100%; }
+.finale-winner-mark { position:relative; display:grid; place-items:center; width:clamp(78px,13vw,124px); height:clamp(78px,13vw,124px); flex:none; overflow:hidden; border:2px solid rgba(255,208,115,.78); border-radius:22px; background:linear-gradient(145deg,rgba(255,208,115,.22),rgba(15,23,27,.95)); color:#ffd073; font-size:clamp(1.1rem,3vw,1.7rem); font-weight:1000; box-shadow:0 0 28px rgba(255,208,115,.18),inset 0 0 20px rgba(255,208,115,.07); }
+.finale-winner-mark .team-logo { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; padding:4px; }
+.finale-winner-name { max-width:100%; color:#f6fbff; font-size:clamp(1.15rem,4.2vw,2.35rem); line-height:1.12; font-weight:1000; letter-spacing:.035em; text-align:center; text-transform:uppercase; overflow-wrap:anywhere; text-shadow:0 0 22px rgba(72,241,138,.12); }
+.finale-winner-caption { color:var(--green); font-size:.68rem; font-weight:950; letter-spacing:.2em; text-align:center; }
+.finale-result-label,.finale-sets-label { color:#8098ad; font-size:.64rem; font-weight:950; letter-spacing:.2em; text-align:center; }
+.finale-result { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:clamp(9px,2.8vw,26px); width:min(100%,650px); padding:clamp(12px,2.3vw,18px); border:1px solid #263d52; border-radius:14px; background:linear-gradient(180deg,rgba(4,10,16,.86),rgba(12,22,32,.9)); }
+.finale-result-side { display:flex; flex-direction:column; align-items:center; gap:6px; min-width:0; text-align:center; }
+.finale-result-name { width:100%; color:#c2d2df; font-size:clamp(.62rem,1.8vw,.87rem); font-weight:900; line-height:1.18; text-transform:uppercase; overflow-wrap:anywhere; }
+.finale-result-side strong { color:#e7f0f8; font-family:ui-monospace,"Roboto Mono",Consolas,monospace; font-size:clamp(2rem,6vw,3.65rem); line-height:1; font-weight:1000; font-variant-numeric:tabular-nums; }
+.finale-result-side.winner-side strong { color:var(--red); text-shadow:0 0 18px rgba(255,101,120,.28); }
+.finale-result-divider { color:#526b80; font-size:clamp(1.25rem,4vw,2rem); font-weight:800; }
+.finale-set-results { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; width:100%; }
+.finale-set-card { flex:1 1 92px; min-width:80px; max-width:145px; padding:10px 8px; border:1px solid #283c4f; border-radius:10px; background:linear-gradient(180deg,#0a121b,#05090e); text-align:center; }
+.finale-set-card small { display:block; color:#8198ad; font-size:.6rem; font-weight:950; letter-spacing:.14em; }
+.finale-set-card strong { display:block; margin-top:6px; color:#eaf2fa; font-family:ui-monospace,"Roboto Mono",Consolas,monospace; font-size:clamp(.95rem,2.7vw,1.3rem); font-variant-numeric:tabular-nums; white-space:nowrap; }
+.finale-set-card .finale-winning-score { color:var(--red); text-shadow:0 0 10px rgba(255,101,120,.2); }
+.finale-return-btn { display:inline-flex; justify-content:center; align-items:center; gap:8px; max-width:100%; margin-top:2px; padding:12px 20px; border:1px solid rgba(72,241,138,.72); border-radius:10px; background:linear-gradient(135deg,#14502f,#0d2a1b); color:#d9ffe2; font-size:.76rem; font-weight:1000; letter-spacing:.13em; cursor:pointer; box-shadow:0 0 20px rgba(72,241,138,.1),inset 0 1px rgba(255,255,255,.09); }
+.finale-return-btn:hover { background:linear-gradient(135deg,#1b7040,#104027); }
+.finale-actions { display:flex; flex-wrap:wrap; align-items:stretch; justify-content:center; gap:10px; width:min(100%,650px); margin-top:2px; }
+.finale-actions > button { flex:1 1 230px; }
+.finale-download-btn { display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:46px; max-width:100%; padding:12px 18px; border:1px solid #48f18a; border-radius:10px; background:linear-gradient(135deg,#176b3b,#104629); color:#eafff0; font-size:.76rem; font-weight:1000; letter-spacing:.09em; cursor:pointer; box-shadow:0 0 20px rgba(72,241,138,.12),inset 0 1px rgba(255,255,255,.15); }
+.finale-download-btn:hover { background:linear-gradient(135deg,#21864d,#145d36); box-shadow:0 0 28px rgba(72,241,138,.2),inset 0 1px rgba(255,255,255,.22); }
+.finale-download-btn .download-main-icon { display:block; width:22px; height:22px; flex:none; }
+.finale-download-btn:disabled { opacity:.72; cursor:wait; }
+.finale-share-btn { display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:46px; max-width:100%; padding:12px 18px; border:1px solid #43b9ff; border-radius:10px; background:linear-gradient(135deg,#176da0,#10456c); color:#f2faff; font-size:.76rem; font-weight:1000; letter-spacing:.09em; cursor:pointer; box-shadow:0 0 20px rgba(67,185,255,.12),inset 0 1px rgba(255,255,255,.15); }
+.finale-share-btn:hover { background:linear-gradient(135deg,#2189bd,#145d8c); box-shadow:0 0 28px rgba(67,185,255,.2),inset 0 1px rgba(255,255,255,.22); }
+.finale-share-btn .share-main-icon { display:block; width:22px; height:22px; flex:none; }
+.finale-share-btn:disabled { opacity:.72; cursor:wait; }
+.finale-share-status { width:min(100%,650px); min-height:0; margin:0; color:#b9d3e9; text-align:center; font-size:.78rem; line-height:1.45; }
+.finale-share-status:empty { display:none; }
+/* Dialoghi per scelta download/condivisione e menu destinazioni su PC, ispirati al pannello Condividi di Windows. */
+.share-choice-overlay { position:fixed; inset:0; z-index:10060; display:flex; align-items:center; justify-content:center; padding:18px; background:rgba(0,0,0,.55); -webkit-backdrop-filter:blur(5px); backdrop-filter:blur(5px); }
+.share-choice-card { width:min(100%,720px); max-height:min(92vh,820px); overflow:auto; display:flex; flex-direction:column; gap:14px; padding:clamp(20px,3vw,30px); border:1px solid #d0d0d0; border-radius:17px; background:#f7f7f7; color:#171717; box-shadow:0 24px 80px rgba(0,0,0,.45); font-family:"Segoe UI",system-ui,sans-serif; }
+.share-choice-title { margin:0; color:#202020; font-size:clamp(1.15rem,3vw,1.45rem); font-weight:650; letter-spacing:0; text-align:left; }
+.share-choice-intro { margin:0; color:#565656; font-size:.92rem; line-height:1.5; text-align:left; }
+.share-action-buttons { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.share-action-button { display:flex; align-items:center; gap:12px; min-height:78px; padding:14px; border:1px solid #d5d5d5; border-radius:12px; background:#fff; color:#1a1a1a; text-align:left; cursor:pointer; }
+.share-action-button:hover { background:#eef6fc; border-color:#91bde0; }
+.share-action-button .share-action-icon { display:grid; place-items:center; width:42px; height:42px; flex:none; border-radius:10px; background:#e5f2fc; color:#176ca5; }
+.share-action-button strong { display:block; font-size:.91rem; font-weight:700; }
+.share-action-button small { display:block; margin-top:3px; color:#666; font-size:.75rem; line-height:1.35; }
+.share-choice-cancel { align-self:flex-end; padding:9px 18px; border:1px solid #c7c7c7; border-radius:8px; background:#fff; color:#242424; font-size:.82rem; font-weight:650; cursor:pointer; }
+.share-choice-cancel:hover { background:#ededed; }
+.share-choice-note { margin:0; min-height:0; color:#565656; font-size:.77rem; line-height:1.45; }
+.desktop-share-choice-card { width:min(100%,790px); gap:15px; }
+.desktop-share-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.desktop-share-heading h2 { margin:0; color:#202020; font-size:1.18rem; font-weight:650; }
+.desktop-share-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+.desktop-share-choice-option { display:flex; min-width:0; min-height:116px; flex-direction:column; align-items:center; justify-content:center; gap:9px; padding:13px 8px; border:1px solid transparent; border-radius:10px; background:transparent; color:#202020; text-align:center; cursor:pointer; }
+.desktop-share-choice-option:hover { border-color:#d4d4d4; background:#fff; }
+.desktop-share-choice-option .choice-app-icon { display:grid; place-items:center; width:48px; height:48px; border-radius:13px; background:#e9e9e9; color:#363636; flex:none; }
+.desktop-share-choice-option .choice-app-icon svg { width:29px; height:29px; display:block; }
+.desktop-share-choice-option .choice-app-icon.whatsapp { background:#25d366; color:#fff; }
+.desktop-share-choice-option .choice-app-icon.facebook { background:#1877f2; color:#fff; border-radius:50%; }
+.desktop-share-choice-option .choice-app-icon.instagram { color:#fff; background:linear-gradient(135deg,#7655d6,#df3478 55%,#ffb347); }
+.desktop-share-choice-option .choice-app-icon.mail { background:#e6f0ff; color:#236dbb; }
+.desktop-share-choice-option .choice-app-icon.copy { background:#e9e9e9; color:#3d4a57; }
+.desktop-share-choice-option strong { display:block; font-size:.88rem; line-height:1.25; font-weight:650; overflow-wrap:anywhere; }
+.desktop-share-choice-option small { display:block; margin-top:3px; color:#6b6b6b; font-size:.68rem; line-height:1.35; font-weight:400; }
+@media (max-width:520px) { .share-choice-overlay { padding:10px; } .share-choice-card { gap:12px; padding:17px 14px; border-radius:14px; } .share-action-buttons { grid-template-columns:1fr; } .desktop-share-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px; } .desktop-share-choice-option { min-height:100px; padding:10px 5px; } }
+@media (prefers-reduced-motion:reduce) { .share-choice-card,.share-action-button,.desktop-share-choice-option { transition:none!important; } }
+@keyframes finaleCardIn { 0% { opacity:0; transform:translateY(28px) scale(.9); filter:blur(6px); } 70% { opacity:1; transform:translateY(-3px) scale(1.015); filter:blur(0); } 100% { opacity:1; transform:translateY(0) scale(1); filter:blur(0); } }
+@keyframes finaleHalo { to { transform:rotate(360deg); } }
+@media (prefers-reduced-motion:no-preference) { .match-finale-overlay:not(.hide) .match-finale-card { animation:finaleCardIn .8s cubic-bezier(.18,.8,.22,1) both; } .match-finale-overlay:not(.hide) .finale-title { animation:finaleTitlePulse 1.8s ease-in-out .75s 2; } @keyframes finaleTitlePulse { 0%,100% { text-shadow:0 0 10px rgba(255,208,115,.65),0 0 28px rgba(255,168,45,.28); } 50% { text-shadow:0 0 16px rgba(255,208,115,.95),0 0 48px rgba(255,168,45,.48); } } }
+@media (max-width:520px) { .match-finale-card { border-radius:17px; padding:16px 12px; gap:10px; } .finale-result { gap:8px; padding:11px 7px; } .finale-set-results { gap:6px; } .finale-set-card { min-width:calc(33.333% - 6px); padding:9px 4px; } .finale-winner-mark { border-radius:16px; } .finale-return-btn { width:100%; } .finale-actions > button { flex-basis:100%; width:100%; } }
+@media (max-height:690px) { .match-finale-overlay { align-items:flex-start; } .match-finale-card { gap:8px; padding-top:12px; padding-bottom:12px; } .finale-winner-mark { width:60px; height:60px; border-radius:13px; } .finale-title { font-size:clamp(2rem,6vh,3.5rem); } .finale-winner { gap:5px; } .finale-set-card { padding:7px 5px; } }
+@media (prefers-reduced-motion:reduce) { .match-finale-card::before { animation:none; } .match-finale-overlay:not(.hide) .match-finale-card,.match-finale-overlay:not(.hide) .finale-title { animation:none; } }
+
+</style><!-- Volley Live v10.8: indicatore connessione Realtime Database aggiornato in modo affidabile. -->
+</head>
+<body><div class="wrap">
+<header class="top"><div class="brandline"><div class="brandmark" aria-hidden="true">VL</div><div><div class="eyebrow">VOLLEY • LIVE SCORE</div><div class="brand">VOLLEY <span>LIVE</span></div></div></div><div class="header-actions"><div class="live state-connecting" id="liveBadge" role="status" aria-live="polite" aria-atomic="true"><span class="dot" aria-hidden="true"></span>CONNESSIONE…</div><button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="Attiva o disattiva schermo intero"><span class="fullscreen-icon" aria-hidden="true">⛶</span><span class="fullscreen-label">SCHERMO INTERO</span></button></div></header>
+<div class="meta-row"><p class="meta" id="matchMeta">PUNTEGGIO IN DIRETTA</p><div class="time-meta"><span class="current-time" id="currentTime">ORA --:--:--</span><span class="updated" id="updatedLabel">Connessione in corso…</span></div></div>
+<div id="notice" class="notice hide">Connessione a Firebase in corso…</div>
+<section class="panel auth-panel hide" id="authPanel"><h2>Accesso amministratore</h2><div class="authrow" id="authRow"><label class="field">Email<input id="emailInput" type="email" autocomplete="username" placeholder="Email amministratore"></label><label class="field">Password<input id="passwordInput" type="password" autocomplete="current-password" placeholder="Password" /></label><button class="btn primary" id="loginBtn" type="button">Accedi</button></div><div class="authstate" id="authState">Gli spettatori possono consultare il tabellone senza accedere.</div><div class="actions"><button class="btn hide" id="logoutBtn">Esci</button><button class="btn copy-public-btn hide" id="copyPublicBtn" type="button" aria-label="Copia link spettatori">
+<svg class="copy-public-icon copy-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/></svg>
+<svg class="copy-public-icon success-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m7.8 12.2 2.7 2.7 5.8-6"/></svg>
+<span class="copy-public-label" aria-live="polite">Copia link spettatori</span></button><button class="btn whatsapp-btn hide" id="whatsappBtn" type="button" aria-label="Condividi su WhatsApp"><svg class="whatsapp-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.874 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.693.626.711.226 1.358.194 1.87.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.999-3.648-.235-.374a9.822 9.822 0 0 1-1.5-5.25c.002-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.874-9.896 9.874m8.413-18.29A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.893c0 2.096.547 4.142 1.588 5.946L.057 24l6.305-1.654a11.882 11.882 0 0 1 5.684 1.448h.005c6.566 0 11.902-5.334 11.905-11.893a11.82 11.82 0 0 0-3.471-8.411z"/></svg><span>Condividi su WhatsApp</span></button></div><p class="small">Non inserire la password in link o file. L'accesso ai comandi è verificato da Firebase Authentication e dalle regole del database.</p></section>
+<main><div class="scoreboard">
+<section class="team home" id="homeTeam"><div class="team-head"><div class="teammark" id="homeBadge" aria-hidden="true"><span id="homeBadgeInitials">CAS</span><img id="homeLogoImg" class="team-logo hide" alt=""></div><div class="team-info"><div class="teamname" id="homeName">SQUADRA DI CASA</div></div></div><div class="point-alert" id="homePointAlert" aria-live="polite"></div><div class="points" id="homeScore">0</div><div class="sets-footer"><div class="setslabel">SET VINTI</div><div class="setsvalue"><div class="setwins" id="homeSets">0</div><small>SET</small></div></div><div class="timeout-panel" aria-label="Time-out squadra di casa"><span class="timeout-label">TIME-OUT</span><div class="timeout-lamps" id="homeTimeoutLamps" aria-hidden="true"><span class="timeout-lamp available"></span><span class="timeout-lamp available"></span></div></div><div class="scorecontrols admin-only"><button class="btn timeout-control" id="homeTimeoutBtn" type="button">+ TIME-OUT CASA</button></div><div class="scorecontrols admin-only" id="homeControls"><button class="btn plus" id="homePlus">+1 PUNTO</button></div></section>
+<section class="team away" id="awayTeam"><div class="team-head"><div class="teammark" id="awayBadge" aria-hidden="true"><span id="awayBadgeInitials">OSP</span><img id="awayLogoImg" class="team-logo hide" alt=""></div><div class="team-info"><div class="teamname" id="awayName">SQUADRA OSPITE</div></div></div><div class="point-alert" id="awayPointAlert" aria-live="polite"></div><div class="points" id="awayScore">0</div><div class="sets-footer"><div class="setslabel">SET VINTI</div><div class="setsvalue"><div class="setwins" id="awaySets">0</div><small>SET</small></div></div><div class="timeout-panel" aria-label="Time-out squadra ospite"><span class="timeout-label">TIME-OUT</span><div class="timeout-lamps" id="awayTimeoutLamps" aria-hidden="true"><span class="timeout-lamp available"></span><span class="timeout-lamp available"></span></div></div><div class="scorecontrols admin-only"><button class="btn timeout-control" id="awayTimeoutBtn" type="button">+ TIME-OUT OSPITE</button></div><div class="scorecontrols admin-only" id="awayControls"><button class="btn orange" id="awayPlus">+1 PUNTO</button></div></section></div>
+<section class="panel"><div class="statusline"><strong id="setTitle">1° SET</strong><span id="setStatus">Partita in corso</span></div><div class="setstrip" id="setStrip"></div><div class="winner" id="winner"></div></section>
+<section class="panel admin-only" id="managePanel"><h2>Gestione partita</h2><div class="formgrid"><label class="field">Squadra di casa<input id="homeInput" maxlength="50" value="SQUADRA DI CASA"></label><label class="field">Squadra ospite<input id="awayInput" maxlength="50" value="SQUADRA OSPITE"></label><label class="field">Torneo / categoria<input id="eventInput" maxlength="80" placeholder="Es. Campionato U14"></label><label class="field">Formato partita<select id="formatInput"><option value="3">Al meglio dei 3 set (2 vinti)</option><option value="5" selected>Al meglio dei 5 set (3 vinti)</option></select></label><div class="field logo-field"><label for="homeLogoFile">Logo squadra di casa</label><input id="homeLogoFile" class="file-input" type="file" accept="image/png,image/jpeg,image/webp"><div class="logo-file-row"><span class="logo-status" id="homeLogoStatus">Nessun logo caricato.</span><button class="btn small-btn" id="clearHomeLogo" type="button">Rimuovi</button></div></div><div class="field logo-field"><label for="awayLogoFile">Logo squadra ospite</label><input id="awayLogoFile" class="file-input" type="file" accept="image/png,image/jpeg,image/webp"><div class="logo-file-row"><span class="logo-status" id="awayLogoStatus">Nessun logo caricato.</span><button class="btn small-btn" id="clearAwayLogo" type="button">Rimuovi</button></div></div></div><div class="service-admin"><h3>Squadra al servizio</h3><p class="note">Seleziona chi serve all’inizio del set: il riquadro del suo punteggio si ingrandisce e si illumina. Quando assegni un punto, l’evidenziazione segue la squadra che ha conquistato il punto. All’inizio del set successivo seleziona chi serve per primo.</p><div class="actions"><button class="btn" id="serveHomeBtn" type="button">● Servizio: casa</button><button class="btn" id="serveAwayBtn" type="button">● Servizio: ospite</button><button class="btn" id="serveNoneBtn" type="button">Nessuna selezione</button></div><div class="authstate" id="servingAdminState">Servizio non indicato.</div></div><div class="actions"><button class="btn primary" id="saveNames">Salva intestazione</button><button class="btn" id="undoBtn">↶ Annulla ultima azione</button><button class="btn" id="nextSetBtn">Conferma / prossimo set</button><button class="btn danger" id="resetBtn">Azzera partita</button></div><p class="logo-note">Scegli un logo in formato PNG, JPG o WebP dal dispositivo. L’immagine viene ridimensionata e salvata nel database per mostrarla a tutti gli spettatori. Dopo aver scelto o rimosso un logo, premi “Salva intestazione”.</p><p class="note">Regole: set normali a 25 punti e almeno 2 di vantaggio; il set decisivo (3° in best-of-3, 5° in best-of-5) si gioca a 15 punti e almeno 2 di vantaggio. Il conteggio dei time-out è preimpostato a 2 per squadra per set e si azzera al set successivo. Il set si registra automaticamente al raggiungimento della soglia. Dopo un set vinto premi “Conferma / prossimo set”.</p></section>
+<span id="eventLabel" class="event-hidden">Campionato / amichevole</span></main><div class="board-caption">Aggiornamento punteggio in tempo reale</div><div class="foot">VOLLEY LIVE • MATCH CENTER</div><div class="copyright-notice">© 2026 Fabio Marsico · Volley Live. Tutti i diritti riservati, nei limiti consentiti dalla legge.</div></div><div id="spectatorPrompt" class="spectator-prompt hide" aria-label="Anteprima della partita e avvio del tabellone"><span class="spectator-prompt-copy"><span class="spectator-prompt-kicker">VOLLEY • LIVE SCORE</span></span><span class="spectator-preview" aria-label="Anteprima in tempo reale del tabellone"><span class="spectator-preview-heading"><span class="spectator-preview-caption">ANTEPRIMA DELLA PARTITA</span><span class="spectator-preview-event" id="spectatorEvent">CAMPIONATO / AMICHEVOLE</span></span><span class="spectator-preview-teams"><span class="spectator-preview-team home-preview"><span class="spectator-preview-mark"><span class="spectator-preview-initials" id="spectatorHomeInitials">CAS</span><img id="spectatorHomeLogo" class="team-logo hide" alt=""></span><span class="spectator-preview-name" id="spectatorHomeName">SQUADRA DI CASA</span></span><span class="spectator-preview-vs" aria-hidden="true">VS</span><span class="spectator-preview-team away-preview"><span class="spectator-preview-mark"><span class="spectator-preview-initials" id="spectatorAwayInitials">OSP</span><img id="spectatorAwayLogo" class="team-logo hide" alt=""></span><span class="spectator-preview-name" id="spectatorAwayName">SQUADRA OSPITE</span></span></span><span class="spectator-preview-footer">CAMPIONATO E SQUADRE • PRONTO PER LA PARTITA</span></span><button id="spectatorStartButton" class="spectator-prompt-arrow" type="button">AVVIA TABELLONE&nbsp; ↗</button></div>
+<div id="matchFinaleOverlay" class="match-finale-overlay hide" role="dialog" aria-modal="true" aria-labelledby="finaleTitle" aria-describedby="finaleWinnerName">
+  <section class="match-finale-card">
+    <div class="finale-event" id="finaleEvent">VOLLEY • LIVE SCORE</div>
+    <h1 class="finale-title" id="finaleTitle"><span class="trophy" aria-hidden="true">🏆</span>VITTORIA!</h1>
+    <div class="finale-subtitle">PARTITA CONCLUSA</div>
+    <div class="finale-winner">
+      <div class="finale-winner-mark" id="finaleWinnerBadge" aria-hidden="true"><span id="finaleWinnerInitials">CAS</span><img id="finaleWinnerLogo" class="team-logo hide" alt=""></div>
+      <div class="finale-winner-name" id="finaleWinnerName">SQUADRA VINCITRICE</div>
+      <div class="finale-winner-caption">VINCITRICE DELLA PARTITA</div>
+    </div>
+    <div class="finale-result-label">RISULTATO FINALE</div>
+    <div class="finale-result" aria-label="Risultato finale della partita">
+      <div class="finale-result-side" id="finaleHomeSide"><span class="finale-result-name" id="finaleHomeName">SQUADRA DI CASA</span><strong id="finaleHomeSets">0</strong></div>
+      <span class="finale-result-divider" aria-hidden="true">–</span>
+      <div class="finale-result-side" id="finaleAwaySide"><span class="finale-result-name" id="finaleAwayName">SQUADRA OSPITE</span><strong id="finaleAwaySets">0</strong></div>
+    </div>
+    <div class="finale-sets-label">PARZIALI DI TUTTI I SET</div>
+    <div class="finale-set-results" id="finaleSetResults" aria-label="Parziali dei set"></div>
+    <div class="finale-actions">
+      <button type="button" id="finaleDownloadBtn" class="finale-download-btn hide" aria-label="Scarica l’immagine del risultato finale">
+        <svg class="download-main-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11m-5-4 5 5 5-5"/><path d="M4 17v3h16v-3"/></svg>
+        <span>SCARICA IMMAGINE</span>
+      </button>
+      <button type="button" id="finaleShareBtn" class="finale-share-btn hide" aria-label="Scarica o condividi immagine del risultato finale">
+        <svg class="share-main-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.7 10.7 6.6-4.4M8.7 13.3l6.6 4.4"/></svg>
+        <span>SCARICA / CONDIVIDI IMMAGINE</span>
+      </button>
+      <button type="button" id="finaleCloseButton" class="finale-return-btn">TORNA AL TABELLONE</button>
+    </div>
+    <p id="finaleShareStatus" class="finale-share-status" role="status" aria-live="polite"></p>
+  </section>
+</div>
+<div id="shareActionChoice" class="share-choice-overlay hide" role="dialog" aria-modal="true" aria-labelledby="shareActionChoiceTitle" aria-describedby="shareActionChoiceIntro">
+  <section class="share-choice-card">
+    <h2 class="share-choice-title" id="shareActionChoiceTitle">IMMAGINE DEL RISULTATO FINALE</h2>
+    <p class="share-choice-intro" id="shareActionChoiceIntro">Vuoi scaricare soltanto l’immagine oppure condividerla?</p>
+    <div class="share-action-buttons">
+      <button type="button" id="downloadImageOnlyBtn" class="share-action-button">
+        <span class="share-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-5-5 5 5 5-5"/><path d="M4 16v4h16v-4"/></svg></span>
+        <span><strong>Scarica solo immagine</strong><small>Salva il PNG sul dispositivo senza aprire app di condivisione.</small></span>
+      </button>
+      <button type="button" id="shareImageChoiceBtn" class="share-action-button">
+        <span class="share-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.7 10.7 6.6-4.4M8.7 13.3l6.6 4.4"/></svg></span>
+        <span><strong>Condividi immagine</strong><small>Su telefono/tablet usa il menu del dispositivo; su PC scegli una destinazione.</small></span>
+      </button>
+    </div>
+    <button type="button" id="shareActionCancelBtn" class="share-choice-cancel">Annulla</button>
+  </section>
+</div>
+<div id="desktopShareChoice" class="share-choice-overlay hide" role="dialog" aria-modal="true" aria-labelledby="desktopShareChoiceTitle" aria-describedby="desktopShareChoiceIntro">
+  <section class="share-choice-card desktop-share-choice-card">
+    <div class="desktop-share-heading"><h2 id="desktopShareChoiceTitle">Condividi</h2></div>
+    <p class="share-choice-intro" id="desktopShareChoiceIntro">Condividi usando</p>
+    <div class="desktop-share-grid">
+      <button type="button" id="shareWhatsAppWebBtn" class="desktop-share-choice-option">
+        <span class="choice-app-icon whatsapp" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.76-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.874 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.693.626.711.226 1.358.194 1.87.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.999-3.648-.235-.374a9.822 9.822 0 0 1-1.5-5.25c.002-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.874-9.896 9.874m8.413-18.29A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.893c0 2.096.547 4.142 1.588 5.946L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.684 1.448h.005c6.566 0 11.902-5.334 11.905-11.893a11.82 11.82 0 0 0-3.471-8.411z"/></svg></span>
+        <span><strong>WhatsApp Web</strong><small>Apri nel browser</small></span>
+      </button>
+      <button type="button" id="shareWhatsAppAppBtn" class="desktop-share-choice-option">
+        <span class="choice-app-icon whatsapp" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.76-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.874 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.693.626.711.226 1.358.194 1.87.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.999-3.648-.235-.374a9.822 9.822 0 0 1-1.5-5.25c.002-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.874-9.896 9.874m8.413-18.29A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.893c0 2.096.547 4.142 1.588 5.946L.057 24l6.305-1.654a11.882 11.882 0 0 1 5.684 1.448h.005c6.566 0 11.902-5.334 11.905-11.893a11.82 11.82 0 0 0-3.471-8.411z"/></svg></span>
+        <span><strong>WhatsApp app</strong><small>Apri l’app installata</small></span>
+      </button>
+      <button type="button" id="shareCopyImageBtn" class="desktop-share-choice-option">
+        <span class="choice-app-icon copy" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/></svg></span>
+        <span><strong>Copia</strong><small>Copia immagine</small></span>
+      </button>
+      <button type="button" id="shareFacebookBtn" class="desktop-share-choice-option">
+        <span class="choice-app-icon facebook" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M13.6 21v-8h2.7l.4-3.1h-3.1V8c0-.9.3-1.5 1.6-1.5h1.7V3.7c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5v1.8H7v3.1h2.9v8z"/></svg></span>
+        <span><strong>Facebook</strong><small>Apri Facebook</small></span>
+      </button>
+      <button type="button" id="shareInstagramBtn" class="desktop-share-choice-option">
+        <span class="choice-app-icon instagram" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.7" cy="6.5" r=".8" fill="currentColor" stroke="none"/></svg></span>
+        <span><strong>Instagram</strong><small>Apri Instagram</small></span>
+      </button>
+      <button type="button" id="shareMailBtn" class="desktop-share-choice-option">
+        <span class="choice-app-icon mail" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></span>
+        <span><strong>Mail</strong><small>Prepara un’email</small></span>
+      </button>
+    </div>
+    <p class="share-choice-note" id="desktopShareChoiceNote" role="status" aria-live="polite">Per WhatsApp, Facebook, Instagram e Mail, se necessario, allega manualmente il PNG scaricato.</p>
+    <button type="button" id="shareChoiceCancelBtn" class="share-choice-cancel">Annulla</button>
+  </section>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js';
+import { getDatabase, ref, onValue, get, set } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js';
+
+// Configurazione della tua app Web Firebase (non contiene password o chiavi private).
+const firebaseConfig = {
+  apiKey: 'AIzaSyCAPi35u8hPcirAIQdhHgLRxjsY7byMrZs',
+  authDomain: 'tabellone-punteggio.firebaseapp.com',
+  databaseURL: 'https://tabellone-punteggio-default-rtdb.europe-west1.firebasedatabase.app',
+  projectId: 'tabellone-punteggio',
+  storageBucket: 'tabellone-punteggio.firebasestorage.app',
+  messagingSenderId: '41970692328',
+  appId: '1:41970692328:web:040220a34f01ce322b195d',
+  measurementId: 'G-RSQBRQELRG'
+};
+const ADMIN_UID = '0OX3K0LBPsRVIffqdAfg23qgr0N2';
+const $ = id => document.getElementById(id);
+const blank = () => ({homeName:'SQUADRA DI CASA',awayName:'SQUADRA OSPITE',homeLogo:'',awayLogo:'',event:'',format:5,setIndex:0,homeScore:0,awayScore:0,homeSets:0,awaySets:0,homeTimeouts:0,awayTimeouts:0,sets:[],serving:'none',finished:false,updatedAt:null,history:[]});
+const ADMIN_MODE = new URLSearchParams(location.search).get('admin') === '1';
+const SPECTATOR_VIEW = !ADMIN_MODE;
+let state=blank(), app, auth, db, currentUser=null, isAdmin=false, remoteReady=false, remoteReadError=false, firebaseConnectionKnown=false, firebaseConnected=false, pending=false, history=[];
+let spectatorStarted=false, finaleDismissed=false;
+// Logo selezionati nel pannello admin: undefined = invariato, stringa = nuovo data URL, '' = rimuovere.
+let logoDraft={home:undefined,away:undefined};
+const HISTORY_HOME_LOGO='__VOLLEY_HOME_LOGO_SAVED__';
+const HISTORY_AWAY_LOGO='__VOLLEY_AWAY_LOGO_SAVED__';
+const configReady = !!firebaseConfig.apiKey && !!firebaseConfig.authDomain && !!firebaseConfig.projectId && !!firebaseConfig.appId && firebaseConfig.projectId==='tabellone-punteggio' && firebaseConfig.databaseURL==='https://tabellone-punteggio-default-rtdb.europe-west1.firebasedatabase.app';
+function notice(message,type=''){const el=$('notice');el.textContent=message;el.className='notice'+(type?' '+type:'');el.classList.toggle('hide',!ADMIN_MODE&&type!=='error');}
+function updateConnectionBadge(){
+ const badge=$('liveBadge');if(!badge)return;
+ let status='connecting',label='CONNESSIONE…',accessible='Connessione al server in verifica';
+ if(firebaseConnectionKnown&&!firebaseConnected){status='disconnected';label='OFFLINE';accessible='Connessione al server assente. Il punteggio potrebbe non essere aggiornato.';}
+ else if(firebaseConnected&&remoteReadError){status='disconnected';label='ERRORE LETTURA';accessible='Connessione al server presente ma lettura del tabellone non riuscita';}
+ else if(firebaseConnected&&!remoteReady){status='connecting';label='COLLEGATO…';accessible='Connessione presente, sincronizzazione iniziale in corso';}
+ else if(firebaseConnected&&remoteReady&&state.finished){status='finale';label='FINALE';accessible='Partita conclusa, connessione attiva';}
+ else if(firebaseConnected&&remoteReady){status='connected';label='LIVE';accessible='Connessione al tabellone attiva in tempo reale';}
+ badge.classList.remove('state-connected','state-disconnected','state-connecting','state-finale');badge.classList.add('state-'+status);
+ badge.replaceChildren();const dot=document.createElement('span');dot.className='dot';dot.setAttribute('aria-hidden','true');badge.append(dot,document.createTextNode(label));badge.setAttribute('aria-label',accessible);
+}
+function updateCurrentTime(){const clock=$('currentTime');if(!clock)return;clock.textContent='ORA '+new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+updateCurrentTime();setInterval(updateCurrentTime,1000);
+function target(){return state.setIndex===state.format-1?15:25;}
+function winnerSide(){if(state.homeSets>=Math.ceil(state.format/2))return 'home';if(state.awaySets>=Math.ceil(state.format/2))return 'away';return null;}
+function canWin(a,b,limit){return a>=limit&&a-b>=2;}
+function recordSet(side){state.sets[state.setIndex]={home:state.homeScore,away:state.awayScore};if(side==='home')state.homeSets++;else state.awaySets++;state.finished=!!winnerSide();}
+function cleanState(s){const d=blank();if(!s||typeof s!=='object')return d;return {...d,...s,format:Number(s.format)===3?3:5,setIndex:Math.max(0,Math.min(4,Number(s.setIndex)||0)),homeScore:Math.max(0,Number(s.homeScore)||0),awayScore:Math.max(0,Number(s.awayScore)||0),homeSets:Math.max(0,Number(s.homeSets)||0),awaySets:Math.max(0,Number(s.awaySets)||0),homeTimeouts:Math.max(0,Math.min(2,Number(s.homeTimeouts)||0)),awayTimeouts:Math.max(0,Math.min(2,Number(s.awayTimeouts)||0)),serving:s.serving==='home'||s.serving==='away'?s.serving:'none',sets:Array.isArray(s.sets)?s.sets.slice(0,5):[],history:[]};}
+function initials(name,fallback){const words=String(name||'').trim().split(/\s+/).filter(Boolean);if(!words.length)return fallback;const letters=words.length===1?words[0].slice(0,3):words.slice(0,3).map(w=>w[0]).join('');return letters.normalize('NFD').replace(/[\u0300-\u036f]/g,'').slice(0,3).toUpperCase();}
+function renderBadge(imgId,initialsId,url,label){const img=$(imgId),fallback=$(initialsId);fallback.textContent=label;let safe='';const candidate=String(url||'');if(/^data:image\/(?:png|jpeg|webp);base64,/i.test(candidate)){safe=candidate;}else{try{const parsed=new URL(candidate);if(parsed.protocol==='https:'||parsed.protocol==='http:')safe=parsed.href;}catch{}}if(!safe){img.removeAttribute('src');img.dataset.src='';img.classList.add('hide');fallback.classList.remove('hide');return;}if(img.dataset.src===safe&&img.classList.contains('loaded-logo'))return;img.dataset.src=safe;img.onload=()=>{img.classList.remove('hide');img.classList.add('loaded-logo');fallback.classList.add('hide');};img.onerror=()=>{img.classList.add('hide');img.classList.remove('loaded-logo');fallback.classList.remove('hide');};img.classList.add('hide');fallback.classList.remove('hide');img.src=safe;}
+function isEmbeddedLogo(value){return typeof value==='string'&&/^data:image\/(?:png|jpeg|webp);base64,/i.test(value);}
+// Le copie storiche non devono ripetere il contenuto base64 dei loghi ad ogni punto: questo mantiene leggera la cronologia.
+function historySnapshot(source){const snap=JSON.parse(JSON.stringify(source));if(isEmbeddedLogo(snap.homeLogo))snap.homeLogo=HISTORY_HOME_LOGO;if(isEmbeddedLogo(snap.awayLogo))snap.awayLogo=HISTORY_AWAY_LOGO;return snap;}
+function restoreHistorySnapshot(snapshot){const restored=JSON.parse(JSON.stringify(snapshot));if(restored.homeLogo===HISTORY_HOME_LOGO)restored.homeLogo=state.homeLogo||'';if(restored.awayLogo===HISTORY_AWAY_LOGO)restored.awayLogo=state.awayLogo||'';return restored;}
+function logoStatus(side){const input=$(side+'LogoFile'),status=$(side+'LogoStatus');if(!status)return;const draft=logoDraft[side],current=state[side+'Logo']||'';if(draft!==undefined){status.textContent=draft?'Nuovo logo selezionato: salva intestazione.':'Il logo verrà rimosso al salvataggio.';}else if(current){status.textContent=isEmbeddedLogo(current)?'Logo caricato e visibile agli spettatori.':'Logo collegato tramite indirizzo web.';}else{status.textContent='Nessun logo caricato.';}}
+function updateLogoStatuses(){logoStatus('home');logoStatus('away');}
+function readFileDataUrl(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||''));reader.onerror=()=>reject(new Error('Non riesco a leggere il file selezionato.'));reader.readAsDataURL(file);});}
+async function compressLogoFile(file){if(!file)throw new Error('Seleziona prima un file immagine.');if(!['image/png','image/jpeg','image/webp'].includes(file.type))throw new Error('Formato non supportato. Scegli un file PNG, JPG o WebP.');if(file.size>8*1024*1024)throw new Error('Il file supera 8 MB. Scegli un’immagine più leggera.');const source=await readFileDataUrl(file);const image=await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('Il file non sembra contenere un’immagine valida.'));img.src=source;});let maxSide=320;function encode(limit,quality){const scale=Math.min(1,limit/Math.max(image.naturalWidth,image.naturalHeight));const w=Math.max(1,Math.round(image.naturalWidth*scale)),h=Math.max(1,Math.round(image.naturalHeight*scale));const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Il browser non riesce a elaborare l’immagine.');ctx.clearRect(0,0,w,h);ctx.drawImage(image,0,0,w,h);let data=canvas.toDataURL('image/webp',quality);if(!data.startsWith('data:image/webp;'))data=canvas.toDataURL('image/png');return data;}let result=encode(maxSide,.82);if(result.length>360000){maxSide=220;result=encode(maxSide,.72);}if(result.length>420000)throw new Error('Il logo è ancora troppo pesante dopo la compressione. Prova un’immagine più semplice o più piccola.');return result;}
+async function chooseLogo(side){const input=$(side+'LogoFile'),file=input.files&&input.files[0];if(!file)return;logoStatus(side);try{notice('Elaborazione del logo in corso…','ok');const data=await compressLogoFile(file);logoDraft[side]=data;render();updateLogoStatuses();notice('Logo pronto. Premi “Salva intestazione” per renderlo visibile a tutti.','ok');}catch(e){input.value='';logoDraft[side]=undefined;updateLogoStatuses();notice(e.message||'Impossibile caricare il logo.','error');}}
+
+function pointAlertFor(side){
+ if(state.finished||state.sets[state.setIndex])return null;
+ const score=side==='home'?state.homeScore:state.awayScore;
+ const opponent=side==='home'?state.awayScore:state.homeScore;
+ const setsWon=side==='home'?state.homeSets:state.awaySets;
+ // Un punto può chiudere il set solo se il punteggio è già almeno target-1 e la squadra è in vantaggio.
+ if(score < target()-1 || score <= opponent)return null;
+ const setsToWin=Math.ceil(state.format/2);
+ return {label:setsWon>=setsToWin-1?'MATCH POINT':'SET POINT',kind:setsWon>=setsToWin-1?'match-point':'set-point'};
+}
+let pointAlertsInitialized=false;
+const lastPointAlertSignature={home:null,away:null};
+let pointFlyover=null;
+function stopPointFlyover(){
+ const flyover=pointFlyover;if(!flyover)return;
+ pointFlyover=null;
+ flyover.target.classList.remove('arriving');
+ try{flyover.bannerAnimation&&flyover.bannerAnimation.cancel();}catch{}
+ try{flyover.stageAnimation&&flyover.stageAnimation.cancel();}catch{}
+ flyover.stage.remove();
+}
+function animatePointAlert(targetEl,alert,side,signature){
+ if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ if(pointFlyover)stopPointFlyover();
+ const rect=targetEl.getBoundingClientRect();
+ if(!rect.width||!rect.height)return;
+ targetEl.classList.add('arriving');
+ const stage=document.createElement('div');stage.className='point-alert-arrival-stage';stage.setAttribute('aria-hidden','true');
+ const banner=document.createElement('div');banner.className=`point-alert-flight ${side} ${alert.kind}`;banner.textContent=alert.label;
+ stage.appendChild(banner);document.body.appendChild(stage);
+ const vw=window.innerWidth||document.documentElement.clientWidth||360;
+ const vh=window.innerHeight||document.documentElement.clientHeight||640;
+ const startWidth=Math.max(240,Math.min(vw*.94,1080));
+ const startHeight=Math.min(190,Math.max(108,vh*.23));
+ const startFont=Math.min(108,Math.max(vw<360?27:36,vw*.095));
+ const startLeft=(vw-startWidth)/2, startTop=(vh-startHeight)/2;
+ Object.assign(banner.style,{left:`${startLeft}px`,top:`${startTop}px`,width:`${startWidth}px`,height:`${startHeight}px`,fontSize:`${startFont}px`,padding:vw<480?'16px 8px':'22px 30px',borderRadius:'16px',transformOrigin:'center',opacity:'1'});
+ const targetStyle=getComputedStyle(targetEl);
+ const baseFrame={left:`${startLeft}px`,top:`${startTop}px`,width:`${startWidth}px`,height:`${startHeight}px`,fontSize:`${startFont}px`,padding:vw<480?'16px 8px':'22px 30px',borderRadius:'16px',borderWidth:'2px',opacity:1,transform:'scale(1)',filter:'brightness(1)'};
+ const destination={left:`${rect.left}px`,top:`${rect.top}px`,width:`${rect.width}px`,height:`${rect.height}px`,fontSize:targetStyle.fontSize,padding:targetStyle.padding,borderRadius:targetStyle.borderRadius,borderWidth:targetStyle.borderTopWidth,borderColor:targetStyle.borderTopColor,backgroundColor:targetStyle.backgroundColor,boxShadow:targetStyle.boxShadow,letterSpacing:targetStyle.letterSpacing,opacity:1,transform:'scale(1)',filter:'brightness(1)'};
+ const flyover={side,signature,target:targetEl,stage,banner,bannerAnimation:null,stageAnimation:null};pointFlyover=flyover;
+ // La scritta resta sempre opaca e il livello che la contiene non oscura lo schermo.
+ // Dopo l'ingresso centrale (circa 0,6 s), rimane ferma e ben leggibile per 3 secondi.
+ // Poi arretra e raggiunge il riquadro definitivo in circa 2,6 secondi, senza dissolvenza.
+ stage.style.opacity='1';
+ flyover.bannerAnimation=banner.animate([
+   {...baseFrame,opacity:1,transform:'scale(.76)',filter:'brightness(1.6)',offset:0,easing:'cubic-bezier(.18,.78,.22,1)'},
+   {...baseFrame,opacity:1,transform:'scale(1.08)',filter:'brightness(1.35)',offset:.07,easing:'cubic-bezier(.22,.8,.24,1)'},
+   {...baseFrame,opacity:1,transform:'scale(1)',filter:'brightness(1.18)',offset:.10,easing:'linear'},
+   // Pausa centrale di circa 3 secondi: testo sempre completamente visibile.
+   {...baseFrame,opacity:1,transform:'scale(1)',filter:'brightness(1.18)',offset:.58,easing:'cubic-bezier(.32,0,.18,1)'},
+   // Arriva alla posizione definitiva ancora opaco: il cambio con l'etichetta fissa è continuo.
+   {...destination,opacity:1,offset:1}
+ ],{duration:6200,easing:'linear',fill:'forwards'});
+ flyover.bannerAnimation.onfinish=()=>{
+   if(pointFlyover!==flyover)return;
+   targetEl.classList.remove('arriving');
+   stage.remove();pointFlyover=null;
+ };
+}
+function renderPointAlert(id,side){
+ const el=$(id),alert=pointAlertFor(side);
+ const signature=alert?`${alert.kind}:${alert.label}`:null;
+ if(pointFlyover&&pointFlyover.side===side&&signature!==pointFlyover.signature)stopPointFlyover();
+ el.className='point-alert'+(alert?' active '+alert.kind:'');
+ if(alert&&pointFlyover&&pointFlyover.side===side&&signature===pointFlyover.signature)el.classList.add('arriving');
+ el.textContent=alert?alert.label:'';
+ el.setAttribute('aria-hidden',alert?'false':'true');
+ const shouldAnimate=!!alert&&pointAlertsInitialized&&signature!==lastPointAlertSignature[side];
+ lastPointAlertSignature[side]=signature;
+ if(shouldAnimate)animatePointAlert(el,alert,side,signature);
+}
+function renderSpectatorPreview(){
+ // L’anteprima d’ingresso usa gli stessi dati della partita LIVE da Firebase.
+ $('spectatorEvent').textContent=(state.event||'CAMPIONATO / AMICHEVOLE').trim().toUpperCase();
+ $('spectatorHomeName').textContent=state.homeName||'SQUADRA DI CASA';
+ $('spectatorAwayName').textContent=state.awayName||'SQUADRA OSPITE';
+ renderBadge('spectatorHomeLogo','spectatorHomeInitials',state.homeLogo,initials(state.homeName,'CAS'));
+ renderBadge('spectatorAwayLogo','spectatorAwayInitials',state.awayLogo,initials(state.awayName,'OSP'));
+}
+function renderMatchFinale(){
+ const overlay=$('matchFinaleOverlay');
+ if(!overlay)return;
+ const shareButton=$('finaleShareBtn');
+ const downloadButton=$('finaleDownloadBtn');
+ const win=winnerSide();
+ // La condivisione resta riservata all’amministratore autenticato; gli spettatori possono solo scaricare il PNG.
+ if(shareButton)shareButton.classList.toggle('hide',!(ADMIN_MODE&&isAdmin&&currentUser&&currentUser.uid===ADMIN_UID));
+ if(downloadButton)downloadButton.classList.toggle('hide',!(SPECTATOR_VIEW&&!!win));
+ // Il numero di set vinti è la fonte più affidabile per rilevare la conclusione:
+ // così la schermata appare anche se un vecchio stato Firebase ha finished=false.
+ if(!win){finaleDismissed=false;overlay.classList.add('hide');return;}
+ // Gli spettatori devono prima premere AVVIA TABELLONE; l'amministratore
+ // autenticato vede invece la schermata finale e può chiuderla per tornare ai comandi.
+ if((SPECTATOR_VIEW&&!spectatorStarted)||(!SPECTATOR_VIEW&&!isAdmin)||finaleDismissed){overlay.classList.add('hide');return;}
+ const winningName=win==='home'?state.homeName:state.awayName;
+ $('finaleEvent').textContent=(state.event||'VOLLEY • LIVE SCORE').trim().toUpperCase();
+ $('finaleWinnerName').textContent=winningName||'SQUADRA VINCITRICE';
+ renderBadge('finaleWinnerLogo','finaleWinnerInitials',win==='home'?state.homeLogo:state.awayLogo,initials(winningName,win==='home'?'CAS':'OSP'));
+ $('finaleHomeName').textContent=state.homeName||'SQUADRA DI CASA';
+ $('finaleAwayName').textContent=state.awayName||'SQUADRA OSPITE';
+ $('finaleHomeSets').textContent=String(state.homeSets);
+ $('finaleAwaySets').textContent=String(state.awaySets);
+ $('finaleHomeSide').classList.toggle('winner-side',win==='home');
+ $('finaleAwaySide').classList.toggle('winner-side',win==='away');
+ const list=$('finaleSetResults');list.replaceChildren();
+ for(let i=0;i<state.format;i++){
+  const sc=state.sets[i];
+  if(!sc||typeof sc!=='object')continue;
+  const homeScore=Number(sc.home)||0,awayScore=Number(sc.away)||0;
+  const card=document.createElement('div');card.className='finale-set-card';
+  const label=document.createElement('small');label.textContent=`SET ${i+1}`;
+  const score=document.createElement('strong');
+  const homeSpan=document.createElement('span');homeSpan.textContent=String(homeScore);if(homeScore>awayScore)homeSpan.className='finale-winning-score';
+  const awaySpan=document.createElement('span');awaySpan.textContent=String(awayScore);if(awayScore>homeScore)awaySpan.className='finale-winning-score';
+  score.append(homeSpan,document.createTextNode(' – '),awaySpan);card.append(label,score);list.append(card);
+ }
+ overlay.classList.remove('hide');
+}
+
+function render(){
+ const matchWon=!!winnerSide();
+ const matchComplete=!!state.finished||matchWon;
+ renderSpectatorPreview();
+ $('homeName').textContent=state.homeName;$('awayName').textContent=state.awayName;const homeLogoToShow=logoDraft.home!==undefined?logoDraft.home:state.homeLogo;const awayLogoToShow=logoDraft.away!==undefined?logoDraft.away:state.awayLogo;renderBadge('homeLogoImg','homeBadgeInitials',homeLogoToShow,initials(state.homeName,'CAS'));renderBadge('awayLogoImg','awayBadgeInitials',awayLogoToShow,initials(state.awayName,'OSP'));$('homeScore').textContent=state.homeScore;$('awayScore').textContent=state.awayScore;$('homeSets').textContent=state.homeSets;$('awaySets').textContent=state.awaySets;renderPointAlert('homePointAlert','home');renderPointAlert('awayPointAlert','away');pointAlertsInitialized=true;
+ const homeRemaining=Math.max(0,2-state.homeTimeouts),awayRemaining=Math.max(0,2-state.awayTimeouts);
+ [['homeTimeoutLamps',homeRemaining],['awayTimeoutLamps',awayRemaining]].forEach(([id,remaining])=>{const lamps=$(id);lamps.replaceChildren();for(let i=0;i<2;i++){const dot=document.createElement('span');dot.className='timeout-lamp'+(i<remaining?' available':'');lamps.append(dot);}});
+ $('homeTimeoutBtn').disabled=!isAdmin||state.finished||state.homeTimeouts>=2||pending;$('awayTimeoutBtn').disabled=!isAdmin||state.finished||state.awayTimeouts>=2||pending;
+ $('homeScore').classList.toggle('serving-score',state.serving==='home');$('awayScore').classList.toggle('serving-score',state.serving==='away');$('serveHomeBtn').classList.toggle('active',state.serving==='home');$('serveAwayBtn').classList.toggle('active',state.serving==='away');$('serveAwayBtn').classList.toggle('away-active',state.serving==='away');$('servingAdminState').textContent=state.serving==='home'?`Servizio: ${state.homeName}`:state.serving==='away'?`Servizio: ${state.awayName}`:'Servizio non indicato.';
+ $('homeTeam').classList.toggle('leading',state.homeScore>state.awayScore&&!matchComplete);$('awayTeam').classList.toggle('leading',state.awayScore>state.homeScore&&!matchComplete);
+ $('setTitle').textContent=matchComplete?'PARTITA CONCLUSA':`${state.setIndex+1}° SET`;$('setStatus').textContent=matchComplete?'Risultato finale':`Obiettivo ${target()} punti · vantaggio di 2`;
+ $('eventLabel').textContent=state.event||'Campionato / amichevole';$('matchMeta').textContent=state.event?state.event.toUpperCase():'PUNTEGGIO IN DIRETTA';$('updatedLabel').textContent=state.updatedAt?'AGGIORNATO '+new Date(state.updatedAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}):'IN ATTESA DEL PRIMO AGGIORNAMENTO';$('setStrip').style.gridTemplateColumns=`repeat(${state.format}, minmax(0, 1fr))`;
+ $('setStrip').replaceChildren();for(let i=0;i<state.format;i++){const el=document.createElement('div');el.className='setbox'+(i===state.setIndex&&!state.finished?' current':'');const small=document.createElement('small');small.textContent=`SET ${i+1}`;const strong=document.createElement('strong');const sc=state.sets[i];if(sc&&typeof sc==='object'){const homeSetScore=Number(sc.home)||0,awaySetScore=Number(sc.away)||0;const homeSpan=document.createElement('span');homeSpan.textContent=String(homeSetScore);if(homeSetScore>awaySetScore)homeSpan.className='set-winning-score';const awaySpan=document.createElement('span');awaySpan.textContent=String(awaySetScore);if(awaySetScore>homeSetScore)awaySpan.className='set-winning-score';strong.append(homeSpan,document.createTextNode(' – '),awaySpan);}else{strong.textContent='—';}el.append(small,strong);$('setStrip').append(el);}
+ const win=winnerSide();$('winner').textContent=win?`🏆 VINCE ${win==='home'?state.homeName:state.awayName}`:'';$('homePlus').disabled=!isAdmin||matchComplete||!!state.sets[state.setIndex]||pending;$('awayPlus').disabled=!isAdmin||matchComplete||!!state.sets[state.setIndex]||pending;$('nextSetBtn').disabled=!isAdmin||matchComplete||!state.sets[state.setIndex]||pending;$('undoBtn').disabled=!isAdmin||!history.length||pending;
+ updateConnectionBadge();
+ if(isAdmin){if(document.activeElement!==$('homeInput'))$('homeInput').value=state.homeName;if(document.activeElement!==$('awayInput'))$('awayInput').value=state.awayName;if(document.activeElement!==$('eventInput'))$('eventInput').value=state.event;if(document.activeElement!==$('formatInput'))$('formatInput').value=String(state.format);updateLogoStatuses();}
+ renderMatchFinale();
+}
+function showAdmin(){const canManage=ADMIN_MODE&&isAdmin;$('authPanel').classList.toggle('hide',!ADMIN_MODE);document.querySelectorAll('.admin-only').forEach(el=>el.classList.toggle('show',canManage));$('authRow').classList.toggle('hide',canManage);$('logoutBtn').classList.toggle('hide',!canManage);$('copyPublicBtn').classList.toggle('hide',!canManage);$('whatsappBtn').classList.toggle('hide',!canManage);$('emailInput').disabled=canManage;$('passwordInput').disabled=canManage;$('authState').textContent=canManage?'Accesso amministratore attivo. I comandi sono abilitati.':'Accedi con l’account amministratore autorizzato.';render();}
+async function persist(next){if(!isAdmin||!currentUser||currentUser.uid!==ADMIN_UID)throw new Error('Solo l’amministratore autorizzato può modificare la partita.');pending=true;render();try{next.updatedAt=Date.now();await set(ref(db,'match'),next);state=cleanState(next);history=next.history||history;notice('Punteggio salvato e sincronizzato.','ok');}catch(e){notice('Salvataggio non riuscito: '+(e.message||e),'error');throw e;}finally{pending=false;render();}}
+async function mutate(fn){if(!isAdmin||pending)return false;const before=historySnapshot(state);history.push(before);if(history.length>80)history.shift();const next=JSON.parse(JSON.stringify(state));fn(next);next.history=history;try{await persist(next);return true;}catch{history.pop();return false;}}
+function checkSet(s){if(s.finished||s.sets[s.setIndex])return;const lim=s.setIndex===s.format-1?15:25;if(canWin(s.homeScore,s.awayScore,lim)){s.sets[s.setIndex]={home:s.homeScore,away:s.awayScore};s.homeSets++;}else if(canWin(s.awayScore,s.homeScore,lim)){s.sets[s.setIndex]={home:s.homeScore,away:s.awayScore};s.awaySets++;}s.finished=s.homeSets>=Math.ceil(s.format/2)||s.awaySets>=Math.ceil(s.format/2);}
+$('homePlus').onclick=()=>mutate(s=>{if(s.finished||s.sets[s.setIndex])return;s.homeScore++;s.serving='home';checkSet(s)});$('awayPlus').onclick=()=>mutate(s=>{if(s.finished||s.sets[s.setIndex])return;s.awayScore++;s.serving='away';checkSet(s)});
+$('homeTimeoutBtn').onclick=()=>mutate(s=>{if(!s.finished&&s.homeTimeouts<2)s.homeTimeouts++;});$('awayTimeoutBtn').onclick=()=>mutate(s=>{if(!s.finished&&s.awayTimeouts<2)s.awayTimeouts++;});
+$('saveNames').onclick=async()=>{const newHomeLogo=logoDraft.home,newAwayLogo=logoDraft.away;const ok=await mutate(s=>{s.homeName=$('homeInput').value.trim().slice(0,50)||'SQUADRA DI CASA';s.awayName=$('awayInput').value.trim().slice(0,50)||'SQUADRA OSPITE';s.event=$('eventInput').value.trim().slice(0,80);if(newHomeLogo!==undefined)s.homeLogo=newHomeLogo;if(newAwayLogo!==undefined)s.awayLogo=newAwayLogo;const fmt=Number($('formatInput').value);if((fmt===3||fmt===5)&&s.homeSets===0&&s.awaySets===0&&s.setIndex===0){s.format=fmt;s.sets=[];}});if(ok){logoDraft={home:undefined,away:undefined};$('homeLogoFile').value='';$('awayLogoFile').value='';render();updateLogoStatuses();notice('Intestazione e loghi salvati e sincronizzati.','ok');}};
+async function setServing(side){if(!isAdmin||pending)return;const next=JSON.parse(JSON.stringify(state));next.serving=side;next.history=history;try{await persist(next);}catch{}}
+$('serveHomeBtn').onclick=()=>setServing('home');$('serveAwayBtn').onclick=()=>setServing('away');$('serveNoneBtn').onclick=()=>setServing('none');
+$('homeLogoFile').addEventListener('change',()=>chooseLogo('home'));$('awayLogoFile').addEventListener('change',()=>chooseLogo('away'));
+$('clearHomeLogo').onclick=()=>{logoDraft.home='';$('homeLogoFile').value='';render();updateLogoStatuses();};
+$('clearAwayLogo').onclick=()=>{logoDraft.away='';$('awayLogoFile').value='';render();updateLogoStatuses();};
+$('undoBtn').onclick=async()=>{if(!isAdmin||!history.length||pending)return;const saved=history.pop();const previous=restoreHistorySnapshot(saved);try{await persist({...previous,history});}catch{history.push(saved);}};
+$('nextSetBtn').onclick=()=>mutate(s=>{if(s.finished||!s.sets[s.setIndex])return;if(s.setIndex+1>=s.format)return;s.setIndex++;s.homeScore=0;s.awayScore=0;s.homeTimeouts=0;s.awayTimeouts=0;s.serving='none';});
+$('resetBtn').onclick=()=>{if(!isAdmin||!confirm('Vuoi davvero azzerare tutta la partita?'))return;history=[];persist({...blank(),updatedAt:Date.now(),history:[]}).catch(()=>{});};
+function publicUrl(){const u=new URL(location.href);u.search='';u.hash='';return u.toString();}
+let copyPublicResetTimer=null;
+function setCopyPublicButtonCopied(copied){const btn=$('copyPublicBtn');const label=btn.querySelector('.copy-public-label');btn.classList.toggle('copied',copied);btn.setAttribute('aria-label',copied?'Link copiato!':'Copia link spettatori');label.textContent=copied?'Link copiato!':'Copia link spettatori';}
+async function sharePublic(){const url=publicUrl();try{await navigator.clipboard.writeText(url);clearTimeout(copyPublicResetTimer);setCopyPublicButtonCopied(true);copyPublicResetTimer=setTimeout(()=>setCopyPublicButtonCopied(false),2500);notice('Link spettatori copiato negli appunti.','ok');}catch{prompt('Copia questo link spettatori:',url);}}
+$('copyPublicBtn').onclick=sharePublic;$('whatsappBtn').onclick=()=>{const msg=`Segui la partita in diretta: ${publicUrl()}`;window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank','noopener,noreferrer');};
+function finaleShareCaption(){
+ // Didascalia richiesta: solo categoria/competizione e risultato finale con icone.
+ // I nomi delle squadre, i parziali testuali e il link LIVE non vengono inclusi.
+ const ball=String.fromCodePoint(0x1F3D0),trophy=String.fromCodePoint(0x1F3C6);
+ const lines=[];
+ const event=String(state.event||'').trim();
+ if(event)lines.push(`${ball} ${event}`);
+ lines.push(`${trophy} RISULTATO FINALE`);
+ return lines.join('\n');
+}
+function isMobileOrTabletDevice(){
+ const ua=navigator.userAgent||'';
+ return /Android|iPhone|iPad|iPod/i.test(ua)||(/Macintosh/i.test(ua)&&Number(navigator.maxTouchPoints||0)>1);
+}
+function roundRectPath(ctx,x,y,w,h,r){
+ const radius=Math.min(r,w/2,h/2);
+ ctx.beginPath();ctx.moveTo(x+radius,y);ctx.arcTo(x+w,y,x+w,y+h,radius);ctx.arcTo(x+w,y+h,x,y+h,radius);ctx.arcTo(x,y+h,x,y,radius);ctx.arcTo(x,y,x+w,y,radius);ctx.closePath();
+}
+function drawRoundedRect(ctx,x,y,w,h,r,fill,stroke=null,lineWidth=1){
+ roundRectPath(ctx,x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lineWidth;ctx.stroke();}
+}
+function fitCanvasText(ctx,text,maxWidth,desired,min=24,weight=900,family='Arial, Helvetica, sans-serif'){
+ let size=desired;do{ctx.font=`${weight} ${size}px ${family}`;if(ctx.measureText(String(text)).width<=maxWidth||size<=min)break;size-=2;}while(size>min);
+ return size;
+}
+function drawCenteredFit(ctx,text,x,y,maxWidth,desired,min,color,weight=900,family='Arial, Helvetica, sans-serif'){
+ const size=fitCanvasText(ctx,text,maxWidth,desired,min,weight,family);ctx.font=`${weight} ${size}px ${family}`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=color;ctx.fillText(String(text),x,y,maxWidth);return size;
+}
+function drawImageContain(ctx,img,x,y,w,h){
+ if(!img||!img.complete||!img.naturalWidth||!img.naturalHeight)return false;
+ const scale=Math.min(w/img.naturalWidth,h/img.naturalHeight);const dw=img.naturalWidth*scale,dh=img.naturalHeight*scale;
+ ctx.drawImage(img,x+(w-dw)/2,y+(h-dh)/2,dw,dh);return true;
+}
+function drawFinaleScoreImage(){
+ const win=winnerSide();if(!win)throw new Error('La partita non risulta conclusa.');
+ const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1350;
+ const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Il browser non supporta la creazione dell’immagine.');
+ const W=canvas.width,H=canvas.height;
+ const bg=ctx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#0e1c2b');bg.addColorStop(.55,'#050b12');bg.addColorStop(1,'#101c28');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+ const glow=ctx.createRadialGradient(W/2,280,30,W/2,280,650);glow.addColorStop(0,'rgba(255,208,115,.19)');glow.addColorStop(.52,'rgba(33,99,73,.09)');glow.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,W,H);
+ drawRoundedRect(ctx,26,26,W-52,H-52,30,'rgba(4,10,16,.42)','rgba(255,208,115,.55)',2);
+ const topGrad=ctx.createLinearGradient(70,0,W-70,0);topGrad.addColorStop(0,'rgba(67,185,255,0)');topGrad.addColorStop(.5,'rgba(67,185,255,.7)');topGrad.addColorStop(1,'rgba(67,185,255,0)');ctx.fillStyle=topGrad;ctx.fillRect(80,62,W-160,2);
+ drawCenteredFit(ctx,'VOLLEY • LIVE SCORE',W/2,99,900,26,20,'#83d4ff',950);
+ const event=String(state.event||'VOLLEY • LIVE SCORE').trim().toUpperCase();
+ drawCenteredFit(ctx,event,W/2,151,930,25,18,'#a7c4d9',900);
+ ctx.save();ctx.shadowColor='rgba(255,208,115,.58)';ctx.shadowBlur=24;
+ drawCenteredFit(ctx,'🏆 VITTORIA!',W/2,230,990,76,52,'#ffd073',1000);
+ ctx.restore();
+ drawCenteredFit(ctx,'PARTITA CONCLUSA',W/2,292,900,21,16,'#d0e0ec',950);
+ const badgeX=W/2-78,badgeY=329,badgeS=156;
+ const badgeGrad=ctx.createLinearGradient(badgeX,badgeY,badgeX+badgeS,badgeY+badgeS);badgeGrad.addColorStop(0,'#3e321f');badgeGrad.addColorStop(1,'#0f171b');drawRoundedRect(ctx,badgeX,badgeY,badgeS,badgeS,24,badgeGrad,'rgba(255,208,115,.85)',3);
+ const winnerName=String(win==='home'?state.homeName:state.awayName)||'SQUADRA VINCITRICE';
+ const winnerLogo=win==='home'?$('finaleWinnerLogo'):$('finaleWinnerLogo');
+ ctx.save();roundRectPath(ctx,badgeX+8,badgeY+8,badgeS-16,badgeS-16,16);ctx.clip();
+ let logoDrawn=false;
+ const logoValue=win==='home'?state.homeLogo:state.awayLogo;
+ if(isEmbeddedLogo(logoValue))logoDrawn=drawImageContain(ctx,winnerLogo,badgeX+10,badgeY+10,badgeS-20,badgeS-20);
+ if(!logoDrawn){const label=initials(winnerName,win==='home'?'CAS':'OSP');drawCenteredFit(ctx,label,W/2,badgeY+badgeS/2,badgeS-24,43,28,'#ffd073',1000);}
+ ctx.restore();
+ drawCenteredFit(ctx,winnerName,W/2,526,970,42,26,'#f6fbff',1000);
+ drawCenteredFit(ctx,'VINCITRICE DELLA PARTITA',W/2,574,940,18,14,'#48f18a',950);
+ drawCenteredFit(ctx,'RISULTATO FINALE',W/2,641,850,20,15,'#8098ad',950);
+ const panelX=65,panelY=670,panelW=950,panelH=176;
+ const panelGrad=ctx.createLinearGradient(panelX,panelY,panelX,panelY+panelH);panelGrad.addColorStop(0,'rgba(4,10,16,.96)');panelGrad.addColorStop(1,'rgba(12,22,32,.98)');drawRoundedRect(ctx,panelX,panelY,panelW,panelH,18,panelGrad,'#294055',2);
+ drawCenteredFit(ctx,String(state.homeName||'SQUADRA DI CASA').toUpperCase(),292,panelY+43,365,24,15,'#c2d2df',900);
+ drawCenteredFit(ctx,String(state.awayName||'SQUADRA OSPITE').toUpperCase(),788,panelY+43,365,24,15,'#c2d2df',900);
+ drawCenteredFit(ctx,String(state.homeSets),426,panelY+112,115,74,58,win==='home'?'#ff6578':'#e7f0f8',1000,'monospace');
+ drawCenteredFit(ctx,'–',540,panelY+112,70,43,28,'#526b80',800);
+ drawCenteredFit(ctx,String(state.awaySets),654,panelY+112,115,74,58,win==='away'?'#ff6578':'#e7f0f8',1000,'monospace');
+ drawCenteredFit(ctx,'PARZIALI DI TUTTI I SET',W/2,902,900,19,15,'#8098ad',950);
+ const completedSets=[];
+ for(let i=0;i<state.format;i++){const sc=state.sets[i];if(sc&&typeof sc==='object')completedSets.push({index:i+1,home:Number(sc.home)||0,away:Number(sc.away)||0});}
+ if(completedSets.length){
+  const gap=12,margin=55,cardW=Math.min(220,(W-margin*2-gap*(completedSets.length-1))/completedSets.length),total=cardW*completedSets.length+gap*(completedSets.length-1),startX=(W-total)/2,cardY=935,cardH=140;
+  completedSets.forEach((sc,i)=>{const x=startX+i*(cardW+gap);drawRoundedRect(ctx,x,cardY,cardW,cardH,12,'#09121c','#2a3e51',2);drawCenteredFit(ctx,`SET ${sc.index}`,x+cardW/2,cardY+34,cardW-12,17,13,'#8198ad',950);const winnerHome=sc.home>sc.away;drawCenteredFit(ctx,String(sc.home),x+cardW*.34,cardY+88,cardW*.32,30,22,winnerHome?'#ff6578':'#eaf2fa',1000,'monospace');drawCenteredFit(ctx,'–',x+cardW*.5,cardY+88,20,18,14,'#8198ad',800);drawCenteredFit(ctx,String(sc.away),x+cardW*.68,cardY+88,cardW*.32,30,22,sc.away>sc.home?'#ff6578':'#eaf2fa',1000,'monospace');});
+ }
+ const footerY=1173;
+ const separator=ctx.createLinearGradient(100,0,W-100,0);separator.addColorStop(0,'rgba(255,208,115,0)');separator.addColorStop(.5,'rgba(255,208,115,.45)');separator.addColorStop(1,'rgba(255,208,115,0)');ctx.fillStyle=separator;ctx.fillRect(100,footerY,W-200,2);
+ drawCenteredFit(ctx,'RISULTATO DELLA PARTITA • VOLLEY LIVE',W/2,1210,920,18,14,'#b7cada',900);
+ drawCenteredFit(ctx,'volleylivestyle.github.io/tabellone-punteggio/',W/2,1250,930,17,13,'#7592a9',700);
+ drawCenteredFit(ctx,'CONDIVISO DALL’AMMINISTRAZIONE',W/2,1290,930,14,11,'#5d7488',800);
+ return canvas;
+}
+function canvasToPngBlob(canvas){return new Promise((resolve,reject)=>{try{canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('Non è stato possibile creare il PNG.')),'image/png');}catch(e){reject(e);}});}
+function downloadBlob(blob,filename){const objectUrl=URL.createObjectURL(blob);const a=document.createElement('a');a.href=objectUrl;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(objectUrl),30000);}
+let preparedSharePayload=null;
+let pendingDesktopShare=null;
+function closeShareActionChoice(clearPending=true){$('shareActionChoice').classList.add('hide');if(clearPending)preparedSharePayload=null;}
+function closeDesktopShareChooser(clearPending=true){$('desktopShareChoice').classList.add('hide');if(clearPending){pendingDesktopShare=null;preparedSharePayload=null;}}
+function showShareActionChoice(payload){preparedSharePayload=payload;$('shareActionChoice').classList.remove('hide');$('downloadImageOnlyBtn').focus();}
+function showDesktopShareChooser(payload){pendingDesktopShare=payload;$('desktopShareChoice').classList.remove('hide');$('shareWhatsAppWebBtn').focus();}
+function setFinaleShareStatus(message){const status=$('finaleShareStatus');if(status)status.textContent=message;}
+async function copyTextToClipboard(text){if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(text);return true;}return false;}
+async function downloadOnlyImage(){const p=preparedSharePayload;if(!p)return;downloadBlob(p.blob,p.filename);closeShareActionChoice();setFinaleShareStatus(`Immagine “${p.filename}” scaricata.`);}
+async function fallbackDownloadAndCopy(blob,filename,caption,statusMessage){
+ downloadBlob(blob,filename);let captionCopied=false;try{captionCopied=await copyTextToClipboard(caption);}catch{}
+ setFinaleShareStatus(statusMessage||`Immagine “${filename}” scaricata${captionCopied?' e didascalia copiata negli appunti':''}. Allega il PNG nella destinazione scelta.`);
+}
+function shareOnMobile(payload){
+ // La chiamata a navigator.share avviene direttamente nel gesto del pulsante Condividi.
+ let fileShareAvailable=false;try{fileShareAvailable=typeof navigator.share==='function'&&typeof navigator.canShare==='function'&&navigator.canShare({files:[payload.file]});}catch{}
+ if(!fileShareAvailable){closeShareActionChoice();fallbackDownloadAndCopy(payload.blob,payload.filename,payload.caption,'Questo browser non supporta la condivisione diretta del PNG. L’immagine è stata scaricata e la didascalia è stata copiata se consentito; apri l’app desiderata e allega il file.');return;}
+ let sharePromise;try{sharePromise=navigator.share({files:[payload.file],title:'Volley Live - Risultato finale',text:payload.caption});}
+ catch(err){closeShareActionChoice();fallbackDownloadAndCopy(payload.blob,payload.filename,payload.caption,'Condivisione non disponibile. Il PNG è stato scaricato; allegalo manualmente nella destinazione desiderata.');return;}
+ closeShareActionChoice();
+ Promise.resolve(sharePromise).then(()=>setFinaleShareStatus('Menu di condivisione del dispositivo chiuso. Se hai scelto un’app, controlla la destinazione e completa l’invio.')).catch(async err=>{if(err&&err.name==='AbortError'){setFinaleShareStatus('Condivisione annullata.');return;}await fallbackDownloadAndCopy(payload.blob,payload.filename,payload.caption,'Condivisione non riuscita. Il PNG è stato scaricato; allegalo manualmente nella destinazione desiderata.');});
+}
+function continueWithSharing(){const payload=preparedSharePayload;if(!payload)return;closeShareActionChoice(false);if(isMobileOrTabletDevice()){shareOnMobile(payload);return;}showDesktopShareChooser(payload);}
+async function downloadFinaleImageForSpectators(){
+ const button=$('finaleDownloadBtn');
+ if(!SPECTATOR_VIEW)return;
+ if(!winnerSide()){setFinaleShareStatus('L’immagine sarà disponibile al termine della partita.');return;}
+ if(!button||button.disabled)return;
+ setFinaleShareStatus('');button.disabled=true;
+ const label=button.querySelector('span');
+ if(label)label.textContent='PREPARO IMMAGINE…';
+ try{
+  const canvas=drawFinaleScoreImage();
+  const blob=await canvasToPngBlob(canvas);
+  const filename=`Volley-Live-Risultato-${new Date().toISOString().slice(0,10)}.png`;
+  downloadBlob(blob,filename);
+  setFinaleShareStatus(`Immagine “${filename}” scaricata sul dispositivo.`);
+ }catch(err){
+  setFinaleShareStatus('Non è stato possibile scaricare l’immagine: '+(err&&err.message?err.message:'errore sconosciuto')+'.');
+ }finally{
+  button.disabled=false;
+  if(label)label.textContent='SCARICA IMMAGINE';
+ }
+}
+async function shareFinalResultAsImage(){
+ const button=$('finaleShareBtn');setFinaleShareStatus('');
+ if(!(ADMIN_MODE&&isAdmin&&currentUser&&currentUser.uid===ADMIN_UID)){setFinaleShareStatus('La condivisione dell’immagine è disponibile solo per l’amministratore autenticato.');return;}
+ if(!winnerSide()){setFinaleShareStatus('La partita non è ancora conclusa.');return;}
+ button.disabled=true;const oldLabel=button.querySelector('span');if(oldLabel)oldLabel.textContent='PREPARO IMMAGINE…';
+ try{
+  const canvas=drawFinaleScoreImage();const blob=await canvasToPngBlob(canvas);const filename=`Volley-Live-Risultato-${new Date().toISOString().slice(0,10)}.png`;const file=new File([blob],filename,{type:'image/png'});const caption=finaleShareCaption();
+  let fileShareAvailable=false;try{fileShareAvailable=typeof navigator.share==='function'&&typeof navigator.canShare==='function'&&navigator.canShare({files:[file]});}catch{}
+  showShareActionChoice({canvas,blob,file,filename,caption,fileShareAvailable});
+ }catch(err){setFinaleShareStatus('Non è stato possibile creare l’immagine: '+(err&&err.message?err.message:'errore sconosciuto')+'.');}
+ finally{button.disabled=false;if(oldLabel)oldLabel.textContent='SCARICA / CONDIVIDI IMMAGINE';}
+}
+function beginDesktopDestination(action){
+ const p=pendingDesktopShare;if(!p)return;const caption=p.caption;const encodedCaption=encodeURIComponent(caption);const status=$('finaleShareStatus');
+ const downloadForManualAttach=()=>downloadBlob(p.blob,p.filename);
+ if(action==='whatsapp-web'){
+  const tab=window.open('https://web.whatsapp.com/send?text='+encodedCaption,'_blank');if(tab)tab.opener=null;downloadForManualAttach();closeDesktopShareChooser();setFinaleShareStatus(`Immagine “${p.filename}” scaricata. In WhatsApp Web allega il PNG prima di inviare; il testo contiene soltanto categoria e RISULTATO FINALE.`);return;
+ }
+ if(action==='whatsapp-app'){
+  const appTab=window.open('whatsapp://send?text='+encodedCaption,'_blank');if(appTab)appTab.opener=null;downloadForManualAttach();closeDesktopShareChooser();setFinaleShareStatus(`Immagine “${p.filename}” scaricata. Se WhatsApp app si apre, allega il PNG alla chat prima di inviare.`);return;
+ }
+ if(action==='copy-image'){
+  (async()=>{try{if(navigator.clipboard&&typeof ClipboardItem!=='undefined'&&navigator.clipboard.write){await navigator.clipboard.write([new ClipboardItem({'image/png':p.blob,'text/plain':new Blob([caption],{type:'text/plain'})})]);closeDesktopShareChooser();setFinaleShareStatus('Immagine e didascalia copiate negli appunti. Puoi incollarle nella chat o nell’app di destinazione; il risultato dipende dal supporto dell’app ai formati copiati.');}
+   else{downloadForManualAttach();let captionCopied=false;try{captionCopied=await copyTextToClipboard(caption);}catch{}closeDesktopShareChooser();setFinaleShareStatus(`Questo browser non permette di copiare direttamente l’immagine. PNG scaricato${captionCopied?' e didascalia copiata':''}; allega il file nella destinazione.`);}
+  }catch{downloadForManualAttach();let captionCopied=false;try{captionCopied=await copyTextToClipboard(caption);}catch{}closeDesktopShareChooser();setFinaleShareStatus(`Copia immagine non supportata in questo browser. PNG scaricato${captionCopied?' e didascalia copiata':''}; allega il file nella destinazione.`);}})();return;
+ }
+ if(action==='facebook'){
+  downloadForManualAttach();const tab=window.open('https://www.facebook.com/','_blank');if(tab)tab.opener=null;closeDesktopShareChooser();
+  (async()=>{let copied=false;try{copied=await copyTextToClipboard(caption);}catch{}setFinaleShareStatus(`Immagine “${p.filename}” scaricata. In Facebook crea un post e carica il PNG.${copied?' La didascalia breve è stata copiata: incollala nel post.':' Didascalia da inserire: '+caption}`);})();return;
+ }
+ if(action==='instagram'){
+  downloadForManualAttach();const tab=window.open('https://www.instagram.com/','_blank');if(tab)tab.opener=null;closeDesktopShareChooser();
+  (async()=>{let copied=false;try{copied=await copyTextToClipboard(caption);}catch{}setFinaleShareStatus(`Immagine “${p.filename}” scaricata. In Instagram crea un post e seleziona il PNG.${copied?' La didascalia breve è stata copiata: incollala nel post.':' Didascalia da inserire: '+caption}`);})();return;
+ }
+ if(action==='mail'){
+  downloadForManualAttach();const subject=encodeURIComponent('Volley Live - Risultato finale');const body=encodeURIComponent(caption);const mailto=`mailto:?subject=${subject}&body=${body}`;const a=document.createElement('a');a.href=mailto;a.style.display='none';document.body.appendChild(a);a.click();a.remove();closeDesktopShareChooser();setFinaleShareStatus(`Immagine “${p.filename}” scaricata. Allega il PNG all’email che si apre.`);return;
+ }
+}
+$('downloadImageOnlyBtn').onclick=downloadOnlyImage;
+$('shareImageChoiceBtn').onclick=continueWithSharing;
+$('shareActionCancelBtn').onclick=()=>closeShareActionChoice();
+$('shareActionChoice').addEventListener('click',e=>{if(e.target===$('shareActionChoice'))closeShareActionChoice();});
+$('shareWhatsAppWebBtn').onclick=()=>beginDesktopDestination('whatsapp-web');
+$('shareWhatsAppAppBtn').onclick=()=>beginDesktopDestination('whatsapp-app');
+$('shareCopyImageBtn').onclick=()=>beginDesktopDestination('copy-image');
+$('shareFacebookBtn').onclick=()=>beginDesktopDestination('facebook');
+$('shareInstagramBtn').onclick=()=>beginDesktopDestination('instagram');
+$('shareMailBtn').onclick=()=>beginDesktopDestination('mail');
+$('shareChoiceCancelBtn').onclick=()=>closeDesktopShareChooser();
+$('desktopShareChoice').addEventListener('click',e=>{if(e.target===$('desktopShareChoice'))closeDesktopShareChooser();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('desktopShareChoice').classList.contains('hide'))closeDesktopShareChooser();else if(!$('shareActionChoice').classList.contains('hide'))closeShareActionChoice();}});
+$('finaleDownloadBtn').onclick=downloadFinaleImageForSpectators;
+$('finaleShareBtn').onclick=shareFinalResultAsImage;
+$('finaleCloseButton').onclick=()=>{finaleDismissed=true;$('matchFinaleOverlay').classList.add('hide');};
+$('loginBtn').onclick=async()=>{const email=$('emailInput').value.trim(),password=$('passwordInput').value;if(!email||!password){notice('Inserisci email e password dell’amministratore.','error');return;}try{await signInWithEmailAndPassword(auth,email,password);$('passwordInput').value='';}catch(e){notice('Accesso non riuscito. Controlla le credenziali e che l’utente sia abilitato in Firebase Authentication.','error');}};
+$('logoutBtn').onclick=()=>signOut(auth).catch(e=>notice('Errore durante l’uscita: '+e.message,'error'));
+const fullscreenButton=$('fullscreenBtn');
+const spectatorPrompt=$('spectatorPrompt');
+const spectatorStartButton=$('spectatorStartButton');
+let screenWakeLock=null;
+let displayActivationRunning=false;
+function isImmersiveView(){return !!document.fullscreenElement||document.body.classList.contains('focus-mode');}
+function updateFullscreenButton(){const active=isImmersiveView();fullscreenButton.querySelector('.fullscreen-icon').textContent=active?'×':'⛶';fullscreenButton.querySelector('.fullscreen-label').textContent=active?'ESCI DA SCHERMO INTERO':'SCHERMO INTERO';fullscreenButton.setAttribute('aria-label',active?'Esci da schermo intero':'Attiva schermo intero');if(spectatorPrompt){spectatorPrompt.classList.toggle('hide',!SPECTATOR_VIEW||spectatorStarted||active);}renderMatchFinale();}
+async function requestScreenWakeLock(){
+ if(!SPECTATOR_VIEW||!('wakeLock' in navigator)||document.visibilityState!=='visible')return false;
+ try{if(screenWakeLock&&!screenWakeLock.released)return true;screenWakeLock=await navigator.wakeLock.request('screen');screenWakeLock.addEventListener('release',()=>{screenWakeLock=null;});return true;}catch{return false;}
+}
+async function activateSpectatorDisplay(fromGesture=false){
+ if(!SPECTATOR_VIEW||displayActivationRunning)return false;
+ displayActivationRunning=true;
+ // Avvia entrambe le richieste durante lo stesso gesto utente: molti browser
+ // richiedono un tocco/clic esplicito per consentire requestFullscreen().
+ const wakeLockPromise=requestScreenWakeLock();
+ let fullscreenPromise=null;
+ if(!isImmersiveView()&&document.documentElement.requestFullscreen){
+  try{fullscreenPromise=document.documentElement.requestFullscreen();}catch{/* Il browser non consente il fullscreen in questo contesto. */}
+ }
+ if(fullscreenPromise){try{await fullscreenPromise;}catch{/* Fallback: modalità immersiva CSS, senza API fullscreen. */}}
+ let active=isImmersiveView();
+ if(!active&&fromGesture){document.body.classList.add('focus-mode');active=true;}
+ await wakeLockPromise;
+ displayActivationRunning=false;
+ updateFullscreenButton();
+ return active;
+}
+fullscreenButton.addEventListener('click',async()=>{
+ if(document.fullscreenElement){try{await document.exitFullscreen();}catch{}document.body.classList.remove('focus-mode');}
+ else if(document.body.classList.contains('focus-mode')){document.body.classList.remove('focus-mode');}
+ else if(document.documentElement.requestFullscreen){try{await document.documentElement.requestFullscreen();}catch{if(SPECTATOR_VIEW)document.body.classList.add('focus-mode');}}
+ else{document.body.classList.add('focus-mode');}
+ if(SPECTATOR_VIEW)await requestScreenWakeLock();
+ updateFullscreenButton();
+});
+if(spectatorStartButton){spectatorStartButton.addEventListener('click',async()=>{spectatorStarted=true;if(!isImmersiveView())await activateSpectatorDisplay(true);updateFullscreenButton();});}
+// Nei browser moderni il fullscreen automatico senza gesto utente viene normalmente bloccato.
+// Per questo la schermata iniziale richiede un tocco esplicito: lo stesso tocco avvia
+// fullscreen e Screen Wake Lock. Il Wake Lock viene comunque ritentato quando si torna alla pagina.
+if(SPECTATOR_VIEW){
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')void requestScreenWakeLock();});
+ window.addEventListener('pageshow',()=>{if(document.visibilityState==='visible')void requestScreenWakeLock();});
+ setTimeout(()=>{void requestScreenWakeLock();},150);
+}
+document.addEventListener('fullscreenchange',updateFullscreenButton);
+updateFullscreenButton();
+if(!configReady){notice('Configurazione Firebase incompleta. Controlla i parametri della tua app Web in index.html. Nessuna password va inserita nel codice.','error');$('liveBadge').classList.remove('state-connected','state-disconnected','state-connecting','state-finale');$('liveBadge').classList.add('state-disconnected');$('liveBadge').innerHTML='<span class="dot"></span>DA CONFIGURARE';showAdmin();}
+else {try{app=initializeApp(firebaseConfig);auth=getAuth(app);db=getDatabase(app);onValue(ref(db,'.info/connected'),snap=>{firebaseConnectionKnown=true;firebaseConnected=snap.val()===true;updateConnectionBadge();});onValue(ref(db,'match'),snap=>{if(snap.exists()){state=cleanState(snap.val());history=Array.isArray(snap.val().history)?snap.val().history:[];}else{state=blank();history=[];}remoteReady=true;remoteReadError=false;render();if(!$('notice').classList.contains('error'))notice('Collegamento al tabellone attivo.','ok');},err=>{remoteReady=false;remoteReadError=true;notice('Lettura Firebase non riuscita. Controlla le regole Realtime Database e la configurazione. '+err.message,'error');render();});onAuthStateChanged(auth,user=>{currentUser=user;const authorizedUser=!!user&&user.uid===ADMIN_UID;isAdmin=authorizedUser&&ADMIN_MODE;showAdmin();if(user&&!authorizedUser){signOut(auth).catch(()=>{});notice('Questo account non è autorizzato a gestire il tabellone.','error');}else if(isAdmin){notice('Accesso amministratore verificato.','ok');get(ref(db,'match')).then(snap=>{if(!snap.exists())return set(ref(db,'match'),{...blank(),history:[]});}).catch(e=>notice('Impossibile inizializzare/verificare il tabellone. Controlla che le regole Firebase siano pubblicate. '+e.message,'error'));}});}catch(e){notice('Errore inizializzazione Firebase: '+e.message,'error');}}
+</script></body></html>

@@ -11,7 +11,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827">
-<meta name="description" content="Tabellone pallavolo live con punteggio sincronizzato in tempo reale e anteprima della partita."><meta name="author" content="Fabio Marsico"><meta name="copyright" content="© 2026 Fabio Marsico — Volley Live. Tutti i diritti riservati nei limiti consentiti dalla legge."><title>Volley Live — Tabellone v10.10</title>
+<meta name="description" content="Tabellone pallavolo live con punteggio sincronizzato in tempo reale e anteprima della partita."><meta name="author" content="Fabio Marsico"><meta name="copyright" content="© 2026 Fabio Marsico — Volley Live. Tutti i diritti riservati nei limiti consentiti dalla legge."><title>Volley Live — Prova V11 GitHub</title>
 <style>
 :root {
   color-scheme: dark;
@@ -373,57 +373,70 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
 @media (prefers-reduced-motion:reduce) { .match-finale-card::before { animation:none; } .match-finale-overlay:not(.hide) .match-finale-card,.match-finale-overlay:not(.hide) .finale-title { animation:none; } }
 
 
-/* V10.10 — importazione manuale calendario FIPAVOnline */
-.fipav-importer { margin:0 0 16px; padding:15px; border:1px solid rgba(91,159,207,.38); border-radius:12px; background:linear-gradient(155deg,rgba(15,35,52,.72),rgba(5,12,19,.78)); }
-.fipav-importer h3 { margin:0 0 6px; color:#eaf4ff; font-size:.98rem; letter-spacing:.025em; }
-.fipav-importer .fipav-intro { margin:0 0 12px; color:#a9bdce; font-size:.77rem; line-height:1.5; }
-.fipav-links { display:flex; flex-wrap:wrap; gap:8px 15px; margin:0 0 12px; font-size:.76rem; }
-.fipav-links a { color:#8fd0ff; text-decoration:underline; text-underline-offset:3px; }
-.fipav-import-grid { display:grid; grid-template-columns:minmax(0,1fr); gap:9px; }
-.fipav-importer textarea { width:100%; min-height:112px; resize:vertical; padding:11px; border:1px solid #30475c; border-radius:8px; background:#070e16; color:#edf5fd; font: .76rem/1.45 ui-monospace,SFMono-Regular,Consolas,monospace; }
-.fipav-importer textarea:focus,.fipav-importer select:focus { outline:2px solid rgba(91,183,255,.45); outline-offset:1px; }
-.fipav-importer select { width:100%; min-width:0; padding:11px; border:1px solid #30475c; border-radius:8px; background:#070e16; color:#edf5fd; font:inherit; }
-.fipav-importer .fipav-status { min-height:20px; margin:7px 0 0; color:#a8c7dc; font-size:.76rem; line-height:1.45; }
-.fipav-importer .fipav-status.ok { color:#a9f4ce; }
-.fipav-importer .fipav-status.error { color:#ffc2ca; }
-.fipav-importer .fipav-small { margin:8px 0 0; color:#8ea4b7; font-size:.7rem; line-height:1.45; }
-.fipav-importer .fipav-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
-.fipav-importer .fipav-actions .btn { flex:1 1 190px; }
-.fipav-importer .fipav-load { border-color:rgba(72,241,138,.45); background:linear-gradient(135deg,#16432f,#0d2b20); color:#d9ffeb; }
-.fipav-importer .fipav-load:disabled { opacity:.45; cursor:not-allowed; }
-.fixture-details { max-width:1100px; margin:0 auto 13px; padding:8px 12px; border:1px solid rgba(96,150,190,.22); border-radius:9px; background:rgba(9,20,31,.72); color:#9eb4c8; text-align:center; font-size:.68rem; font-weight:750; line-height:1.5; letter-spacing:.035em; overflow-wrap:anywhere; }
-@media (max-width:520px) { .fipav-importer { padding:11px; } .fipav-importer .fipav-actions .btn { flex-basis:100%; width:100%; } .fixture-details { font-size:.62rem; padding:7px 9px; } }
+/* V11 GitHub trial: static FIPAV selector */
+.fixture-details{margin:0 0 12px;padding:10px 13px;border:1px solid #29465e;border-radius:10px;background:rgba(10,24,37,.9);color:#dcecff;font-size:.82rem;line-height:1.5}
+.fixture-details strong{color:#fff}
+.fixture-picker-panel{border-color:#36536c}
+.fixture-picker-panel h2{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.fixture-demo-badge{display:inline-flex;align-items:center;border:1px solid #d3a24b;border-radius:99px;padding:3px 9px;color:#ffd98a;background:rgba(211,162,75,.10);font-size:.65rem;font-weight:900;letter-spacing:.06em}
+.fixture-source-note{margin:7px 0 14px;color:#f4d79c;font-size:.76rem;line-height:1.5}
+.fixture-picker-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:13px 0}
+.fixture-picker-grid .field{min-width:0}
+.fixture-picker-grid .wide{grid-column:1/-1}
+.fixture-result-preview{margin:12px 0;padding:13px;border:1px solid #2c455b;border-radius:10px;background:#08131e}
+.fixture-result-preview .fixture-preview-teams{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:10px;font-weight:900;color:#fff;text-align:center}
+.fixture-result-preview .fixture-preview-teams span:first-child{text-align:right}
+.fixture-result-preview .fixture-preview-teams span:last-child{text-align:left}
+.fixture-result-preview .fixture-preview-vs{color:#82a5c4;font-size:.7rem}
+.fixture-result-preview .fixture-preview-meta{margin-top:8px;color:#b7c8d7;font-size:.75rem;line-height:1.5;text-align:center}
+.fixture-result-preview .fixture-preview-partials{margin-top:5px;color:#8fa7bd;font-size:.7rem;text-align:center}
+.fixture-picker-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.fixture-picker-actions .btn{flex:1 1 190px}
+.fixture-fetch-status{margin:9px 0 0;color:#a9bfd1;font-size:.76rem;line-height:1.45}
+.fixture-demo-count{margin:0 0 8px;color:#8fa8bf;font-size:.72rem}
+.fixture-include-played{display:flex;gap:8px;align-items:center;margin:4px 0 10px;color:#c7d5e1;font-size:.78rem}
+.fixture-include-played input{accent-color:#62b5ff}
+@media(max-width:600px){.fixture-picker-grid{grid-template-columns:1fr}.fixture-picker-grid .wide{grid-column:auto}.fixture-result-preview .fixture-preview-teams{font-size:.82rem;gap:5px}}
 
-</style><!-- Volley Live v10.10: importazione manuale e reversibile del calendario FIPAVOnline. -->
+</style><!-- Volley Live v10.8: indicatore connessione Realtime Database aggiornato in modo affidabile. -->
 </head>
 <body><div class="wrap">
 <header class="top"><div class="brandline"><div class="brandmark" aria-hidden="true">VL</div><div><div class="eyebrow">VOLLEY • LIVE SCORE</div><div class="brand">VOLLEY <span>LIVE</span></div></div></div><div class="header-actions"><div class="live state-connecting" id="liveBadge" role="status" aria-live="polite" aria-atomic="true"><span class="dot" aria-hidden="true"></span>CONNESSIONE…</div><button class="fullscreen-btn" id="fullscreenBtn" type="button" aria-label="Attiva o disattiva schermo intero"><span class="fullscreen-icon" aria-hidden="true">⛶</span><span class="fullscreen-label">SCHERMO INTERO</span></button></div></header>
 <div class="meta-row"><p class="meta" id="matchMeta">PUNTEGGIO IN DIRETTA</p><div class="time-meta"><span class="current-time" id="currentTime">ORA --:--:--</span><span class="updated" id="updatedLabel">Connessione in corso…</span></div></div>
-<div id="fixtureDetails" class="fixture-details hide" aria-live="polite"></div>
 <div id="notice" class="notice hide">Connessione a Firebase in corso…</div>
 <section class="panel auth-panel hide" id="authPanel"><h2>Accesso amministratore</h2><div class="authrow" id="authRow"><label class="field">Email<input id="emailInput" type="email" autocomplete="username" placeholder="Email amministratore"></label><label class="field">Password<input id="passwordInput" type="password" autocomplete="current-password" placeholder="Password" /></label><button class="btn primary" id="loginBtn" type="button">Accedi</button></div><div class="authstate" id="authState">Gli spettatori possono consultare il tabellone senza accedere.</div><div class="actions"><button class="btn hide" id="logoutBtn">Esci</button><button class="btn copy-public-btn hide" id="copyPublicBtn" type="button" aria-label="Copia link spettatori">
 <svg class="copy-public-icon copy-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/></svg>
 <svg class="copy-public-icon success-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m7.8 12.2 2.7 2.7 5.8-6"/></svg>
 <span class="copy-public-label" aria-live="polite">Copia link spettatori</span></button><button class="btn whatsapp-btn hide" id="whatsappBtn" type="button" aria-label="Condividi su WhatsApp"><svg class="whatsapp-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.874 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.693.626.711.226 1.358.194 1.87.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.999-3.648-.235-.374a9.822 9.822 0 0 1-1.5-5.25c.002-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.874-9.896 9.874m8.413-18.29A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.893c0 2.096.547 4.142 1.588 5.946L.057 24l6.305-1.654a11.882 11.882 0 0 1 5.684 1.448h.005c6.566 0 11.902-5.334 11.905-11.893a11.82 11.82 0 0 0-3.471-8.411z"/></svg><span>Condividi su WhatsApp</span></button></div><p class="small">Non inserire la password in link o file. L'accesso ai comandi è verificato da Firebase Authentication e dalle regole del database.</p></section>
-<main><div class="scoreboard">
+<main>
+<div id="fixtureDetails" class="fixture-details hide" aria-live="polite"></div>
+<section class="panel admin-only fixture-picker-panel" id="fixturePickerPanel">
+  <h2>Seleziona una gara dal calendario <span class="fixture-demo-badge">PROVA GITHUB</span></h2>
+  <p class="fixture-source-note"><strong>Attenzione:</strong> questa prova usa un catalogo statico acquisito il 02/11/2026. Il collegamento automatico a FIPAVOnline non è attivo in GitHub Pages; il test serve a verificare la selezione e il caricamento della gara in Firebase.</p>
+  <div class="fixture-picker-grid">
+    <label class="field">Regione / Comitato<select id="fixtureCommittee"><option value="04020">Lombardia · C.T. Varese</option></select></label>
+    <label class="field">Campionato<select id="fixtureCompetition"></select></label>
+    <label class="field">Girone<select id="fixtureGroup"></select></label>
+    <label class="field">Giornata<select id="fixtureRound"></select></label>
+    <label class="field wide">Partita<select id="fixtureMatch"></select></label>
+  </div>
+  <label class="fixture-include-played"><input type="checkbox" id="fixtureIncludePlayed"> Mostra anche le gare già disputate</label>
+  <p class="fixture-demo-count" id="fixtureDemoCount">Caricamento catalogo di prova…</p>
+  <div class="fixture-result-preview" id="fixturePreview" aria-live="polite">
+    <div class="fixture-preview-teams"><span>Seleziona una partita</span><span class="fixture-preview-vs">VS</span><span>—</span></div>
+    <div class="fixture-preview-meta">I dettagli della gara appariranno qui.</div>
+  </div>
+  <div class="fixture-picker-actions">
+    <button class="btn primary" id="fixtureImportBtn" type="button" disabled>Carica gara nel tabellone</button>
+    <a class="btn" id="fixtureOfficialLink" href="https://public.fipavonline.it/gironi/63719" target="_blank" rel="noopener noreferrer">Apri calendario ufficiale FIPAV ↗</a>
+  </div>
+  <p class="fixture-fetch-status" id="fixtureStatus">La prova contiene il calendario del Girone B di Prima Divisione Femminile. Gli altri gironi sono presenti nel menu, ma i rispettivi calendari non sono inclusi in questa fotografia.</p>
+</section>
+<div class="scoreboard">
 <section class="team home" id="homeTeam"><div class="team-head"><div class="teammark" id="homeBadge" aria-hidden="true"><span id="homeBadgeInitials">CAS</span><img id="homeLogoImg" class="team-logo hide" alt=""></div><div class="team-info"><div class="teamname" id="homeName">SQUADRA DI CASA</div></div></div><div class="point-alert" id="homePointAlert" aria-live="polite"></div><div class="points" id="homeScore">0</div><div class="sets-footer"><div class="setslabel">SET VINTI</div><div class="setsvalue"><div class="setwins" id="homeSets">0</div><small>SET</small></div></div><div class="timeout-panel" aria-label="Time-out squadra di casa"><span class="timeout-label">TIME-OUT</span><div class="timeout-lamps" id="homeTimeoutLamps" aria-hidden="true"><span class="timeout-lamp available"></span><span class="timeout-lamp available"></span></div></div><div class="scorecontrols admin-only"><button class="btn timeout-control" id="homeTimeoutBtn" type="button">+ TIME-OUT CASA</button></div><div class="scorecontrols admin-only" id="homeControls"><button class="btn plus" id="homePlus">+1 PUNTO</button></div></section>
 <section class="team away" id="awayTeam"><div class="team-head"><div class="teammark" id="awayBadge" aria-hidden="true"><span id="awayBadgeInitials">OSP</span><img id="awayLogoImg" class="team-logo hide" alt=""></div><div class="team-info"><div class="teamname" id="awayName">SQUADRA OSPITE</div></div></div><div class="point-alert" id="awayPointAlert" aria-live="polite"></div><div class="points" id="awayScore">0</div><div class="sets-footer"><div class="setslabel">SET VINTI</div><div class="setsvalue"><div class="setwins" id="awaySets">0</div><small>SET</small></div></div><div class="timeout-panel" aria-label="Time-out squadra ospite"><span class="timeout-label">TIME-OUT</span><div class="timeout-lamps" id="awayTimeoutLamps" aria-hidden="true"><span class="timeout-lamp available"></span><span class="timeout-lamp available"></span></div></div><div class="scorecontrols admin-only"><button class="btn timeout-control" id="awayTimeoutBtn" type="button">+ TIME-OUT OSPITE</button></div><div class="scorecontrols admin-only" id="awayControls"><button class="btn orange" id="awayPlus">+1 PUNTO</button></div></section></div>
 <section class="panel"><div class="statusline"><strong id="setTitle">1° SET</strong><span id="setStatus">Partita in corso</span></div><div class="setstrip" id="setStrip"></div><div class="winner" id="winner"></div></section>
-<section class="panel admin-only" id="managePanel"><h2>Gestione partita</h2>
-<div class="fipav-importer" id="fipavImporter">
-  <h3>Importa una gara da FIPAVOnline</h3>
-  <p class="fipav-intro">Seleziona campionato, girone e partita partendo dal testo del calendario. Il portale non viene interrogato automaticamente: carica un file TXT salvato da una copia manuale della pagina oppure incolla il testo qui sotto.</p>
-  <div class="fipav-links"><a href="https://public.fipavonline.it/comitati/04020/campionati" target="_blank" rel="noopener noreferrer">Apri campionati · C.T. Varese</a><a href="https://public.fipavonline.it/gironi/63719" target="_blank" rel="noopener noreferrer">Apri girone di esempio</a></div>
-  <label class="field">Carica testo calendario (.txt)<input id="fipavTextFile" class="file-input" type="file" accept=".txt,text/plain"></label>
-  <div class="fipav-import-grid">
-    <label class="field" for="fipavCalendarText">Oppure incolla il testo copiato da FIPAVOnline<textarea id="fipavCalendarText" spellcheck="false" placeholder="Apri il calendario FIPAVOnline, copia il testo della pagina e incollalo qui…"></textarea></label>
-    <div class="fipav-actions"><button class="btn" id="fipavAnalyzeBtn" type="button">ANALIZZA CALENDARIO</button></div>
-    <label class="field" for="fipavMatchSelect">Gare non ancora disputate<select id="fipavMatchSelect" disabled><option value="">Prima analizza un calendario</option></select></label>
-    <div class="fipav-actions"><button class="btn fipav-load" id="fipavLoadMatchBtn" type="button" disabled>CARICA GARA NEL TABELLONE</button></div>
-  </div>
-  <p class="fipav-status" id="fipavImportStatus" role="status" aria-live="polite">Nessun calendario analizzato.</p>
-  <p class="fipav-small">L’importazione carica squadre, campionato/girone, giornata, data, orario, numero gara e palestra. Il testo copiato non contiene i file dei loghi: per i loghi continua a usare i normali campi di caricamento. Prima di caricare una nuova gara viene chiesta conferma e il punteggio viene azzerato. L’importazione non modifica Firebase Rules.</p>
-</div><div class="formgrid"><label class="field">Squadra di casa<input id="homeInput" maxlength="50" value="SQUADRA DI CASA"></label><label class="field">Squadra ospite<input id="awayInput" maxlength="50" value="SQUADRA OSPITE"></label><label class="field">Torneo / categoria<input id="eventInput" maxlength="80" placeholder="Es. Campionato U14"></label><label class="field">Formato partita<select id="formatInput"><option value="3">Al meglio dei 3 set (2 vinti)</option><option value="5" selected>Al meglio dei 5 set (3 vinti)</option></select></label><div class="field logo-field"><label for="homeLogoFile">Logo squadra di casa</label><input id="homeLogoFile" class="file-input" type="file" accept="image/png,image/jpeg,image/webp"><div class="logo-file-row"><span class="logo-status" id="homeLogoStatus">Nessun logo caricato.</span><button class="btn small-btn" id="clearHomeLogo" type="button">Rimuovi</button></div></div><div class="field logo-field"><label for="awayLogoFile">Logo squadra ospite</label><input id="awayLogoFile" class="file-input" type="file" accept="image/png,image/jpeg,image/webp"><div class="logo-file-row"><span class="logo-status" id="awayLogoStatus">Nessun logo caricato.</span><button class="btn small-btn" id="clearAwayLogo" type="button">Rimuovi</button></div></div></div><div class="service-admin"><h3>Squadra al servizio</h3><p class="note">Seleziona chi serve all’inizio del set: il riquadro del suo punteggio si ingrandisce e si illumina. Quando assegni un punto, l’evidenziazione segue la squadra che ha conquistato il punto. All’inizio del set successivo seleziona chi serve per primo.</p><div class="actions"><button class="btn" id="serveHomeBtn" type="button">● Servizio: casa</button><button class="btn" id="serveAwayBtn" type="button">● Servizio: ospite</button><button class="btn" id="serveNoneBtn" type="button">Nessuna selezione</button></div><div class="authstate" id="servingAdminState">Servizio non indicato.</div></div><div class="actions"><button class="btn primary" id="saveNames">Salva intestazione</button><button class="btn" id="undoBtn">↶ Annulla ultima azione</button><button class="btn" id="nextSetBtn">Conferma / prossimo set</button><button class="btn danger" id="resetBtn">Azzera partita</button></div><p class="logo-note">Scegli un logo in formato PNG, JPG o WebP dal dispositivo. L’immagine viene ridimensionata e salvata nel database per mostrarla a tutti gli spettatori. Dopo aver scelto o rimosso un logo, premi “Salva intestazione”.</p><p class="note">Regole: set normali a 25 punti e almeno 2 di vantaggio; il set decisivo (3° in best-of-3, 5° in best-of-5) si gioca a 15 punti e almeno 2 di vantaggio. Il conteggio dei time-out è preimpostato a 2 per squadra per set e si azzera al set successivo. Il set si registra automaticamente al raggiungimento della soglia. Dopo un set vinto premi “Conferma / prossimo set”.</p></section>
+<section class="panel admin-only" id="managePanel"><h2>Gestione partita</h2><div class="formgrid"><label class="field">Squadra di casa<input id="homeInput" maxlength="50" value="SQUADRA DI CASA"></label><label class="field">Squadra ospite<input id="awayInput" maxlength="50" value="SQUADRA OSPITE"></label><label class="field">Torneo / categoria<input id="eventInput" maxlength="80" placeholder="Es. Campionato U14"></label><label class="field">Formato partita<select id="formatInput"><option value="3">Al meglio dei 3 set (2 vinti)</option><option value="5" selected>Al meglio dei 5 set (3 vinti)</option></select></label><div class="field logo-field"><label for="homeLogoFile">Logo squadra di casa</label><input id="homeLogoFile" class="file-input" type="file" accept="image/png,image/jpeg,image/webp"><div class="logo-file-row"><span class="logo-status" id="homeLogoStatus">Nessun logo caricato.</span><button class="btn small-btn" id="clearHomeLogo" type="button">Rimuovi</button></div></div><div class="field logo-field"><label for="awayLogoFile">Logo squadra ospite</label><input id="awayLogoFile" class="file-input" type="file" accept="image/png,image/jpeg,image/webp"><div class="logo-file-row"><span class="logo-status" id="awayLogoStatus">Nessun logo caricato.</span><button class="btn small-btn" id="clearAwayLogo" type="button">Rimuovi</button></div></div></div><div class="service-admin"><h3>Squadra al servizio</h3><p class="note">Seleziona chi serve all’inizio del set: il riquadro del suo punteggio si ingrandisce e si illumina. Quando assegni un punto, l’evidenziazione segue la squadra che ha conquistato il punto. All’inizio del set successivo seleziona chi serve per primo.</p><div class="actions"><button class="btn" id="serveHomeBtn" type="button">● Servizio: casa</button><button class="btn" id="serveAwayBtn" type="button">● Servizio: ospite</button><button class="btn" id="serveNoneBtn" type="button">Nessuna selezione</button></div><div class="authstate" id="servingAdminState">Servizio non indicato.</div></div><div class="actions"><button class="btn primary" id="saveNames">Salva intestazione</button><button class="btn" id="undoBtn">↶ Annulla ultima azione</button><button class="btn" id="nextSetBtn">Conferma / prossimo set</button><button class="btn danger" id="resetBtn">Azzera partita</button></div><p class="logo-note">Scegli un logo in formato PNG, JPG o WebP dal dispositivo. L’immagine viene ridimensionata e salvata nel database per mostrarla a tutti gli spettatori. Dopo aver scelto o rimosso un logo, premi “Salva intestazione”.</p><p class="note">Regole: set normali a 25 punti e almeno 2 di vantaggio; il set decisivo (3° in best-of-3, 5° in best-of-5) si gioca a 15 punti e almeno 2 di vantaggio. Il conteggio dei time-out è preimpostato a 2 per squadra per set e si azzera al set successivo. Il set si registra automaticamente al raggiungimento della soglia. Dopo un set vinto premi “Conferma / prossimo set”.</p></section>
 <span id="eventLabel" class="event-hidden">Campionato / amichevole</span></main><div class="board-caption">Aggiornamento punteggio in tempo reale</div><div class="foot">VOLLEY LIVE • MATCH CENTER</div><div class="copyright-notice">© 2026 Fabio Marsico · Volley Live. Tutti i diritti riservati, nei limiti consentiti dalla legge.</div></div><div id="spectatorPrompt" class="spectator-prompt hide" aria-label="Anteprima della partita e avvio del tabellone"><span class="spectator-prompt-copy"><span class="spectator-prompt-kicker">VOLLEY • LIVE SCORE</span></span><span class="spectator-preview" aria-label="Anteprima in tempo reale del tabellone"><span class="spectator-preview-heading"><span class="spectator-preview-caption">ANTEPRIMA DELLA PARTITA</span><span class="spectator-preview-event" id="spectatorEvent">CAMPIONATO / AMICHEVOLE</span></span><span class="spectator-preview-teams"><span class="spectator-preview-team home-preview"><span class="spectator-preview-mark"><span class="spectator-preview-initials" id="spectatorHomeInitials">CAS</span><img id="spectatorHomeLogo" class="team-logo hide" alt=""></span><span class="spectator-preview-name" id="spectatorHomeName">SQUADRA DI CASA</span></span><span class="spectator-preview-vs" aria-hidden="true">VS</span><span class="spectator-preview-team away-preview"><span class="spectator-preview-mark"><span class="spectator-preview-initials" id="spectatorAwayInitials">OSP</span><img id="spectatorAwayLogo" class="team-logo hide" alt=""></span><span class="spectator-preview-name" id="spectatorAwayName">SQUADRA OSPITE</span></span></span><span class="spectator-preview-footer">CAMPIONATO E SQUADRE • PRONTO PER LA PARTITA</span></span><button id="spectatorStartButton" class="spectator-prompt-arrow" type="button">AVVIA TABELLONE&nbsp; ↗</button></div>
 <div id="matchFinaleOverlay" class="match-finale-overlay hide" role="dialog" aria-modal="true" aria-labelledby="finaleTitle" aria-describedby="finaleWinnerName">
   <section class="match-finale-card">
@@ -527,7 +540,7 @@ const firebaseConfig = {
 };
 const ADMIN_UID = '0OX3K0LBPsRVIffqdAfg23qgr0N2';
 const $ = id => document.getElementById(id);
-const blank = () => ({homeName:'SQUADRA DI CASA',awayName:'SQUADRA OSPITE',homeLogo:'',awayLogo:'',event:'',format:5,setIndex:0,homeScore:0,awayScore:0,homeSets:0,awaySets:0,homeTimeouts:0,awayTimeouts:0,sets:[],serving:'none',finished:false,updatedAt:null,fixture:null,history:[]});
+const blank = () => ({homeName:'SQUADRA DI CASA',awayName:'SQUADRA OSPITE',homeLogo:'',awayLogo:'',event:'',format:5,setIndex:0,homeScore:0,awayScore:0,homeSets:0,awaySets:0,homeTimeouts:0,awayTimeouts:0,sets:[],serving:'none',finished:false,updatedAt:null,history:[]});
 const ADMIN_MODE = new URLSearchParams(location.search).get('admin') === '1';
 const SPECTATOR_VIEW = !ADMIN_MODE;
 let state=blank(), app, auth, db, currentUser=null, isAdmin=false, remoteReady=false, remoteReadError=false, firebaseConnectionKnown=false, firebaseConnected=false, pending=false, history=[];
@@ -556,68 +569,6 @@ function winnerSide(){if(state.homeSets>=Math.ceil(state.format/2))return 'home'
 function canWin(a,b,limit){return a>=limit&&a-b>=2;}
 function recordSet(side){state.sets[state.setIndex]={home:state.homeScore,away:state.awayScore};if(side==='home')state.homeSets++;else state.awaySets++;state.finished=!!winnerSide();}
 function cleanState(s){const d=blank();if(!s||typeof s!=='object')return d;return {...d,...s,format:Number(s.format)===3?3:5,setIndex:Math.max(0,Math.min(4,Number(s.setIndex)||0)),homeScore:Math.max(0,Number(s.homeScore)||0),awayScore:Math.max(0,Number(s.awayScore)||0),homeSets:Math.max(0,Number(s.homeSets)||0),awaySets:Math.max(0,Number(s.awaySets)||0),homeTimeouts:Math.max(0,Math.min(2,Number(s.homeTimeouts)||0)),awayTimeouts:Math.max(0,Math.min(2,Number(s.awayTimeouts)||0)),serving:s.serving==='home'||s.serving==='away'?s.serving:'none',sets:Array.isArray(s.sets)?s.sets.slice(0,5):[],history:[]};}
-
-// Importatore FIPAVOnline: analizza soltanto testo fornito manualmente dall'amministratore.
-let fipavParsedMatches=[];
-let fipavCompetition=null;
-function fipavNonEmpty(lines,index){while(index<lines.length&&!lines[index])index++;return {index,value:lines[index]||''};}
-function fipavIsDateLine(line){return /^(?:Lun|Mar|Mer|Gio|Ven|Sab|Dom)\s+\d{2}\/\d{2}\/\d{4}\s*[·•]\s*\d{1,2}[.:]\d{2}$/i.test(line);}
-function parseFipavCalendar(raw){
- const text=String(raw||'').replace(/\u00a0/g,' ').replace(/\r/g,'');
- if(!text.trim())throw new Error('Il testo del calendario è vuoto.');
- if(text.length>1500000)throw new Error('Il testo supera il limite di 1,5 MB.');
- const lines=text.split('\n').map(line=>line.trim());
- let competition=null;
- for(const line of lines){const m=line.match(/^(.+?)\s*[-–—]\s*Girone\s+([A-Z0-9]+)$/i);if(m){competition={name:m[1].trim(),group:'Girone '+m[2].toUpperCase(),label:m[1].trim()+' - Girone '+m[2].toUpperCase()};break;}}
- if(!competition)throw new Error('Non trovo il titolo del campionato nel formato “Campionato - Girone B”. Copia il testo partendo dall’inizio della pagina del calendario.');
- let round=null;const matches=[];let malformed=0;
- for(let i=0;i<lines.length;i++){
-  const roundMatch=lines[i].match(/^Giornata\s+(\d+)$/i);if(roundMatch){round=Number(roundMatch[1]);continue;}
-  if(!fipavIsDateLine(lines[i]))continue;
-  const dateMatch=lines[i].match(/^(?:Lun|Mar|Mer|Gio|Ven|Sab|Dom)\s+(\d{2}\/\d{2}\/\d{4})\s*[·•]\s*(\d{1,2})[.:](\d{2})$/i);
-  let p=fipavNonEmpty(lines,i+1);if(!/^Gara\s+\d+$/i.test(p.value)){malformed++;continue;}
-  const gameId=p.value.match(/\d+/)[0];
-  p=fipavNonEmpty(lines,p.index+1);if(p.value.toLowerCase()!=='impianto'){malformed++;continue;}
-  p=fipavNonEmpty(lines,p.index+1);const venue=p.value;
-  p=fipavNonEmpty(lines,p.index+1);const home=p.value;
-  p=fipavNonEmpty(lines,p.index+1);let result=p.value;let nextIndex=p.index+1;
-  if(/^Parziali\s*:/i.test(result)){malformed++;continue;}
-  if(!/^(?:\d+\s*[–—-]\s*\d+|[–—-])$/.test(result)){malformed++;continue;}
-  p=fipavNonEmpty(lines,nextIndex);
-  if(/^Parziali\s*:/i.test(p.value))p=fipavNonEmpty(lines,p.index+1);
-  const away=p.value;
-  if(!home||!away||/^Arbitri$/i.test(away)||/^Giornata\s+\d+$/i.test(away)){malformed++;continue;}
-  const dateParts=dateMatch[1].split('/');
-  const isoDate=dateParts[2]+'-'+dateParts[1]+'-'+dateParts[0];
-  const hour=String(dateMatch[2]).padStart(2,'0'),minute=dateMatch[3];
-  matches.push({id:gameId,round:round||0,dayLine:lines[i],date:isoDate,time:hour+':'+minute,home,away,venue,result,played:result!=='–'&&result!=='—'&&result!=='-'});
- }
- if(!matches.length)throw new Error('Non ho riconosciuto alcuna gara. Verifica di aver copiato il calendario completo e non soltanto la classifica.');
- const ids=new Set();const unique=matches.filter(m=>{if(ids.has(m.id))return false;ids.add(m.id);return true;});
- unique.sort((a,b)=>(a.date+'T'+a.time).localeCompare(b.date+'T'+b.time));
- return {competition,matches:unique,malformed};
-}
-function setFipavStatus(message,type=''){const el=$('fipavImportStatus');if(!el)return;el.textContent=message;el.className='fipav-status'+(type?' '+type:'');}
-function fipavMatchOptionLabel(match){return 'G'+match.round+' · '+match.dayLine.replace(/^\S+\s+/,'')+' · '+match.home+' — '+match.away+' · '+match.venue;}
-function renderFipavMatches(){const select=$('fipavMatchSelect');const load=$('fipavLoadMatchBtn');select.replaceChildren();const scheduled=fipavParsedMatches.filter(match=>!match.played);if(!scheduled.length){select.add(new Option('Nessuna gara da disputare',''));select.disabled=true;load.disabled=true;return;}
- scheduled.forEach(match=>{const option=new Option(fipavMatchOptionLabel(match),match.id);select.add(option);});select.disabled=false;load.disabled=false;}
-function analyzeFipavCalendar(){try{const parsed=parseFipavCalendar($('fipavCalendarText').value);fipavParsedMatches=parsed.matches;fipavCompetition=parsed.competition;renderFipavMatches();const played=fipavParsedMatches.filter(m=>m.played).length;const scheduled=fipavParsedMatches.length-played;const warning=parsed.malformed?` · ${parsed.malformed} righe non riconosciute ignorate`:'';setFipavStatus(`${fipavCompetition.label}: ${fipavParsedMatches.length} gare riconosciute (${played} già disputate, ${scheduled} da disputare). Seleziona la gara da caricare.${warning}`,'ok');}catch(e){fipavParsedMatches=[];fipavCompetition=null;$('fipavMatchSelect').replaceChildren(new Option('Nessuna gara disponibile',''));$('fipavMatchSelect').disabled=true;$('fipavLoadMatchBtn').disabled=true;setFipavStatus(e.message||'Errore durante l’analisi del calendario.','error');}}
-async function loadSelectedFipavMatch(){
- if(!isAdmin||!currentUser||currentUser.uid!==ADMIN_UID||pending)return;
- const selectedId=$('fipavMatchSelect').value;const match=fipavParsedMatches.find(item=>item.id===selectedId&&!item.played);if(!match){setFipavStatus('Seleziona una gara non ancora disputata.','error');return;}
- const format=Number($('formatInput').value)===3?3:5;
- const fixture={source:'FIPAVOnline · importazione manuale',competition:fipavCompetition.name,group:fipavCompetition.group,round:match.round,matchId:match.id,date:match.date,time:match.time,venue:match.venue,home:match.home,away:match.away};
- const prettyDate=match.date.split('-').reverse().join('/');
- if(!confirm(`Caricare nel tabellone questa gara?\n\n${fipavCompetition.label}\nGiornata ${match.round} · ${prettyDate} · ${match.time}\n${match.home} — ${match.away}\n${match.venue}\n\nIl punteggio e i set della partita attuale verranno azzerati. I loghi saranno mantenuti soltanto per le squadre che hanno già lo stesso nome.`))return;
- const ok=await mutate(s=>{
-  const oldHome=s.homeName,oldAway=s.awayName;
-  s.homeName=match.home;s.awayName=match.away;s.event=fipavCompetition.label;
-  if(oldHome!==match.home)s.homeLogo='';if(oldAway!==match.away)s.awayLogo='';
-  s.format=format;s.setIndex=0;s.homeScore=0;s.awayScore=0;s.homeSets=0;s.awaySets=0;s.homeTimeouts=0;s.awayTimeouts=0;s.sets=[];s.serving='none';s.finished=false;s.fixture=fixture;
- });
- if(ok){logoDraft={home:undefined,away:undefined};$('homeLogoFile').value='';$('awayLogoFile').value='';render();updateLogoStatuses();setFipavStatus(`Gara ${match.id} caricata: ${match.home} — ${match.away}. Campionato, girone e dati della palestra sono stati associati al tabellone.`,'ok');notice('Gara FIPAV caricata. Punteggio azzerato e dati sincronizzati.','ok');}
-}
-
 function initials(name,fallback){const words=String(name||'').trim().split(/\s+/).filter(Boolean);if(!words.length)return fallback;const letters=words.length===1?words[0].slice(0,3):words.slice(0,3).map(w=>w[0]).join('');return letters.normalize('NFD').replace(/[\u0300-\u036f]/g,'').slice(0,3).toUpperCase();}
 function renderBadge(imgId,initialsId,url,label){const img=$(imgId),fallback=$(initialsId);fallback.textContent=label;let safe='';const candidate=String(url||'');if(/^data:image\/(?:png|jpeg|webp);base64,/i.test(candidate)){safe=candidate;}else{try{const parsed=new URL(candidate);if(parsed.protocol==='https:'||parsed.protocol==='http:')safe=parsed.href;}catch{}}if(!safe){img.removeAttribute('src');img.dataset.src='';img.classList.add('hide');fallback.classList.remove('hide');return;}if(img.dataset.src===safe&&img.classList.contains('loaded-logo'))return;img.dataset.src=safe;img.onload=()=>{img.classList.remove('hide');img.classList.add('loaded-logo');fallback.classList.add('hide');};img.onerror=()=>{img.classList.add('hide');img.classList.remove('loaded-logo');fallback.classList.remove('hide');};img.classList.add('hide');fallback.classList.remove('hide');img.src=safe;}
 function isEmbeddedLogo(value){return typeof value==='string'&&/^data:image\/(?:png|jpeg|webp);base64,/i.test(value);}
@@ -751,6 +702,14 @@ function renderMatchFinale(){
 }
 
 function render(){
+ const fixtureBox=$('fixtureDetails');
+ if(fixtureBox){
+  const fx=state.fixture;
+  if(fx&&fx.gameNo){
+   fixtureBox.classList.remove('hide');
+   fixtureBox.textContent='GARA '+fx.gameNo+' · '+fx.date+' · '+fx.time+' · '+fx.venue+' · '+fx.committee;
+  }else{fixtureBox.classList.add('hide');fixtureBox.textContent='';}
+ }
  const matchWon=!!winnerSide();
  const matchComplete=!!state.finished||matchWon;
  renderSpectatorPreview();
@@ -761,27 +720,23 @@ function render(){
  $('homeScore').classList.toggle('serving-score',state.serving==='home');$('awayScore').classList.toggle('serving-score',state.serving==='away');$('serveHomeBtn').classList.toggle('active',state.serving==='home');$('serveAwayBtn').classList.toggle('active',state.serving==='away');$('serveAwayBtn').classList.toggle('away-active',state.serving==='away');$('servingAdminState').textContent=state.serving==='home'?`Servizio: ${state.homeName}`:state.serving==='away'?`Servizio: ${state.awayName}`:'Servizio non indicato.';
  $('homeTeam').classList.toggle('leading',state.homeScore>state.awayScore&&!matchComplete);$('awayTeam').classList.toggle('leading',state.awayScore>state.homeScore&&!matchComplete);
  $('setTitle').textContent=matchComplete?'PARTITA CONCLUSA':`${state.setIndex+1}° SET`;$('setStatus').textContent=matchComplete?'Risultato finale':`Obiettivo ${target()} punti · vantaggio di 2`;
- $('eventLabel').textContent=state.event||'Campionato / amichevole';$('matchMeta').textContent=state.event?state.event.toUpperCase():'PUNTEGGIO IN DIRETTA';const fixture=state.fixture&&typeof state.fixture==='object'?state.fixture:null;const fixtureDetails=$('fixtureDetails');if(fixtureDetails){if(fixture){const fixtureDate=String(fixture.date||'').split('-').reverse().join('/');fixtureDetails.textContent=`GIORNATA ${fixture.round||'—'} · GARA ${fixture.matchId||'—'} · ${fixtureDate} ${fixture.time||''} · ${fixture.venue||''}`;fixtureDetails.classList.remove('hide');}else{fixtureDetails.textContent='';fixtureDetails.classList.add('hide');}}$('updatedLabel').textContent=state.updatedAt?'AGGIORNATO '+new Date(state.updatedAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}):'IN ATTESA DEL PRIMO AGGIORNAMENTO';$('setStrip').style.gridTemplateColumns=`repeat(${state.format}, minmax(0, 1fr))`;
+ $('eventLabel').textContent=state.event||'Campionato / amichevole';$('matchMeta').textContent=state.event?state.event.toUpperCase():'PUNTEGGIO IN DIRETTA';$('updatedLabel').textContent=state.updatedAt?'AGGIORNATO '+new Date(state.updatedAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}):'IN ATTESA DEL PRIMO AGGIORNAMENTO';$('setStrip').style.gridTemplateColumns=`repeat(${state.format}, minmax(0, 1fr))`;
  $('setStrip').replaceChildren();for(let i=0;i<state.format;i++){const el=document.createElement('div');el.className='setbox'+(i===state.setIndex&&!state.finished?' current':'');const small=document.createElement('small');small.textContent=`SET ${i+1}`;const strong=document.createElement('strong');const sc=state.sets[i];if(sc&&typeof sc==='object'){const homeSetScore=Number(sc.home)||0,awaySetScore=Number(sc.away)||0;const homeSpan=document.createElement('span');homeSpan.textContent=String(homeSetScore);if(homeSetScore>awaySetScore)homeSpan.className='set-winning-score';const awaySpan=document.createElement('span');awaySpan.textContent=String(awaySetScore);if(awaySetScore>homeSetScore)awaySpan.className='set-winning-score';strong.append(homeSpan,document.createTextNode(' – '),awaySpan);}else{strong.textContent='—';}el.append(small,strong);$('setStrip').append(el);}
  const win=winnerSide();$('winner').textContent=win?`🏆 VINCE ${win==='home'?state.homeName:state.awayName}`:'';$('homePlus').disabled=!isAdmin||matchComplete||!!state.sets[state.setIndex]||pending;$('awayPlus').disabled=!isAdmin||matchComplete||!!state.sets[state.setIndex]||pending;$('nextSetBtn').disabled=!isAdmin||matchComplete||!state.sets[state.setIndex]||pending;$('undoBtn').disabled=!isAdmin||!history.length||pending;
  updateConnectionBadge();
+ if(typeof renderFixturePreview==='function')renderFixturePreview();
  if(isAdmin){if(document.activeElement!==$('homeInput'))$('homeInput').value=state.homeName;if(document.activeElement!==$('awayInput'))$('awayInput').value=state.awayName;if(document.activeElement!==$('eventInput'))$('eventInput').value=state.event;if(document.activeElement!==$('formatInput'))$('formatInput').value=String(state.format);updateLogoStatuses();}
  renderMatchFinale();
 }
-function showAdmin(){const canManage=ADMIN_MODE&&isAdmin;$('authPanel').classList.toggle('hide',!ADMIN_MODE);document.querySelectorAll('.admin-only').forEach(el=>el.classList.toggle('show',canManage));$('authRow').classList.toggle('hide',canManage);$('logoutBtn').classList.toggle('hide',!canManage);$('copyPublicBtn').classList.toggle('hide',!canManage);$('whatsappBtn').classList.toggle('hide',!canManage);$('emailInput').disabled=canManage;$('passwordInput').disabled=canManage;$('authState').textContent=canManage?'Accesso amministratore attivo. I comandi sono abilitati.':'Accedi con l’account amministratore autorizzato.';render();}
+function showAdmin(){const canManage=ADMIN_MODE&&isAdmin;$('authPanel').classList.toggle('hide',!ADMIN_MODE);document.querySelectorAll('.admin-only').forEach(el=>el.classList.toggle('show',canManage));$('authRow').classList.toggle('hide',canManage);$('logoutBtn').classList.toggle('hide',!canManage);$('copyPublicBtn').classList.toggle('hide',!canManage);$('whatsappBtn').classList.toggle('hide',!canManage);$('emailInput').disabled=canManage;$('passwordInput').disabled=canManage;$('authState').textContent=canManage?'Accesso amministratore attivo. I comandi sono abilitati.':'Accedi con l’account amministratore autorizzato.';render();if(typeof renderFixturePreview==='function')renderFixturePreview();}
 async function persist(next){if(!isAdmin||!currentUser||currentUser.uid!==ADMIN_UID)throw new Error('Solo l’amministratore autorizzato può modificare la partita.');pending=true;render();try{next.updatedAt=Date.now();await set(ref(db,'match'),next);state=cleanState(next);history=next.history||history;notice('Punteggio salvato e sincronizzato.','ok');}catch(e){notice('Salvataggio non riuscito: '+(e.message||e),'error');throw e;}finally{pending=false;render();}}
 async function mutate(fn){if(!isAdmin||pending)return false;const before=historySnapshot(state);history.push(before);if(history.length>80)history.shift();const next=JSON.parse(JSON.stringify(state));fn(next);next.history=history;try{await persist(next);return true;}catch{history.pop();return false;}}
 function checkSet(s){if(s.finished||s.sets[s.setIndex])return;const lim=s.setIndex===s.format-1?15:25;if(canWin(s.homeScore,s.awayScore,lim)){s.sets[s.setIndex]={home:s.homeScore,away:s.awayScore};s.homeSets++;}else if(canWin(s.awayScore,s.homeScore,lim)){s.sets[s.setIndex]={home:s.homeScore,away:s.awayScore};s.awaySets++;}s.finished=s.homeSets>=Math.ceil(s.format/2)||s.awaySets>=Math.ceil(s.format/2);}
 $('homePlus').onclick=()=>mutate(s=>{if(s.finished||s.sets[s.setIndex])return;s.homeScore++;s.serving='home';checkSet(s)});$('awayPlus').onclick=()=>mutate(s=>{if(s.finished||s.sets[s.setIndex])return;s.awayScore++;s.serving='away';checkSet(s)});
 $('homeTimeoutBtn').onclick=()=>mutate(s=>{if(!s.finished&&s.homeTimeouts<2)s.homeTimeouts++;});$('awayTimeoutBtn').onclick=()=>mutate(s=>{if(!s.finished&&s.awayTimeouts<2)s.awayTimeouts++;});
-$('saveNames').onclick=async()=>{const newHomeLogo=logoDraft.home,newAwayLogo=logoDraft.away;const ok=await mutate(s=>{s.homeName=$('homeInput').value.trim().slice(0,50)||'SQUADRA DI CASA';s.awayName=$('awayInput').value.trim().slice(0,50)||'SQUADRA OSPITE';s.event=$('eventInput').value.trim().slice(0,80);if(newHomeLogo!==undefined)s.homeLogo=newHomeLogo;if(newAwayLogo!==undefined)s.awayLogo=newAwayLogo;const fmt=Number($('formatInput').value);if((fmt===3||fmt===5)&&s.homeSets===0&&s.awaySets===0&&s.setIndex===0){s.format=fmt;s.sets=[];}});if(ok){logoDraft={home:undefined,away:undefined};$('homeLogoFile').value='';$('awayLogoFile').value='';render();updateLogoStatuses();notice('Intestazione e loghi salvati e sincronizzati.','ok');}};
+$('saveNames').onclick=async()=>{const newHomeLogo=logoDraft.home,newAwayLogo=logoDraft.away;const ok=await mutate(s=>{s.homeName=$('homeInput').value.trim().slice(0,50)||'SQUADRA DI CASA';s.awayName=$('awayInput').value.trim().slice(0,50)||'SQUADRA OSPITE';s.event=$('eventInput').value.trim().slice(0,80);if(s.fixture&&(s.homeName!==state.homeName||s.awayName!==state.awayName||s.event!==state.event))s.fixture=null;if(newHomeLogo!==undefined)s.homeLogo=newHomeLogo;if(newAwayLogo!==undefined)s.awayLogo=newAwayLogo;const fmt=Number($('formatInput').value);if((fmt===3||fmt===5)&&s.homeSets===0&&s.awaySets===0&&s.setIndex===0){s.format=fmt;s.sets=[];}});if(ok){logoDraft={home:undefined,away:undefined};$('homeLogoFile').value='';$('awayLogoFile').value='';render();updateLogoStatuses();notice('Intestazione e loghi salvati e sincronizzati.','ok');}};
 async function setServing(side){if(!isAdmin||pending)return;const next=JSON.parse(JSON.stringify(state));next.serving=side;next.history=history;try{await persist(next);}catch{}}
 $('serveHomeBtn').onclick=()=>setServing('home');$('serveAwayBtn').onclick=()=>setServing('away');$('serveNoneBtn').onclick=()=>setServing('none');
-
-$('fipavTextFile').addEventListener('change',async()=>{const file=$('fipavTextFile').files&&$('fipavTextFile').files[0];if(!file)return;if(file.size>1500000){setFipavStatus('Il file supera 1,5 MB.','error');$('fipavTextFile').value='';return;}try{$('fipavCalendarText').value=await file.text();setFipavStatus('File caricato. Premi “Analizza calendario” per leggere le gare.','ok');}catch(e){setFipavStatus('Non riesco a leggere il file selezionato.','error');}});
-$('fipavAnalyzeBtn').onclick=analyzeFipavCalendar;
-$('fipavLoadMatchBtn').onclick=loadSelectedFipavMatch;
-
 $('homeLogoFile').addEventListener('change',()=>chooseLogo('home'));$('awayLogoFile').addEventListener('change',()=>chooseLogo('away'));
 $('clearHomeLogo').onclick=()=>{logoDraft.home='';$('homeLogoFile').value='';render();updateLogoStatuses();};
 $('clearAwayLogo').onclick=()=>{logoDraft.away='';$('awayLogoFile').value='';render();updateLogoStatuses();};
@@ -1026,6 +981,164 @@ if(SPECTATOR_VIEW){
 }
 document.addEventListener('fullscreenchange',updateFullscreenButton);
 updateFullscreenButton();
+
+// V11 GitHub trial: catalogo statico incluso nella stessa repository.
+let fixtureCatalog = null;
+const fixtureEls = {
+ committee: $('fixtureCommittee'), competition: $('fixtureCompetition'), group: $('fixtureGroup'),
+ round: $('fixtureRound'), match: $('fixtureMatch'), includePlayed: $('fixtureIncludePlayed'),
+ preview: $('fixturePreview'), count: $('fixtureDemoCount'), status: $('fixtureStatus'),
+ importBtn: $('fixtureImportBtn'), officialLink: $('fixtureOfficialLink')
+};
+function fixtureDateValue(value){
+ const m=String(value||'').match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+ if(!m)return new Date(0);
+ return new Date(Number(m[3]),Number(m[2])-1,Number(m[1]));
+}
+function fixtureOption(select,value,label){const o=document.createElement('option');o.value=String(value);o.textContent=String(label);select.append(o);}
+function selectedFixtureGroup(){return fixtureCatalog?.groupsById?.[fixtureEls.group.value]||null;}
+function renderFixturePreview(){
+ if(!fixtureCatalog||!fixtureEls.preview)return;
+ const groupId=fixtureEls.group.value;
+ const groupData=fixtureCatalog.groupSnapshots[groupId];
+ const game=groupData?.matches.find(x=>String(x.gameNo)===fixtureEls.match.value);
+ fixtureEls.preview.replaceChildren();
+ const teams=document.createElement('div');teams.className='fixture-preview-teams';
+ const home=document.createElement('span');home.textContent=game?game.home:'Seleziona una partita';
+ const vs=document.createElement('span');vs.className='fixture-preview-vs';vs.textContent='VS';
+ const away=document.createElement('span');away.textContent=game?game.away:'—';
+ teams.append(home,vs,away);fixtureEls.preview.append(teams);
+ const meta=document.createElement('div');meta.className='fixture-preview-meta';
+ const partials=document.createElement('div');partials.className='fixture-preview-partials';
+ if(game){
+  const comp=fixtureEls.competition.value, group=fixtureEls.group.options[fixtureEls.group.selectedIndex]?.textContent||'';
+  meta.textContent=`${fixtureCatalog.committee.name} · ${comp} · ${group} · Giornata ${game.round} · Gara ${game.gameNo} · ${game.date} ore ${game.time} · ${game.venue}`;
+  if(game.result){partials.textContent=`Risultato registrato nella fotografia: ${game.result[0]}–${game.result[1]}${game.partials?.length?' · Parziali '+game.partials.join(' / '):''}. Il tabellone LIVE verrà comunque azzerato.`;}
+  else partials.textContent='Gara da disputare secondo la fotografia del 02/11/2026.';
+ }else{
+  meta.textContent='I dettagli della gara appariranno qui.';
+ }
+ fixtureEls.preview.append(meta,partials);
+ fixtureEls.importBtn.disabled=!game||!isAdmin||pending;
+}
+function updateFixtureMatches(){
+ const groupId=fixtureEls.group.value;
+ const groupData=fixtureCatalog?.groupSnapshots?.[groupId];
+ fixtureEls.match.replaceChildren();
+ fixtureEls.round.replaceChildren();
+ if(!groupData){
+  fixtureOption(fixtureEls.round,'','Calendario non incluso nella prova');
+  fixtureEls.round.disabled=true;fixtureEls.match.disabled=true;
+  fixtureOption(fixtureEls.match,'','Nessuna partita disponibile in questa prova');
+  fixtureEls.importBtn.disabled=true;
+  fixtureEls.count.textContent='Girone selezionato: identificativo '+groupId+'. In questa prova è disponibile il calendario soltanto del girone 63719.';
+  fixtureEls.status.textContent='Apri il calendario ufficiale FIPAV tramite il collegamento. Per aggiungere questo girone occorre acquisirne i dati tramite una fonte autorizzata.';
+  renderFixturePreview();return;
+ }
+ fixtureEls.round.disabled=false;fixtureEls.match.disabled=false;
+ const rounds=[...new Set(groupData.matches.map(g=>g.round))].sort((a,b)=>a-b);
+ rounds.forEach(r=>{
+  const all=groupData.matches.filter(g=>g.round===r);
+  const done=all.filter(g=>g.result).length;
+  fixtureOption(fixtureEls.round,r,`Giornata ${r} · ${all.length} gare${done?` · ${done} disputate`:''}`);
+ });
+ const today=new Date();today.setHours(0,0,0,0);
+ let defaultRound=rounds.find(r=>groupData.matches.some(g=>g.round===r&&fixtureDateValue(g.date)>=today&&(!g.result||fixtureEls.includePlayed.checked)));
+ if(!defaultRound)defaultRound=rounds[rounds.length-1];
+ fixtureEls.round.value=String(defaultRound||'');
+ filterFixtureGames();
+ fixtureEls.count.textContent=`${groupData.matches.length} gare · ${groupData.counts.completedMatches} disputate · ${groupData.counts.upcomingMatches} da disputare · ${groupData.counts.rounds} giornate · ${groupData.teams.length} squadre. Dati del 02/11/2026.`;
+ fixtureEls.status.textContent='Catalogo statico di prova. La selezione carica la gara in Firebase; non aggiorna automaticamente il calendario FIPAV.';
+ renderFixturePreview();
+}
+function filterFixtureGames(){
+ if(!fixtureCatalog)return;
+ const groupData=fixtureCatalog.groupSnapshots[fixtureEls.group.value];
+ if(!groupData){renderFixturePreview();return;}
+ const round=Number(fixtureEls.round.value);
+ const today=new Date();today.setHours(0,0,0,0);
+ let games=groupData.matches.filter(g=>g.round===round);
+ if(!fixtureEls.includePlayed.checked)games=games.filter(g=>!g.result&&fixtureDateValue(g.date)>=today);
+ fixtureEls.match.replaceChildren();
+ if(!games.length){fixtureOption(fixtureEls.match,'','Nessuna gara da mostrare');fixtureEls.importBtn.disabled=true;fixtureEls.status.textContent='Non ci sono gare future in questa giornata nella fotografia del 02/11/2026. Seleziona “Mostra anche le gare già disputate” oppure un’altra giornata.';renderFixturePreview();return;}
+ games.sort((a,b)=>fixtureDateValue(a.date)-fixtureDateValue(b.date)||a.time.localeCompare(b.time));
+ games.forEach(g=>{
+  const label=`Gara ${g.gameNo} · ${g.date} ${g.time} · ${g.home} – ${g.away}${g.result?` (${g.result[0]}–${g.result[1]})`:''}`;
+  fixtureOption(fixtureEls.match,g.gameNo,label);
+ });
+ fixtureEls.match.value=String(games[0].gameNo);
+ renderFixturePreview();
+}
+function updateFixtureGroups(preferId){
+ const comp=fixtureCatalog?.groups.find(c=>c.name===fixtureEls.competition.value);
+ fixtureEls.group.replaceChildren();
+ if(!comp){updateFixtureMatches();return;}
+ comp.groups.forEach(g=>fixtureOption(fixtureEls.group,g.id,`${g.name} · ${g.id}`));
+ const wanted=preferId&&comp.groups.some(g=>g.id===preferId)?preferId:(comp.groups.some(g=>g.id==='63719')?'63719':comp.groups[0]?.id);
+ if(wanted)fixtureEls.group.value=wanted;
+ fixtureEls.officialLink.href=`https://public.fipavonline.it/gironi/${encodeURIComponent(fixtureEls.group.value)}`;
+ updateFixtureMatches();
+}
+async function initFixturePicker(){
+ try{
+  const url=new URL('./catalogo-fipav-v11.json',location.href);
+  const response=await fetch(url.href,{cache:'no-store',headers:{'Accept':'application/json'}});
+  if(!response.ok)throw new Error(`HTTP ${response.status}`);
+  fixtureCatalog=await response.json();
+  fixtureCatalog.groupsById={};
+  fixtureCatalog.groups.forEach(c=>c.groups.forEach(g=>fixtureCatalog.groupsById[g.id]={...g,competition:c.name,gender:c.gender}));
+  fixtureEls.competition.replaceChildren();
+  fixtureCatalog.groups.forEach(c=>fixtureOption(fixtureEls.competition,c.name,c.name));
+  fixtureEls.competition.value='Prima Divisione Femminile';
+  updateFixtureGroups('63719');
+  fixtureEls.committee.value='04020';
+  fixtureEls.committee.disabled=true;
+  fixtureEls.competition.addEventListener('change',()=>updateFixtureGroups());
+  fixtureEls.group.addEventListener('change',()=>{
+   fixtureEls.officialLink.href=`https://public.fipavonline.it/gironi/${encodeURIComponent(fixtureEls.group.value)}`;
+   updateFixtureMatches();
+  });
+  fixtureEls.round.addEventListener('change',filterFixtureGames);
+  fixtureEls.match.addEventListener('change',renderFixturePreview);
+  fixtureEls.includePlayed.addEventListener('change',filterFixtureGames);
+  fixtureEls.importBtn.addEventListener('click',importSelectedFixture);
+  fixtureEls.status.textContent='Catalogo di prova caricato. Scegli una giornata e una gara, quindi importa nel tabellone.';
+ }catch(error){
+  fixtureEls.count.textContent='Impossibile caricare il catalogo statico: '+(error.message||error);
+  fixtureEls.status.textContent='Controlla che catalogo-fipav-v11.json sia stato caricato nella stessa cartella di prova di questo file HTML.';
+ }
+}
+async function importSelectedFixture(){
+ if(!isAdmin||!currentUser){notice('Accedi come amministratore per caricare una gara.','error');return;}
+ if(pending||!fixtureCatalog)return;
+ const groupId=fixtureEls.group.value;
+ const groupData=fixtureCatalog.groupSnapshots[groupId];
+ const game=groupData?.matches.find(x=>String(x.gameNo)===fixtureEls.match.value);
+ if(!game){notice('Seleziona una partita valida.','error');return;}
+ const comp=fixtureEls.competition.value;
+ const groupName=fixtureEls.group.options[fixtureEls.group.selectedIndex]?.textContent.split(' · ')[0]||'Girone';
+ const confirmation=`Caricare nel tabellone?\n\n${game.home}\ncontro\n${game.away}\n\n${comp} · ${groupName} · Giornata ${game.round}\n${game.date} ore ${game.time}\n${game.venue}\n\nIl punteggio e i set della partita attualmente attiva verranno azzerati. I loghi già caricati saranno conservati solo per le squadre che coincidono esattamente.`;
+ if(!confirm(confirmation))return;
+ const next=JSON.parse(JSON.stringify(state));
+ const preserveHomeLogo=state.homeName===game.home?state.homeLogo:'';
+ const preserveAwayLogo=state.awayName===game.away?state.awayLogo:'';
+ next.homeName=game.home;next.awayName=game.away;
+ next.homeLogo=preserveHomeLogo;next.awayLogo=preserveAwayLogo;
+ next.event=`${comp} · ${groupName} · Giornata ${game.round}`;
+ next.format=5;next.setIndex=0;next.homeScore=0;next.awayScore=0;next.homeSets=0;next.awaySets=0;
+ next.homeTimeouts=0;next.awayTimeouts=0;next.sets=[];next.serving='none';next.finished=false;
+ next.fixture={committee:fixtureCatalog.committee.name,committeeId:fixtureCatalog.committee.id,competition:comp,group:groupName,groupId,round:game.round,gameNo:game.gameNo,date:game.date,time:game.time,venue:game.venue,source:'static-snapshot',snapshotDate:fixtureCatalog.snapshotDate,sourceUrl:groupData.sourceUrl};
+ history=[];next.history=[];
+ try{
+  await persist(next);
+  logoDraft={home:undefined,away:undefined};
+  $('homeLogoFile').value='';$('awayLogoFile').value='';
+  render();updateLogoStatuses();
+  notice(`Gara ${game.gameNo} caricata. Il tabellone LIVE è stato azzerato e sincronizzato.`, 'ok');
+ }catch(error){notice('Non sono riuscito a caricare la gara: '+(error.message||error),'error');}
+}
+void initFixturePicker();
+
 if(!configReady){notice('Configurazione Firebase incompleta. Controlla i parametri della tua app Web in index.html. Nessuna password va inserita nel codice.','error');$('liveBadge').classList.remove('state-connected','state-disconnected','state-connecting','state-finale');$('liveBadge').classList.add('state-disconnected');$('liveBadge').innerHTML='<span class="dot"></span>DA CONFIGURARE';showAdmin();}
 else {try{app=initializeApp(firebaseConfig);auth=getAuth(app);db=getDatabase(app);onValue(ref(db,'.info/connected'),snap=>{firebaseConnectionKnown=true;firebaseConnected=snap.val()===true;updateConnectionBadge();});onValue(ref(db,'match'),snap=>{if(snap.exists()){state=cleanState(snap.val());history=Array.isArray(snap.val().history)?snap.val().history:[];}else{state=blank();history=[];}remoteReady=true;remoteReadError=false;render();if(!$('notice').classList.contains('error'))notice('Collegamento al tabellone attivo.','ok');},err=>{remoteReady=false;remoteReadError=true;notice('Lettura Firebase non riuscita. Controlla le regole Realtime Database e la configurazione. '+err.message,'error');render();});onAuthStateChanged(auth,user=>{currentUser=user;const authorizedUser=!!user&&user.uid===ADMIN_UID;isAdmin=authorizedUser&&ADMIN_MODE;showAdmin();if(user&&!authorizedUser){signOut(auth).catch(()=>{});notice('Questo account non è autorizzato a gestire il tabellone.','error');}else if(isAdmin){notice('Accesso amministratore verificato.','ok');get(ref(db,'match')).then(snap=>{if(!snap.exists())return set(ref(db,'match'),{...blank(),history:[]});}).catch(e=>notice('Impossibile inizializzare/verificare il tabellone. Controlla che le regole Firebase siano pubblicate. '+e.message,'error'));}});}catch(e){notice('Errore inizializzazione Firebase: '+e.message,'error');}}
 </script></body></html>
