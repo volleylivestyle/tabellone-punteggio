@@ -1,0 +1,45 @@
+name: Aggiorna calendari FIPAV
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 5 * * *"
+  push:
+    paths:
+      - "scripts/aggiorna_catalogo_fipav.py"
+      - ".github/workflows/aggiorna-calendari-fipav.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: aggiorna-calendari-fipav
+  cancel-in-progress: false
+
+jobs:
+  aggiorna:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Scarica il repository
+        uses: actions/checkout@v4
+
+      - name: Prepara Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Acquisisci e converti i calendari FIPAV
+        run: python scripts/aggiorna_catalogo_fipav.py
+
+      - name: Salva il catalogo aggiornato
+        run: |
+          if git diff --quiet -- catalogo-fipav-v11.json; then
+            echo "Nessuna variazione nei calendari: nessun commit necessario."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add catalogo-fipav-v11.json
+          git commit -m "Aggiorna calendari FIPAV"
+          git push
