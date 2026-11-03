@@ -415,8 +415,8 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
 <main>
 <div id="fixtureDetails" class="fixture-details hide" aria-live="polite"></div>
 <section class="panel admin-only fixture-picker-panel" id="fixturePickerPanel">
-  <h2>Seleziona una gara dal calendario <span class="fixture-demo-badge">PROVA GITHUB</span></h2>
-  <p class="fixture-source-note"><strong>Attenzione:</strong> questa prova usa un catalogo statico acquisito il 02/11/2026. Il collegamento automatico a FIPAVOnline non è attivo in GitHub Pages; il test serve a verificare la selezione e il caricamento della gara in Firebase.</p>
+  <h2>Seleziona una gara dal calendario FIPAV <span class="fixture-demo-badge">DATI FIPAV</span></h2>
+  <p class="fixture-source-note"><strong>Attenzione:</strong> I calendari vengono acquisiti dal servizio dati FIPAV tramite un aggiornamento server-side quotidiano. La selezione della partita carica nel tabellone soltanto squadre e dettagli della gara: punteggio e set LIVE partono da zero.</p>
   <div class="fixture-picker-grid">
     <label class="field">Regione / Comitato<select id="fixtureCommittee"><option value="04020">Lombardia · C.T. Varese</option></select></label>
     <label class="field">Campionato<select id="fixtureCompetition"></select></label>
@@ -425,7 +425,7 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
     <label class="field wide">Partita<select id="fixtureMatch"></select></label>
   </div>
   <label class="fixture-include-played"><input type="checkbox" id="fixtureIncludePlayed"> Mostra anche le gare già disputate</label>
-  <p class="fixture-demo-count" id="fixtureDemoCount">Caricamento catalogo di prova…</p>
+  <p class="fixture-demo-count" id="fixtureDemoCount">Caricamento catalogo FIPAV…</p>
   <div class="fixture-result-preview" id="fixturePreview" aria-live="polite">
     <div class="fixture-preview-teams"><span>Seleziona una partita</span><span class="fixture-preview-vs">VS</span><span>—</span></div>
     <div class="fixture-preview-meta">I dettagli della gara appariranno qui.</div>
@@ -434,7 +434,7 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
     <button class="btn primary" id="fixtureImportBtn" type="button" disabled>Carica gara nel tabellone</button>
     <a class="btn" id="fixtureOfficialLink" href="https://public.fipavonline.it/gironi/63719" target="_blank" rel="noopener noreferrer">Apri calendario ufficiale FIPAV ↗</a>
   </div>
-  <p class="fixture-fetch-status" id="fixtureStatus">La prova contiene il calendario del Girone B di Prima Divisione Femminile. Gli altri gironi sono presenti nel menu, ma i rispettivi calendari non sono inclusi in questa fotografia.</p>
+  <p class="fixture-fetch-status" id="fixtureStatus">Caricamento dei calendari FIPAV…</p>
 </section>
 <div class="scoreboard">
 <section class="team home" id="homeTeam"><div class="team-head"><div class="teammark" id="homeBadge" aria-hidden="true"><span id="homeBadgeInitials">CAS</span><img id="homeLogoImg" class="team-logo hide" alt=""></div><div class="team-info"><div class="teamname" id="homeName">SQUADRA DI CASA</div></div></div><div class="point-alert" id="homePointAlert" aria-live="polite"></div><div class="points" id="homeScore">0</div><div class="sets-footer"><div class="setslabel">SET VINTI</div><div class="setsvalue"><div class="setwins" id="homeSets">0</div><small>SET</small></div></div><div class="timeout-panel" aria-label="Time-out squadra di casa"><span class="timeout-label">TIME-OUT</span><div class="timeout-lamps" id="homeTimeoutLamps" aria-hidden="true"><span class="timeout-lamp available"></span><span class="timeout-lamp available"></span></div></div><div class="scorecontrols admin-only"><button class="btn timeout-control" id="homeTimeoutBtn" type="button">+ TIME-OUT CASA</button></div><div class="scorecontrols admin-only" id="homeControls"><button class="btn plus" id="homePlus">+1 PUNTO</button></div></section>
@@ -1033,7 +1033,7 @@ function renderFixturePreview(){
   const comp=fixtureEls.competition.value, group=fixtureEls.group.options[fixtureEls.group.selectedIndex]?.textContent||'';
   meta.textContent=`${fixtureCatalog.committee.name} · ${comp} · ${group} · Giornata ${game.round} · Gara ${game.gameNo} · ${game.date} ore ${game.time} · ${game.venue}`;
   if(game.result){partials.textContent=`Risultato registrato nella fotografia: ${game.result[0]}–${game.result[1]}${game.partials?.length?' · Parziali '+game.partials.join(' / '):''}. Il tabellone LIVE verrà comunque azzerato.`;}
-  else partials.textContent='Gara da disputare secondo la fotografia del 02/11/2026.';
+  else partials.textContent=`Gara da disputare secondo i dati FIPAV acquisiti il ${fixtureCatalog.snapshotDate}.`;
  }else{
   meta.textContent='I dettagli della gara appariranno qui.';
  }
@@ -1046,12 +1046,12 @@ function updateFixtureMatches(){
  fixtureEls.match.replaceChildren();
  fixtureEls.round.replaceChildren();
  if(!groupData){
-  fixtureOption(fixtureEls.round,'','Calendario non incluso nella prova');
+  fixtureOption(fixtureEls.round,'','Calendario non disponibile');
   fixtureEls.round.disabled=true;fixtureEls.match.disabled=true;
-  fixtureOption(fixtureEls.match,'','Nessuna partita disponibile in questa prova');
+  fixtureOption(fixtureEls.match,'','Nessuna partita disponibile');
   fixtureEls.importBtn.disabled=true;
-  fixtureEls.count.textContent='Girone selezionato: identificativo '+groupId+'. In questa prova è disponibile il calendario soltanto del girone 63719.';
-  fixtureEls.status.textContent='Apri il calendario ufficiale FIPAV tramite il collegamento. Per aggiungere questo girone occorre acquisirne i dati tramite una fonte autorizzata.';
+  fixtureEls.count.textContent='Girone selezionato: identificativo '+groupId+'. Il calendario non è presente nell’ultimo aggiornamento disponibile.';
+  fixtureEls.status.textContent='Il calendario di questo girone non è stato acquisito. Puoi riprovare dopo il prossimo aggiornamento automatico.';
   renderFixturePreview();return;
  }
  fixtureEls.round.disabled=false;fixtureEls.match.disabled=false;
@@ -1066,8 +1066,8 @@ function updateFixtureMatches(){
  if(!defaultRound)defaultRound=rounds[rounds.length-1];
  fixtureEls.round.value=String(defaultRound||'');
  filterFixtureGames();
- fixtureEls.count.textContent=`${groupData.matches.length} gare · ${groupData.counts.completedMatches} disputate · ${groupData.counts.upcomingMatches} da disputare · ${groupData.counts.rounds} giornate · ${groupData.teams.length} squadre. Dati del 02/11/2026.`;
- fixtureEls.status.textContent='Catalogo statico di prova. I loghi ufficiali FIPAV disponibili sono mostrati in anteprima e collegati automaticamente alla gara; il calendario non si aggiorna automaticamente.';
+ fixtureEls.count.textContent=`${groupData.matches.length} gare · ${groupData.counts.completedMatches} disputate · ${groupData.counts.upcomingMatches} da disputare · ${groupData.counts.rounds} giornate · ${groupData.teams.length} squadre. Dati FIPAV acquisiti il ${fixtureCatalog.snapshotDate}.`;
+ fixtureEls.status.textContent='Dati acquisiti dal servizio JSON FIPAV. GitHub Actions aggiorna il catalogo una volta al giorno; i loghi ufficiali disponibili sono collegati automaticamente alla gara.';
  renderFixturePreview();
 }
 function filterFixtureGames(){
@@ -1079,7 +1079,7 @@ function filterFixtureGames(){
  let games=groupData.matches.filter(g=>g.round===round);
  if(!fixtureEls.includePlayed.checked)games=games.filter(g=>!g.result&&fixtureDateValue(g.date)>=today);
  fixtureEls.match.replaceChildren();
- if(!games.length){fixtureOption(fixtureEls.match,'','Nessuna gara da mostrare');fixtureEls.importBtn.disabled=true;fixtureEls.status.textContent='Non ci sono gare future in questa giornata nella fotografia del 02/11/2026. Seleziona “Mostra anche le gare già disputate” oppure un’altra giornata.';renderFixturePreview();return;}
+ if(!games.length){fixtureOption(fixtureEls.match,'','Nessuna gara da mostrare');fixtureEls.importBtn.disabled=true;fixtureEls.status.textContent=`Non ci sono gare future in questa giornata nei dati FIPAV acquisiti il ${fixtureCatalog.snapshotDate}. Seleziona “Mostra anche le gare già disputate” oppure un’altra giornata.`;renderFixturePreview();return;}
  games.sort((a,b)=>fixtureDateValue(a.date)-fixtureDateValue(b.date)||a.time.localeCompare(b.time));
  games.forEach(g=>{
   const label=`Gara ${g.gameNo} · ${g.date} ${g.time} · ${g.home} – ${g.away}${g.result?` (${g.result[0]}–${g.result[1]})`:''}`;
@@ -1148,7 +1148,7 @@ async function importSelectedFixture(){
  next.event=`${comp} · ${groupName} · Giornata ${game.round}`;
  next.format=5;next.setIndex=0;next.homeScore=0;next.awayScore=0;next.homeSets=0;next.awaySets=0;
  next.homeTimeouts=0;next.awayTimeouts=0;next.sets=[];next.serving='none';next.finished=false;
- next.fixture={committee:fixtureCatalog.committee.name,committeeId:fixtureCatalog.committee.id,competition:comp,group:groupName,groupId,round:game.round,gameNo:game.gameNo,date:game.date,time:game.time,venue:game.venue,source:'static-snapshot',snapshotDate:fixtureCatalog.snapshotDate,sourceUrl:groupData.sourceUrl};
+ next.fixture={committee:fixtureCatalog.committee.name,committeeId:fixtureCatalog.committee.id,competition:comp,group:groupName,groupId,round:game.round,gameNo:game.gameNo,date:game.date,time:game.time,venue:game.venue,source:'fipav-api-snapshot',snapshotDate:fixtureCatalog.snapshotDate,sourceUrl:groupData.sourceUrl};
  history=[];next.history=[];
  try{
   await persist(next);
