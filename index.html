@@ -1014,7 +1014,7 @@ function fixtureSourceUrl(groupData){
 }
 function fixtureSourceDescription(){
  if(activeFixtureCommittee?.source==='fipavonline')return `Dati FIPAVOnline acquisiti il ${fixtureSnapshotDate()}. La sincronizzazione API server-side aggiorna Varese ogni giorno.`;
- return `Snapshot del portale ufficiale SOL acquisito il ${fixtureSnapshotDate()}. I dati disponibili in questa versione non vengono aggiornati automaticamente.`;
+ return `Dati del portale ufficiale SOL acquisiti il ${fixtureSnapshotDate()}. GitHub Actions aggiorna campionati, gironi e calendari ogni giorno; gli snapshot validi restano conservati se SOL non risponde.`;
 }
 function fixtureTeamLogo(groupData,teamName){
  const logos=groupData?.teamLogos||{};
@@ -1069,10 +1069,10 @@ function updateFixtureMatches(){
   const comp=selectedFixtureCompetition();
   if(activeFixtureCommittee?.source==='sol-blazor-snapshot'&&comp&&!comp.groups?.length){
    fixtureEls.count.textContent=`${comp.name} (${comp.code}) presente nel catalogo SOL; i gironi non erano contenuti nelle acquisizioni disponibili.`;
-   fixtureEls.status.textContent='In questa versione SOL è stato acquisito il calendario della sola 1ª Divisione Femminile · Girone A. Gli altri campionati sono elencati, ma non è disponibile uno snapshot dei relativi gironi.';
+   fixtureEls.status.textContent='Il catalogo SOL viene completato dal sincronizzatore automatico GitHub Actions. Avvia il workflow “Aggiorna calendari Volley Live” per acquisire fasi, gironi e calendari; i dati già presenti non vengono cancellati in caso di errore.';
   }else{
    fixtureEls.count.textContent=groupId?`Girone ${groupId}: calendario non presente nell’ultimo aggiornamento disponibile.`:'Seleziona un girone per visualizzare le partite.';
-   fixtureEls.status.textContent=activeFixtureCommittee?.source==='fipavonline'?'Il calendario di questo girone non è stato acquisito. Resterà disponibile un eventuale snapshot precedente.':'Per il campionato selezionato non è presente un calendario nella cattura SOL disponibile.';
+   fixtureEls.status.textContent=activeFixtureCommittee?.source==='fipavonline'?'Il calendario di questo girone non è stato acquisito. Resterà disponibile un eventuale snapshot precedente.':'Girone rilevato nel portale SOL; calendario non ancora presente nello snapshot locale. Avvia il workflow GitHub Actions per sincronizzare il calendario ufficiale.';
   }
   fixtureEls.officialLink.href=fixtureSourceUrl(null);
   renderFixturePreview();return;
