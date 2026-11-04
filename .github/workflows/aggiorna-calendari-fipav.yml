@@ -1,4 +1,4 @@
-name: Aggiorna calendari Volley Live (Varese)
+name: Aggiorna calendari Volley Live (Varese + Milano-Monza-Lecco)
 
 on:
   workflow_dispatch:
@@ -8,19 +8,20 @@ on:
   push:
     paths:
       - "scripts/aggiorna_catalogo_fipav.py"
+      - "scripts/aggiorna_catalogo_sol.py"
       - ".github/workflows/aggiorna-calendari-fipav.yml"
 
 permissions:
   contents: write
 
 concurrency:
-  group: aggiorna-calendari-fipav
+  group: aggiorna-calendari-volley-live
   cancel-in-progress: false
 
 jobs:
   aggiorna:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 60
     steps:
       - name: Scarica il repository
         uses: actions/checkout@v4
@@ -30,8 +31,17 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Installa Playwright e Chromium per il portale SOL
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+
       - name: Sincronizza i gironi FIPAVOnline di Varese
         run: python scripts/aggiorna_catalogo_fipav.py
+
+      - name: Sincronizza campionati, gironi e calendari SOL di Milano-Monza-Lecco
+        run: python scripts/aggiorna_catalogo_sol.py
 
       - name: Salva il catalogo aggiornato
         run: |
@@ -42,5 +52,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add catalogo-fipav-v11.json
-          git commit -m "Aggiorna calendari Varese FIPAVOnline"
+          git commit -m "Aggiorna calendari Volley Live Varese e Milano-Monza-Lecco"
           git push
