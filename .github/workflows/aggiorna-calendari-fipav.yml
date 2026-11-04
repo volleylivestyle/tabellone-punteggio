@@ -1,8 +1,9 @@
-name: Aggiorna calendari FIPAV
+name: Aggiorna calendari Volley Live (Varese)
 
 on:
   workflow_dispatch:
   schedule:
+    # Una volta al giorno; avvio manuale disponibile dalla scheda Actions.
     - cron: "23 5 * * *"
   push:
     paths:
@@ -29,7 +30,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Acquisisci e converti i calendari FIPAV
+      - name: Sincronizza i gironi FIPAVOnline di Varese
         run: python scripts/aggiorna_catalogo_fipav.py
 
       - name: Salva il catalogo aggiornato
@@ -41,5 +42,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add catalogo-fipav-v11.json
-          git commit -m "Aggiorna calendari FIPAV"
+          git commit -m "Aggiorna calendari Varese FIPAVOnline"
           git push
