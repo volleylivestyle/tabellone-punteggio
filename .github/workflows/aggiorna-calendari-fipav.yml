@@ -9,6 +9,7 @@ on:
     paths:
       - "scripts/aggiorna_catalogo_fipav.py"
       - "scripts/aggiorna_catalogo_sol.py"
+      - "catalogo-fipav-v11.json"
       - ".github/workflows/aggiorna-calendari-fipav.yml"
 
 permissions:
@@ -20,14 +21,14 @@ concurrency:
 
 jobs:
   aggiorna:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
       - name: Scarica il repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Prepara Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -38,7 +39,13 @@ jobs:
           python -m playwright install --with-deps chromium
 
       - name: Sincronizza i gironi FIPAVOnline di Varese
+        id: sync_varese
+        continue-on-error: true
         run: python scripts/aggiorna_catalogo_fipav.py
+
+      - name: Segnala eventuale indisponibilità FIPAV senza bloccare Milano
+        if: steps.sync_varese.outcome == 'failure'
+        run: echo "AVVISO - sincronizzazione Varese non riuscita; proseguo comunque con SOL Milano-Monza-Lecco."
 
       - name: Sincronizza campionati, gironi e calendari SOL di Milano-Monza-Lecco
         run: python scripts/aggiorna_catalogo_sol.py
