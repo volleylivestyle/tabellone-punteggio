@@ -1,0 +1,76 @@
+VOLLEY LIVE V11.3 COMPLETA — VARESE + MILANO-MONZA-LECCO
+========================================================
+
+SCOPO
+- Un solo tabellone LIVE con due soli Comitati Territoriali:
+  1) C.T. Varese (LM09)
+  2) C.T. Milano-Monza-Lecco (LM06)
+- Varese mantiene l'integrazione API JSON FIPAVOnline della V11.2.
+- Milano-Monza-Lecco usa il portale ufficiale SOL, che è un'applicazione Blazor
+  Server e non espone nel materiale acquisito lo stesso endpoint JSON di Varese.
+
+COSA È GIÀ PRESENTE NEL CATALOGO INIZIALE
+- Tutti i 18 campionati visualizzati nella pagina SOL acquisita il 04/11/2026.
+- Per 1ª Divisione Femminile (ID campionato SOL 1001225): sei gironi effettivi,
+  A, B, C, D, E, F, con 14 squadre ciascuno (84 squadre totali) estratte dalla
+  griglia Squadre della cattura.
+- Calendario completo del Girone A: 182 gare, 14 squadre e 26 giornate, con
+  data, orario, squadre, risultati, parziali, palestra, comune e indirizzo.
+- I calendari degli altri gironi/competizioni vengono acquisiti dal sincronizzatore
+  SOL quando il workflow GitHub Actions viene eseguito.
+
+FILE DA CARICARE/SOSTITUIRE NELLA ROOT DEL REPOSITORY
+1) index.html
+2) catalogo-fipav-v11.json
+3) scripts/aggiorna_catalogo_fipav.py
+4) scripts/aggiorna_catalogo_sol.py                  [NUOVO]
+5) .github/workflows/aggiorna-calendari-fipav.yml
+6) ISTRUZIONI.txt (facoltativo, documentazione)
+
+Non modificare Firebase Config, ADMIN_UID, Firebase Authentication o le regole
+Realtime Database. Lo ZIP contiene la configurazione esistente della V11.2/V11.3.
+
+SINCRONIZZAZIONE AUTOMATICA
+Il workflow "Aggiorna calendari Volley Live (Varese + Milano-Monza-Lecco)":
+- aggiorna i calendari FIPAVOnline di Varese tramite l'API JSON esistente;
+- avvia Chromium headless tramite Playwright;
+- apre il catalogo SOL pubblico e legge i 18 campionati, la fase e l'ID tecnico
+  ricavato dalla route /calendarioris/{id}/{stagione};
+- apre ciascun campionato, legge le schede dei gironi (A, B, C...);
+- per ogni girone apre il comando Calendario e legge le righe del Calendario Ufficiale;
+- scrive nel catalogo gironi e calendari effettivamente acquisiti.
+
+Il workflow si avvia:
+- automaticamente quando vengono caricati/aggiornati gli script o il workflow;
+- ogni giorno alle 05:23 UTC;
+- manualmente da GitHub > Actions > Run workflow.
+
+ATTENZIONE AL PRIMO AVVIO
+Il crawler SOL è incluso e configurato, ma l'ambiente di generazione non può
+accedere direttamente al circuito Blazor del sito. Pertanto il primo popolamento
+completo dei gironi/calendari deve essere eseguito dal runner GitHub Actions dopo
+aver caricato i file. Il catalogo iniziale contiene già tutti i 18 campionati,
+sei gironi 1DF e il calendario 1DF Girone A. I nuovi dati SOL vengono salvati
+nel file catalogo-fipav-v11.json e pubblicati da GitHub Pages al successivo deploy.
+
+PROTEZIONE DEI DATI
+- Un errore SOL non cancella i gironi o gli snapshot già acquisiti.
+- Un calendario viene sostituito solo dopo aver letto partite valide.
+- Gli ID locali dei gironi SOL hanno formato SOL-{idCampionato}-{lettera}; non
+  vengono spacciati per ID ufficiali SOL.
+- Le regole Firebase e le credenziali non vengono modificate.
+
+IMPORTAZIONE NEL TABELLONE
+La conferma dell'importazione continua ad azzerare punteggio, set, time-out e stato
+partita. I loghi già caricati vengono mantenuti se i nomi squadra coincidono.
+
+FONTI DATI NEL CODICE
+- FIPAVOnline per Varese: https://public.fipavonline.it/
+- SOL per Milano-Monza-Lecco: https://www.sol.milano.federvolley.it/campionatiris
+
+
+CORREZIONE WORKFLOW V11.3.1 (04/11/2026)
+- Il workflow corretto si chiama esattamente: Aggiorna calendari Volley Live (Varese + Milano-Monza-Lecco).
+- Se in GitHub Actions compare ancora soltanto "Aggiorna calendari FIPAV", il vecchio file YAML non è stato sostituito nel percorso .github/workflows/aggiorna-calendari-fipav.yml.
+- La sincronizzazione FIPAV Varese è tollerante agli errori temporanei: se l'API non risponde conserva gli snapshot e non blocca l'esecuzione SOL.
+- Il passo SOL viene quindi eseguito anche quando la sincronizzazione Varese non riesce.

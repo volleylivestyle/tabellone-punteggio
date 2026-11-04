@@ -33,6 +33,7 @@ REQUEST_HEADERS = {
 TIMEOUT_SECONDS = 35
 RETRIES = 3
 DELAY_BETWEEN_REQUESTS = 0.4
+CONSECUTIVE_FAILURE_LIMIT = 3
 
 
 def fix_mojibake(value: Any) -> str:
@@ -262,6 +263,7 @@ def main() -> int:
         return 1
 
     total = len(sync_groups)
+    consecutive_failures = 0
     for index, (committee, group) in enumerate(sync_groups, start=1):
         group_id = group["id"]
         committee_name = clean(committee.get("name")) or clean(committee.get("id"))
@@ -274,17 +276,40 @@ def main() -> int:
             snapshots = committee.setdefault("groupSnapshots", {})
             snapshots[group_id] = snapshot
             updated.append(f"{committee_name}/{group_id}:{len(snapshot['matches'])}")
+            consecutive_failures = 0
             print(f"  OK: {len(snapshot['matches'])} partite, {len(snapshot['teams'])} squadre, "
                   f"{snapshot['counts']['rounds']} giornate", flush=True)
         except Exception as exc:  # conserva lo snapshot precedente per questo girone
             failed.append((f"{committee_name}/{group_id}", str(exc)))
+            consecutive_failures += 1
             print(f"  ERRORE: {exc}; mantengo i dati precedenti", flush=True)
-        if index < total:
+            if consecutive_failures >= CONSECUTIVE_FAILURE_LIMIT:
+                print(
+                    f"API FIPAV non raggiungibile per {consecutive_failures} gironi consecutivi: "
+                    "interrompo i tentativi Varese e passo al sincronizzatore SOL.",
+                    file=sys.stderr, flush=True,
+                )
+                for _, pending_group in sync_groups[index:]:
+                    pending_name = clean(pending_group.get("competition"))
+                    pending_committee = clean(committee.get("name"))
+                    failed.append((
+                        f"{pending_committee}/{pending_group['id']}",
+                        "tentativo non eseguito: sospeso dopo tre errori API consecutivi",
+                    ))
+                break
+        if index < total and consecutive_failures < CONSECUTIVE_FAILURE_LIMIT:
             time.sleep(DELAY_BETWEEN_REQUESTS)
 
     if not updated:
-        print("Nessun girone aggiornato: catalogo non modificato.", file=sys.stderr)
-        return 1
+        print("ATTENZIONE: nessun girone FIPAVOnline aggiornato in questa esecuzione.", file=sys.stderr)
+        if failed:
+            print(f"Richieste FIPAV non riuscite ({len(failed)}):", file=sys.stderr)
+            for group_id, error in failed:
+                print(f"  - {group_id}: {error}", file=sys.stderr)
+        print("Conservo tutti gli snapshot FIPAV già presenti e proseguo con la sincronizzazione SOL di Milano-Monza-Lecco.", flush=True)
+        # Un'indisponibilità temporanea dell'API di Varese non deve impedire
+        # al workflow multi-comitato di eseguire lo scraper SOL.
+        return 0
 
     today = datetime.now(timezone.utc).date().isoformat()
     for committee in committees:
