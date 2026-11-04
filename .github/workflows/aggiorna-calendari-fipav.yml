@@ -48,7 +48,37 @@ jobs:
         run: echo "AVVISO - sincronizzazione Varese non riuscita; proseguo comunque con SOL Milano-Monza-Lecco."
 
       - name: Sincronizza campionati, gironi e calendari SOL di Milano-Monza-Lecco
-        run: python scripts/aggiorna_catalogo_sol.py
+        id: sync_milano
+        run: |
+          set -o pipefail
+          python -u scripts/aggiorna_catalogo_sol.py 2>&1 | tee sol-sync.log
+
+      - name: Riepilogo catalogo multi-comitato
+        if: success()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data = json.loads(Path("catalogo-fipav-v11.json").read_text(encoding="utf-8"))
+          for committee in data.get("committees", []):
+              comps = committee.get("groups", [])
+              groups = sum(len(c.get("groups", [])) for c in comps)
+              snaps = committee.get("groupSnapshots", {})
+              matches = sum(len(x.get("matches", [])) for x in snaps.values())
+              print(f"{committee.get('name')}: {len(comps)} campionati, {groups} gironi, {len(snaps)} calendari, {matches} gare")
+          PY
+
+      - name: Conserva log sincronizzazione SOL in caso di errore
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sol-sync-diagnostics
+          path: |
+            sol-sync.log
+            sol-debug-*.png
+            sol-debug-*.html
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Salva il catalogo aggiornato
         run: |
