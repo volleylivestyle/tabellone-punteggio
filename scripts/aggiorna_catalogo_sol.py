@@ -180,16 +180,35 @@ async def click_competition(page, row_index: int) -> tuple[str, str]:
 
 
 async def discover_group_tabs(page) -> list[str]:
-    tabs = page.locator("li[role='tab']")
-    await tabs.first.wait_for(state="visible", timeout=ELEMENT_TIMEOUT_MS)
+    """Legge le schede Radzen SOL dalla navigazione reale del TabView.
+
+    Nelle catture HAR SOL le schede A-F sono elementi <li> dentro
+    .rz-tabview-nav. Non hanno l'attributo role="tab": usare li[role=tab]
+    restituisce zero risultati e lascia nel catalogo soltanto lo snapshot A.
+    """
+    selectors = [
+        ".rz-tabview-nav > li",
+        "ul[role='tablist'] > li",
+        "[role='tablist'] > li",
+    ]
+    tabs = None
+    for selector in selectors:
+        candidate = page.locator(selector)
+        if await candidate.count():
+            tabs = candidate
+            break
+    if tabs is None:
+        raise RuntimeError("SOL: navigazione gironi non trovata (.rz-tabview-nav)")
+
     labels = await tabs.all_inner_texts()
     groups: list[str] = []
     for raw in labels:
         label = clean(raw).upper()
-        # Le schede SOL osservate sono A, B, ... F; la stessa regola copre
-        # denominazioni alfanumeriche in altri campionati.
-        if re.fullmatch(r"[A-Z0-9]{1,3}", label) and label not in groups:
-            groups.append(label)
+        match = re.fullmatch(r"(?:GIRONE\s*)?([A-Z0-9]{1,3})", label)
+        if match:
+            group = match.group(1)
+            if group not in groups:
+                groups.append(group)
     return groups
 
 
@@ -221,19 +240,35 @@ async def extract_roster_teams(page, group_letter: str) -> list[str]:
 
 
 async def open_group_calendar(page, route_url: str, group_letter: str) -> None:
-    # Ricaricare la route ripristina la vista gruppi anche dopo l'apertura del
-    # calendario, senza dipendere da un back button o dallo stato del componente.
+    """Apre una scheda girone e poi il relativo Calendario ufficiale."""
     await page.goto(route_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT_MS)
-    await page.wait_for_selector("li[role='tab']", timeout=ELEMENT_TIMEOUT_MS)
-    tab = page.get_by_role("tab", name=group_letter, exact=True)
+    await page.locator(".rz-tabview-nav > li").first.wait_for(
+        state="visible", timeout=ELEMENT_TIMEOUT_MS
+    )
+
+    tab_selector = ".rz-tabview-nav > li"
+    tab = page.locator(tab_selector).filter(
+        has_text=re.compile(rf"^\s*{re.escape(group_letter)}\s*$", re.I)
+    ).first
     if await tab.count() == 0:
-        tab = page.locator("li[role='tab']").filter(has_text=re.compile(rf"^\s*{re.escape(group_letter)}\s*$")).first
-    await tab.click(timeout=10_000)
-    calendar_button = page.get_by_role("button", name=re.compile(r"^\s*Calendario\s*$", re.I)).first
-    await calendar_button.wait_for(state="visible", timeout=ELEMENT_TIMEOUT_MS)
-    await calendar_button.click(timeout=10_000)
+        raise RuntimeError(f"Scheda girone {group_letter} non trovata nel TabView SOL")
+    await tab.click(timeout=15_000)
     await page.wait_for_function(
-        "() => document.body.innerText.includes('Calendario Ufficiale') && document.querySelectorAll('table.rz-grid-table tbody tr.rz-data-row').length > 0",
+        "letter => Array.from(document.querySelectorAll('.rz-tabview-nav > li'))"
+        ".some(el => el.classList.contains('rz-tabview-selected') && "
+        "(el.innerText || '').trim().toUpperCase() === letter)",
+        arg=group_letter.upper(),
+        timeout=ELEMENT_TIMEOUT_MS,
+    )
+
+    calendar_button = page.locator("button.rz-button").filter(
+        has_text=re.compile(r"^\s*Calendario\s*$", re.I)
+    ).first
+    await calendar_button.wait_for(state="visible", timeout=ELEMENT_TIMEOUT_MS)
+    await calendar_button.click(timeout=15_000)
+    await page.wait_for_function(
+        "() => document.body.innerText.includes('Calendario Ufficiale') && "
+        "document.querySelectorAll('table.rz-grid-table tbody tr.rz-data-row').length > 0",
         timeout=ELEMENT_TIMEOUT_MS,
     )
 
@@ -317,8 +352,11 @@ async def sync_sol(committee: dict[str, Any]) -> tuple[int, int, list[str]]:
             await open_selection_page(page)
             competitions = await read_competitions(page, previous_groups)
             print(f"SOL: individuate {len(competitions)} competizioni nella pagina pubblica", flush=True)
-            if len(competitions) < 15:
-                raise RuntimeError(f"Catalogo SOL incompleto: {len(competitions)}/{EXPECTED_COMPETITIONS} competizioni")
+            if len(competitions) < EXPECTED_COMPETITIONS:
+                raise RuntimeError(
+                    f"Catalogo SOL incompleto: {len(competitions)}/{EXPECTED_COMPETITIONS} competizioni; "
+                    "nessuna sostituzione del catalogo."
+                )
 
             new_competitions: list[dict[str, Any]] = []
             for comp_index, comp in enumerate(competitions, start=1):
@@ -387,12 +425,27 @@ async def sync_sol(committee: dict[str, Any]) -> tuple[int, int, list[str]]:
                     groups_updated += len(group_entries)
                 except Exception as exc:
                     warnings.append(f"{code}: {exc}")
-                    print(f"  ERRORE competizione {code}: {exc}; mantengo i dati già presenti", flush=True)
+                    print(f"  ERRORE competizione {code}: {type(exc).__name__}: {exc}; mantengo i dati già presenti", flush=True)
+                    # Allega elementi diagnostici al job Actions, così un errore
+                    # non viene più nascosto dietro il vecchio snapshot.
+                    try:
+                        await page.screenshot(path=str(ROOT / f"sol-debug-{code}.png"), full_page=True)
+                        (ROOT / f"sol-debug-{code}.html").write_text(await page.content(), encoding="utf-8")
+                    except Exception as debug_exc:
+                        print(f"  Diagnostica non disponibile: {debug_exc}", flush=True)
                     if old:
                         new_competitions.append(old)
 
-            if len(new_competitions) < 15 or groups_updated < 1:
-                raise RuntimeError("La scansione SOL non ha prodotto un elenco sufficiente di gironi; nessuna sostituzione del catalogo")
+            competitions_with_groups = sum(
+                1 for item in new_competitions if isinstance(item, dict) and item.get("groups")
+            )
+            if len(new_competitions) < EXPECTED_COMPETITIONS or competitions_with_groups < EXPECTED_COMPETITIONS or groups_updated < EXPECTED_COMPETITIONS:
+                raise RuntimeError(
+                    "Scansione SOL incompleta: "
+                    f"{competitions_with_groups}/{len(new_competitions)} campionati con gironi; "
+                    f"{groups_updated} gironi individuati. Attesi almeno {EXPECTED_COMPETITIONS} campionati "
+                    "con almeno un girone ciascuno. Catalogo precedente conservato."
+                )
 
             # Non eliminare competizioni non viste durante un caricamento parziale.
             new_by_code = {c.get("code"): c for c in new_competitions}
@@ -429,10 +482,9 @@ def main() -> int:
     try:
         groups, snapshots, warnings = asyncio.run(sync_sol(committee))
     except Exception as exc:
-        print(f"ATTENZIONE: sincronizzazione SOL non completata: {exc}", file=sys.stderr)
-        print("I dati già presenti nel catalogo sono stati conservati.", file=sys.stderr)
-        # Il workflow deve comunque poter salvare gli aggiornamenti Varese.
-        return 0
+        print(f"ERRORE: sincronizzazione SOL non completata: {exc}", file=sys.stderr)
+        print("I dati già presenti nel catalogo sono stati conservati; il job deve risultare FALLITO.", file=sys.stderr)
+        return 1
 
     catalog["snapshotDate"] = datetime.now(timezone.utc).date().isoformat()
     catalog["version"] = "volley-live-v11.3-completa"

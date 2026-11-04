@@ -1,0 +1,19 @@
+V11.3.2 - FIX SOL TAB DISCOVERY + HONEST ACTION STATUS
+
+Root cause in V11.3/V11.3.1:
+The SOL scraper looked for li[role="tab"]. The SOL Blazor page renders group tabs
+as <li> children of .rz-tabview-nav without role="tab". The scraper therefore
+found zero group tabs, retained the original partial data and (in the previous
+main()) returned exit code 0. That made Actions appear successful without
+updating Milano.
+
+Fixes:
+- Discover groups from .rz-tabview-nav > li (fallback selectors included).
+- Click and verify the active group tab from the selected Radzen class.
+- Open the Calendario button and parse its rows.
+- Require all expected competition names and group tabs before replacing the
+  SOL catalogue; otherwise fail the Actions job and retain the last good data.
+- Do not return success when the SOL sync failed.
+- Attach SOL logs and debug HTML/screenshots when the job fails.
+- Open the admin fixture picker on Milano-Monza-Lecco, with an unselected
+  competition placeholder so all 18 competition choices are visibly available.

@@ -74,3 +74,46 @@ CORREZIONE WORKFLOW V11.3.1 (04/11/2026)
 - Se in GitHub Actions compare ancora soltanto "Aggiorna calendari FIPAV", il vecchio file YAML non è stato sostituito nel percorso .github/workflows/aggiorna-calendari-fipav.yml.
 - La sincronizzazione FIPAV Varese è tollerante agli errori temporanei: se l'API non risponde conserva gli snapshot e non blocca l'esecuzione SOL.
 - Il passo SOL viene quindi eseguito anche quando la sincronizzazione Varese non riesce.
+
+
+V11.3.2 - CORREZIONE SCHEDE GIRONE SOL
+-------------------------------------
+- Il portale SOL renderizza le schede A-F come elementi <li> dentro .rz-tabview-nav;
+  non usa li[role=tab]. Il vecchio selettore restituiva zero gironi e conservava
+  soltanto gli snapshot già presenti.
+- Il crawler ora legge le schede Radzen reali, seleziona ciascun girone e apre
+  il pulsante Calendario.
+- La sincronizzazione non viene più dichiarata riuscita quando SOL fallisce:
+  GitHub Actions deve mostrare un job rosso con l'errore diagnostico.
+- Il selettore si apre direttamente su Milano-Monza-Lecco, mentre Varese resta
+  selezionabile. Ogni campionato mostra il numero dei gironi effettivamente
+  acquisiti, per distinguere i dati reali da quelli ancora mancanti.
+
+ISTRUZIONI DI SOSTITUZIONE V11.3.2
+---------------------------------
+1) Estrarre questo ZIP sul PC.
+2) Nel repository GitHub caricare/sovrascrivere i file mantenendo i percorsi:
+   - index.html
+   - catalogo-fipav-v11.json
+   - scripts/aggiorna_catalogo_fipav.py
+   - scripts/aggiorna_catalogo_sol.py
+   - .github/workflows/aggiorna-calendari-fipav.yml
+3) Non caricare lo ZIP come singolo file nel repository e non creare una cartella
+   aggiuntiva V11.3.2 dentro la root: i file devono restare direttamente nei
+   percorsi indicati.
+4) Dopo il commit, aprire Actions e avviare il workflow
+   "Aggiorna calendari Volley Live (Varese + Milano-Monza-Lecco)".
+5) Il job stampa il riepilogo con conteggio dei campionati/gironi/calendari.
+   Se il crawler SOL non trova i gironi, il job ora fallisce esplicitamente e
+   allega sol-sync.log e sol-debug-*; non dichiara più un aggiornamento riuscito
+   lasciando invariato il vecchio snapshot.
+
+STATO DEI DATI ALL'INTERNO DELLO ZIP
+-----------------------------------
+- Milano-Monza-Lecco: 18 denominazioni di campionato catalogate.
+- 1ª Divisione Femminile: 6 schede A-F identificate dalle catture HAR.
+- Calendario locale disponibile inizialmente: solo lo snapshot acquisito del
+  Girone A (182 gare). I calendari degli altri gironi e delle altre competizioni
+  devono essere popolati dal workflow server-side.
+- Il selettore si apre su Milano-Monza-Lecco e presenta l'elenco dei campionati
+  con il numero dei gironi effettivamente acquisiti; Varese resta selezionabile.

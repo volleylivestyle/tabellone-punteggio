@@ -1119,7 +1119,10 @@ function filterFixtureGames(){
 function updateFixtureGroups(preferId){
  const comp=selectedFixtureCompetition();
  fixtureEls.group.replaceChildren();
- if(!comp){fixtureEls.group.disabled=true;updateFixtureMatches();return;}
+ if(!comp){
+  fixtureOption(fixtureEls.group,'','Seleziona prima un campionato',true);
+  fixtureEls.group.disabled=true;updateFixtureMatches();return;
+ }
  const groups=Array.isArray(comp.groups)?comp.groups:[];
  if(!groups.length){
   fixtureOption(fixtureEls.group,'','Gironi non acquisiti',true);
@@ -1144,10 +1147,18 @@ function selectFixtureCommittee(committeeId,preferCompetition,preferGroup){
  }));
  fixtureEls.committee.value=committee.id;
  fixtureEls.competition.replaceChildren();
- (committee.groups||[]).forEach(c=>fixtureOption(fixtureEls.competition,c.code||c.name,c.name+(c.phase?` · ${c.phase}`:'')));
- const defaultName=committee.source==='sol-blazor-snapshot'?'1DF':'Prima Divisione Femminile';
- const defaultComp=preferCompetition||((committee.groups||[]).find(c=>(c.code||c.name)===defaultName)?defaultName:(committee.groups||[])[0]?.code||(committee.groups||[])[0]?.name);
+ if(committee.source==='sol-blazor-snapshot'){
+  fixtureOption(fixtureEls.competition,'','Seleziona un campionato tra quelli disponibili',true);
+ }
+ (committee.groups||[]).forEach(c=>fixtureOption(fixtureEls.competition,c.code||c.name,`${c.name}${c.phase?` · ${c.phase}`:''} · ${(c.groups||[]).length} gironi`));
+ const defaultName='Prima Divisione Femminile';
+ const defaultComp=preferCompetition||(
+  committee.source==='fipavonline'
+   ? ((committee.groups||[]).find(c=>(c.code||c.name)===defaultName)?defaultName:(committee.groups||[])[0]?.code||(committee.groups||[])[0]?.name)
+   : ''
+ );
  if(defaultComp)fixtureEls.competition.value=defaultComp;
+ else fixtureEls.competition.value='';
  updateFixtureGroups(preferGroup);
 }
 async function initFixturePicker(){
@@ -1167,7 +1178,9 @@ async function initFixturePicker(){
   }
   fixtureEls.committee.replaceChildren();
   fixtureCatalog.committees.forEach(c=>fixtureOption(fixtureEls.committee,c.id,c.name.replace('Comitato Territoriale ','C.T. ')));
-  selectFixtureCommittee('04020');
+  // V11.3.2: il comitato richiesto dall'utente è selezionato all'apertura.
+  // Varese resta disponibile nel selettore, senza essere nascosto o rimosso.
+  selectFixtureCommittee('LM06');
   fixtureEls.committee.addEventListener('change',()=>{
    try{selectFixtureCommittee(fixtureEls.committee.value);}
    catch(error){fixtureEls.status.textContent='Impossibile selezionare il comitato: '+error.message;}
@@ -1181,7 +1194,8 @@ async function initFixturePicker(){
   fixtureEls.match.addEventListener('change',renderFixturePreview);
   fixtureEls.includePlayed.addEventListener('change',filterFixtureGames);
   fixtureEls.importBtn.addEventListener('click',importSelectedFixture);
-  fixtureEls.status.textContent='Catalogo caricato. Seleziona Varese oppure Milano-Monza-Lecco, quindi campionato, girone e gara.';
+  fixtureEls.count.textContent=`${fixtureCatalog.committees.length} comitati · ${activeFixtureCommittee.groups.length} campionati nel C.T. Milano-Monza-Lecco · ${(activeFixtureCommittee.groups||[]).reduce((n,c)=>n+(c.groups||[]).length,0)} gironi acquisiti.`;
+  fixtureEls.status.textContent='Milano-Monza-Lecco selezionato. Scegli campionato, girone e gara; Varese resta disponibile nel primo selettore.';
  }catch(error){
   fixtureEls.count.textContent='Impossibile caricare il catalogo: '+(error.message||error);
   fixtureEls.status.textContent='Controlla che catalogo-fipav-v11.json sia presente nella stessa cartella di index.html.';
