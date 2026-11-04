@@ -11,7 +11,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827">
-<meta name="description" content="Tabellone pallavolo live con punteggio sincronizzato in tempo reale e anteprima della partita."><meta name="author" content="Fabio Marsico"><meta name="copyright" content="© 2026 Fabio Marsico — Volley Live. Tutti i diritti riservati nei limiti consentiti dalla legge."><title>Volley Live — Prova V11 GitHub</title>
+<meta name="description" content="Tabellone pallavolo live con punteggio sincronizzato in tempo reale e anteprima della partita."><meta name="author" content="Fabio Marsico"><meta name="copyright" content="© 2026 Fabio Marsico — Volley Live. Tutti i diritti riservati nei limiti consentiti dalla legge."><title>Volley Live — V11.3 Varese + Milano-Monza-Lecco</title>
 <style>
 :root {
   color-scheme: dark;
@@ -373,7 +373,7 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
 @media (prefers-reduced-motion:reduce) { .match-finale-card::before { animation:none; } .match-finale-overlay:not(.hide) .match-finale-card,.match-finale-overlay:not(.hide) .finale-title { animation:none; } }
 
 
-/* V11 GitHub trial: static FIPAV selector */
+/* V11.3: selezione dei Comitati Territoriali Varese e Milano-Monza-Lecco */
 .fixture-details{margin:0 0 12px;padding:10px 13px;border:1px solid #29465e;border-radius:10px;background:rgba(10,24,37,.9);color:#dcecff;font-size:.82rem;line-height:1.5}
 .fixture-details strong{color:#fff}
 .fixture-picker-panel{border-color:#36536c}
@@ -415,26 +415,26 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
 <main>
 <div id="fixtureDetails" class="fixture-details hide" aria-live="polite"></div>
 <section class="panel admin-only fixture-picker-panel" id="fixturePickerPanel">
-  <h2>Seleziona una gara dal calendario FIPAV <span class="fixture-demo-badge">DATI FIPAV</span></h2>
-  <p class="fixture-source-note"><strong>Attenzione:</strong> I calendari vengono acquisiti dal servizio dati FIPAV tramite un aggiornamento server-side quotidiano. La selezione della partita carica nel tabellone soltanto squadre e dettagli della gara: punteggio e set LIVE partono da zero.</p>
+  <h2>Seleziona una gara dai calendari federali <span class="fixture-demo-badge">VARESE · MILANO-MONZA-LECCO</span></h2>
+  <p class="fixture-source-note"><strong>Nota:</strong> Varese utilizza il servizio dati FIPAVOnline con aggiornamento automatico quotidiano. Milano-Monza-Lecco utilizza i dati ufficiali SOL acquisiti il 04/11/2026: in questa versione è disponibile il calendario completo della 1ª Divisione Femminile, Girone A. La selezione carica squadre e dettagli della gara; il punteggio LIVE parte da zero.</p>
   <div class="fixture-picker-grid">
-    <label class="field">Regione / Comitato<select id="fixtureCommittee"><option value="04020">Lombardia · C.T. Varese</option></select></label>
+    <label class="field">Comitato Territoriale<select id="fixtureCommittee"><option value="04020">C.T. Varese</option><option value="LM06">C.T. Milano-Monza-Lecco</option></select></label>
     <label class="field">Campionato<select id="fixtureCompetition"></select></label>
     <label class="field">Girone<select id="fixtureGroup"></select></label>
     <label class="field">Giornata<select id="fixtureRound"></select></label>
     <label class="field wide">Partita<select id="fixtureMatch"></select></label>
   </div>
   <label class="fixture-include-played"><input type="checkbox" id="fixtureIncludePlayed"> Mostra anche le gare già disputate</label>
-  <p class="fixture-demo-count" id="fixtureDemoCount">Caricamento catalogo FIPAV…</p>
+  <p class="fixture-demo-count" id="fixtureDemoCount">Caricamento catalogo federale…</p>
   <div class="fixture-result-preview" id="fixturePreview" aria-live="polite">
     <div class="fixture-preview-teams"><span>Seleziona una partita</span><span class="fixture-preview-vs">VS</span><span>—</span></div>
     <div class="fixture-preview-meta">I dettagli della gara appariranno qui.</div>
   </div>
   <div class="fixture-picker-actions">
     <button class="btn primary" id="fixtureImportBtn" type="button" disabled>Carica gara nel tabellone</button>
-    <a class="btn" id="fixtureOfficialLink" href="https://public.fipavonline.it/gironi/63719" target="_blank" rel="noopener noreferrer">Apri calendario ufficiale FIPAV ↗</a>
+    <a class="btn" id="fixtureOfficialLink" href="https://public.fipavonline.it/gironi/63719" target="_blank" rel="noopener noreferrer">Apri calendario ufficiale ↗</a>
   </div>
-  <p class="fixture-fetch-status" id="fixtureStatus">Caricamento dei calendari FIPAV…</p>
+  <p class="fixture-fetch-status" id="fixtureStatus">Caricamento dei calendari federali…</p>
 </section>
 <div class="scoreboard">
 <section class="team home" id="homeTeam"><div class="team-head"><div class="teammark" id="homeBadge" aria-hidden="true"><span id="homeBadgeInitials">CAS</span><img id="homeLogoImg" class="team-logo hide" alt=""></div><div class="team-info"><div class="teamname" id="homeName">SQUADRA DI CASA</div></div></div><div class="point-alert" id="homePointAlert" aria-live="polite"></div><div class="points" id="homeScore">0</div><div class="sets-footer"><div class="setslabel">SET VINTI</div><div class="setsvalue"><div class="setwins" id="homeSets">0</div><small>SET</small></div></div><div class="timeout-panel" aria-label="Time-out squadra di casa"><span class="timeout-label">TIME-OUT</span><div class="timeout-lamps" id="homeTimeoutLamps" aria-hidden="true"><span class="timeout-lamp available"></span><span class="timeout-lamp available"></span></div></div><div class="scorecontrols admin-only"><button class="btn timeout-control" id="homeTimeoutBtn" type="button">+ TIME-OUT CASA</button></div><div class="scorecontrols admin-only" id="homeControls"><button class="btn plus" id="homePlus">+1 PUNTO</button></div></section>
@@ -986,8 +986,9 @@ if(SPECTATOR_VIEW){
 document.addEventListener('fullscreenchange',updateFullscreenButton);
 updateFullscreenButton();
 
-// V11 GitHub trial: catalogo statico incluso nella stessa repository.
+// V11.3: catalogo federale multi-comitato incluso nella stessa repository.
 let fixtureCatalog = null;
+let activeFixtureCommittee = null;
 const fixtureEls = {
  committee: $('fixtureCommittee'), competition: $('fixtureCompetition'), group: $('fixtureGroup'),
  round: $('fixtureRound'), match: $('fixtureMatch'), includePlayed: $('fixtureIncludePlayed'),
@@ -999,8 +1000,22 @@ function fixtureDateValue(value){
  if(!m)return new Date(0);
  return new Date(Number(m[3]),Number(m[2])-1,Number(m[1]));
 }
-function fixtureOption(select,value,label){const o=document.createElement('option');o.value=String(value);o.textContent=String(label);select.append(o);}
-function selectedFixtureGroup(){return fixtureCatalog?.groupsById?.[fixtureEls.group.value]||null;}
+function fixtureOption(select,value,label,disabled=false){const o=document.createElement('option');o.value=String(value);o.textContent=String(label);o.disabled=disabled;select.append(o);}
+function selectedFixtureCompetition(){
+ const value=fixtureEls.competition.value;
+ return activeFixtureCommittee?.groups?.find(c=>(c.code||c.name)===value)||null;
+}
+function selectedFixtureGroup(){return activeFixtureCommittee?.groupsById?.[fixtureEls.group.value]||null;}
+function fixtureSnapshotDate(){return activeFixtureCommittee?.snapshotDate||fixtureCatalog?.snapshotDate||'non disponibile';}
+function fixtureSourceUrl(groupData){
+ if(groupData?.sourceUrl)return groupData.sourceUrl;
+ if(activeFixtureCommittee?.source==='fipavonline')return activeFixtureCommittee.selectionUrl||'https://public.fipavonline.it/';
+ return activeFixtureCommittee?.selectionUrl||'https://www.sol.milano.federvolley.it/campionatiris';
+}
+function fixtureSourceDescription(){
+ if(activeFixtureCommittee?.source==='fipavonline')return `Dati FIPAVOnline acquisiti il ${fixtureSnapshotDate()}. La sincronizzazione API server-side aggiorna Varese ogni giorno.`;
+ return `Snapshot del portale ufficiale SOL acquisito il ${fixtureSnapshotDate()}. I dati disponibili in questa versione non vengono aggiornati automaticamente.`;
+}
 function fixtureTeamLogo(groupData,teamName){
  const logos=groupData?.teamLogos||{};
  return logos[teamName]||'';
@@ -1008,10 +1023,8 @@ function fixtureTeamLogo(groupData,teamName){
 function fixturePreviewTeam(name,logoUrl,side){
  const wrap=document.createElement('div');wrap.className=`fixture-preview-team ${side}`;
  const img=document.createElement('img');img.className='fixture-preview-logo';img.alt='';img.loading='lazy';
- if(logoUrl){
-  img.src=logoUrl;
-  img.onerror=()=>{img.classList.add('fallback');};
- }else img.classList.add('fallback');
+ if(logoUrl){img.src=logoUrl;img.onerror=()=>{img.classList.add('fallback');};}
+ else img.classList.add('fallback');
  const label=document.createElement('span');label.className='fixture-preview-team-name';label.textContent=name||'—';
  if(side==='home'){wrap.append(img,label);}else{wrap.append(label,img);}
  return wrap;
@@ -1019,7 +1032,7 @@ function fixturePreviewTeam(name,logoUrl,side){
 function renderFixturePreview(){
  if(!fixtureCatalog||!fixtureEls.preview)return;
  const groupId=fixtureEls.group.value;
- const groupData=fixtureCatalog.groupSnapshots[groupId];
+ const groupData=activeFixtureCommittee?.groupSnapshots?.[groupId];
  const game=groupData?.matches.find(x=>String(x.gameNo)===fixtureEls.match.value);
  fixtureEls.preview.replaceChildren();
  const teams=document.createElement('div');teams.className='fixture-preview-teams';
@@ -1030,28 +1043,38 @@ function renderFixturePreview(){
  const meta=document.createElement('div');meta.className='fixture-preview-meta';
  const partials=document.createElement('div');partials.className='fixture-preview-partials';
  if(game){
-  const comp=fixtureEls.competition.value, group=fixtureEls.group.options[fixtureEls.group.selectedIndex]?.textContent||'';
-  meta.textContent=`${fixtureCatalog.committee.name} · ${comp} · ${group} · Giornata ${game.round} · Gara ${game.gameNo} · ${game.date} ore ${game.time} · ${game.venue}`;
-  if(game.result){partials.textContent=`Risultato registrato nella fotografia: ${game.result[0]}–${game.result[1]}${game.partials?.length?' · Parziali '+game.partials.join(' / '):''}. Il tabellone LIVE verrà comunque azzerato.`;}
-  else partials.textContent=`Gara da disputare secondo i dati FIPAV acquisiti il ${fixtureCatalog.snapshotDate}.`;
- }else{
-  meta.textContent='I dettagli della gara appariranno qui.';
- }
+  const compData=selectedFixtureCompetition();
+  const comp=compData?.name||fixtureEls.competition.value;
+  const phase=compData?.phase?` · ${compData.phase}`:'';
+  const group=fixtureEls.group.options[fixtureEls.group.selectedIndex]?.textContent||'';
+  meta.textContent=`${activeFixtureCommittee.name} · ${comp}${phase} · ${group} · Giornata ${game.round} · Gara ${game.gameNo} · ${game.date} ore ${game.time} · ${game.venue}`;
+  if(game.result){
+   const status=game.status?` · ${game.status}`:'';
+   partials.textContent=`Risultato presente nella fotografia: ${game.result[0]}–${game.result[1]}${game.partials?.length?' · Parziali '+game.partials.join(' / '):''}${status}. Il tabellone LIVE verrà comunque azzerato.`;
+  }else partials.textContent=`Gara da disputare secondo i dati acquisiti il ${fixtureSnapshotDate()}.`;
+ }else meta.textContent='I dettagli della gara appariranno qui.';
  fixtureEls.preview.append(meta,partials);
  fixtureEls.importBtn.disabled=!game||!isAdmin||pending;
 }
 function updateFixtureMatches(){
  const groupId=fixtureEls.group.value;
- const groupData=fixtureCatalog?.groupSnapshots?.[groupId];
+ const groupData=activeFixtureCommittee?.groupSnapshots?.[groupId];
  fixtureEls.match.replaceChildren();
  fixtureEls.round.replaceChildren();
- if(!groupData){
-  fixtureOption(fixtureEls.round,'','Calendario non disponibile');
+ if(!groupId||!groupData){
+  fixtureOption(fixtureEls.round,'','Calendario non disponibile',true);
   fixtureEls.round.disabled=true;fixtureEls.match.disabled=true;
-  fixtureOption(fixtureEls.match,'','Nessuna partita disponibile');
+  fixtureOption(fixtureEls.match,'','Nessuna partita disponibile',true);
   fixtureEls.importBtn.disabled=true;
-  fixtureEls.count.textContent='Girone selezionato: identificativo '+groupId+'. Il calendario non è presente nell’ultimo aggiornamento disponibile.';
-  fixtureEls.status.textContent='Il calendario di questo girone non è stato acquisito. Puoi riprovare dopo il prossimo aggiornamento automatico.';
+  const comp=selectedFixtureCompetition();
+  if(activeFixtureCommittee?.source==='sol-blazor-snapshot'&&comp&&!comp.groups?.length){
+   fixtureEls.count.textContent=`${comp.name} (${comp.code}) presente nel catalogo SOL; i gironi non erano contenuti nelle acquisizioni disponibili.`;
+   fixtureEls.status.textContent='In questa versione SOL è stato acquisito il calendario della sola 1ª Divisione Femminile · Girone A. Gli altri campionati sono elencati, ma non è disponibile uno snapshot dei relativi gironi.';
+  }else{
+   fixtureEls.count.textContent=groupId?`Girone ${groupId}: calendario non presente nell’ultimo aggiornamento disponibile.`:'Seleziona un girone per visualizzare le partite.';
+   fixtureEls.status.textContent=activeFixtureCommittee?.source==='fipavonline'?'Il calendario di questo girone non è stato acquisito. Resterà disponibile un eventuale snapshot precedente.':'Per il campionato selezionato non è presente un calendario nella cattura SOL disponibile.';
+  }
+  fixtureEls.officialLink.href=fixtureSourceUrl(null);
   renderFixturePreview();return;
  }
  fixtureEls.round.disabled=false;fixtureEls.match.disabled=false;
@@ -1059,27 +1082,32 @@ function updateFixtureMatches(){
  rounds.forEach(r=>{
   const all=groupData.matches.filter(g=>g.round===r);
   const done=all.filter(g=>g.result).length;
-  fixtureOption(fixtureEls.round,r,`Giornata ${r} · ${all.length} gare${done?` · ${done} disputate`:''}`);
+  fixtureOption(fixtureEls.round,r,`Giornata ${r} · ${all.length} gare${done?` · ${done} con risultato`:''}`);
  });
  const today=new Date();today.setHours(0,0,0,0);
  let defaultRound=rounds.find(r=>groupData.matches.some(g=>g.round===r&&fixtureDateValue(g.date)>=today&&(!g.result||fixtureEls.includePlayed.checked)));
  if(!defaultRound)defaultRound=rounds[rounds.length-1];
  fixtureEls.round.value=String(defaultRound||'');
  filterFixtureGames();
- fixtureEls.count.textContent=`${groupData.matches.length} gare · ${groupData.counts.completedMatches} disputate · ${groupData.counts.upcomingMatches} da disputare · ${groupData.counts.rounds} giornate · ${groupData.teams.length} squadre. Dati FIPAV acquisiti il ${fixtureCatalog.snapshotDate}.`;
- fixtureEls.status.textContent='Dati acquisiti dal servizio JSON FIPAV. GitHub Actions aggiorna il catalogo una volta al giorno; i loghi ufficiali disponibili sono collegati automaticamente alla gara.';
+ fixtureEls.count.textContent=`${groupData.matches.length} gare · ${groupData.counts.completedMatches} con risultato · ${groupData.counts.upcomingMatches} senza risultato · ${groupData.counts.rounds} giornate · ${groupData.teams.length} squadre. Snapshot ${fixtureSnapshotDate()}.`;
+ fixtureEls.status.textContent=fixtureSourceDescription();
+ fixtureEls.officialLink.href=fixtureSourceUrl(groupData);
  renderFixturePreview();
 }
 function filterFixtureGames(){
- if(!fixtureCatalog)return;
- const groupData=fixtureCatalog.groupSnapshots[fixtureEls.group.value];
+ if(!fixtureCatalog||!activeFixtureCommittee)return;
+ const groupData=activeFixtureCommittee.groupSnapshots?.[fixtureEls.group.value];
  if(!groupData){renderFixturePreview();return;}
  const round=Number(fixtureEls.round.value);
  const today=new Date();today.setHours(0,0,0,0);
  let games=groupData.matches.filter(g=>g.round===round);
  if(!fixtureEls.includePlayed.checked)games=games.filter(g=>!g.result&&fixtureDateValue(g.date)>=today);
  fixtureEls.match.replaceChildren();
- if(!games.length){fixtureOption(fixtureEls.match,'','Nessuna gara da mostrare');fixtureEls.importBtn.disabled=true;fixtureEls.status.textContent=`Non ci sono gare future in questa giornata nei dati FIPAV acquisiti il ${fixtureCatalog.snapshotDate}. Seleziona “Mostra anche le gare già disputate” oppure un’altra giornata.`;renderFixturePreview();return;}
+ if(!games.length){
+  fixtureOption(fixtureEls.match,'','Nessuna gara da mostrare',true);fixtureEls.importBtn.disabled=true;
+  fixtureEls.status.textContent=`Non ci sono gare future senza risultato in questa giornata nello snapshot del ${fixtureSnapshotDate()}. Attiva “Mostra anche le gare già disputate” oppure scegli un’altra giornata.`;
+  renderFixturePreview();return;
+ }
  games.sort((a,b)=>fixtureDateValue(a.date)-fixtureDateValue(b.date)||a.time.localeCompare(b.time));
  games.forEach(g=>{
   const label=`Gara ${g.gameNo} · ${g.date} ${g.time} · ${g.home} – ${g.away}${g.result?` (${g.result[0]}–${g.result[1]})`:''}`;
@@ -1089,14 +1117,38 @@ function filterFixtureGames(){
  renderFixturePreview();
 }
 function updateFixtureGroups(preferId){
- const comp=fixtureCatalog?.groups.find(c=>c.name===fixtureEls.competition.value);
+ const comp=selectedFixtureCompetition();
  fixtureEls.group.replaceChildren();
- if(!comp){updateFixtureMatches();return;}
- comp.groups.forEach(g=>fixtureOption(fixtureEls.group,g.id,`${g.name} · ${g.id}`));
- const wanted=preferId&&comp.groups.some(g=>g.id===preferId)?preferId:(comp.groups.some(g=>g.id==='63719')?'63719':comp.groups[0]?.id);
+ if(!comp){fixtureEls.group.disabled=true;updateFixtureMatches();return;}
+ const groups=Array.isArray(comp.groups)?comp.groups:[];
+ if(!groups.length){
+  fixtureOption(fixtureEls.group,'','Gironi non acquisiti',true);
+  fixtureEls.group.disabled=true;
+  fixtureEls.officialLink.href=activeFixtureCommittee.selectionUrl||'#';
+  updateFixtureMatches();return;
+ }
+ fixtureEls.group.disabled=false;
+ groups.forEach(g=>fixtureOption(fixtureEls.group,g.id,g.label||g.name));
+ const wanted=preferId&&groups.some(g=>g.id===preferId)?preferId:(groups.some(g=>g.id==='63719')?'63719':groups[0]?.id);
  if(wanted)fixtureEls.group.value=wanted;
- fixtureEls.officialLink.href=`https://public.fipavonline.it/gironi/${encodeURIComponent(fixtureEls.group.value)}`;
+ fixtureEls.officialLink.href=fixtureSourceUrl(activeFixtureCommittee.groupSnapshots?.[fixtureEls.group.value]||groups[0]);
  updateFixtureMatches();
+}
+function selectFixtureCommittee(committeeId,preferCompetition,preferGroup){
+ const committee=(fixtureCatalog.committees||[]).find(c=>String(c.id)===String(committeeId));
+ if(!committee)throw new Error(`Comitato ${committeeId} non presente nel catalogo.`);
+ activeFixtureCommittee=committee;
+ activeFixtureCommittee.groupsById={};
+ (activeFixtureCommittee.groups||[]).forEach(c=>(c.groups||[]).forEach(g=>{
+  activeFixtureCommittee.groupsById[g.id]={...g,competition:c.name,competitionCode:c.code,gender:c.gender,phase:c.phase};
+ }));
+ fixtureEls.committee.value=committee.id;
+ fixtureEls.competition.replaceChildren();
+ (committee.groups||[]).forEach(c=>fixtureOption(fixtureEls.competition,c.code||c.name,c.name+(c.phase?` · ${c.phase}`:'')));
+ const defaultName=committee.source==='sol-blazor-snapshot'?'1DF':'Prima Divisione Femminile';
+ const defaultComp=preferCompetition||((committee.groups||[]).find(c=>(c.code||c.name)===defaultName)?defaultName:(committee.groups||[])[0]?.code||(committee.groups||[])[0]?.name);
+ if(defaultComp)fixtureEls.competition.value=defaultComp;
+ updateFixtureGroups(preferGroup);
 }
 async function initFixturePicker(){
  try{
@@ -1104,39 +1156,49 @@ async function initFixturePicker(){
   const response=await fetch(url.href,{cache:'no-store',headers:{'Accept':'application/json'}});
   if(!response.ok)throw new Error(`HTTP ${response.status}`);
   fixtureCatalog=await response.json();
-  fixtureCatalog.groupsById={};
-  fixtureCatalog.groups.forEach(c=>c.groups.forEach(g=>fixtureCatalog.groupsById[g.id]={...g,competition:c.name,gender:c.gender}));
-  fixtureEls.competition.replaceChildren();
-  fixtureCatalog.groups.forEach(c=>fixtureOption(fixtureEls.competition,c.name,c.name));
-  fixtureEls.competition.value='Prima Divisione Femminile';
-  updateFixtureGroups('63719');
-  fixtureEls.committee.value='04020';
-  fixtureEls.committee.disabled=true;
+  // Compatibilità con il vecchio catalogo V11.2: se è ancora presente, viene
+  // convertito in memoria come Comitato Varese, senza modificare il file.
+  if(!Array.isArray(fixtureCatalog.committees)){
+   fixtureCatalog.committees=[{
+    id:fixtureCatalog.committee?.id||'04020',code:'LM09',name:fixtureCatalog.committee?.name||'Comitato Territoriale Varese',
+    source:'fipavonline',selectionUrl:fixtureCatalog.officialSelectionUrl||fixtureCatalog.committee?.selectionUrl,
+    snapshotDate:fixtureCatalog.snapshotDate,groups:fixtureCatalog.groups||[],groupSnapshots:fixtureCatalog.groupSnapshots||{}
+   }];
+  }
+  fixtureEls.committee.replaceChildren();
+  fixtureCatalog.committees.forEach(c=>fixtureOption(fixtureEls.committee,c.id,c.name.replace('Comitato Territoriale ','C.T. ')));
+  selectFixtureCommittee('04020');
+  fixtureEls.committee.addEventListener('change',()=>{
+   try{selectFixtureCommittee(fixtureEls.committee.value);}
+   catch(error){fixtureEls.status.textContent='Impossibile selezionare il comitato: '+error.message;}
+  });
   fixtureEls.competition.addEventListener('change',()=>updateFixtureGroups());
   fixtureEls.group.addEventListener('change',()=>{
-   fixtureEls.officialLink.href=`https://public.fipavonline.it/gironi/${encodeURIComponent(fixtureEls.group.value)}`;
+   fixtureEls.officialLink.href=fixtureSourceUrl(activeFixtureCommittee.groupSnapshots?.[fixtureEls.group.value]);
    updateFixtureMatches();
   });
   fixtureEls.round.addEventListener('change',filterFixtureGames);
   fixtureEls.match.addEventListener('change',renderFixturePreview);
   fixtureEls.includePlayed.addEventListener('change',filterFixtureGames);
   fixtureEls.importBtn.addEventListener('click',importSelectedFixture);
-  fixtureEls.status.textContent='Catalogo di prova caricato. Scegli una giornata e una gara, quindi importa nel tabellone.';
+  fixtureEls.status.textContent='Catalogo caricato. Seleziona Varese oppure Milano-Monza-Lecco, quindi campionato, girone e gara.';
  }catch(error){
-  fixtureEls.count.textContent='Impossibile caricare il catalogo statico: '+(error.message||error);
-  fixtureEls.status.textContent='Controlla che catalogo-fipav-v11.json sia stato caricato nella stessa cartella di prova di questo file HTML.';
+  fixtureEls.count.textContent='Impossibile caricare il catalogo: '+(error.message||error);
+  fixtureEls.status.textContent='Controlla che catalogo-fipav-v11.json sia presente nella stessa cartella di index.html.';
  }
 }
 async function importSelectedFixture(){
  if(!isAdmin||!currentUser){notice('Accedi come amministratore per caricare una gara.','error');return;}
- if(pending||!fixtureCatalog)return;
+ if(pending||!fixtureCatalog||!activeFixtureCommittee)return;
  const groupId=fixtureEls.group.value;
- const groupData=fixtureCatalog.groupSnapshots[groupId];
+ const groupData=activeFixtureCommittee.groupSnapshots?.[groupId];
  const game=groupData?.matches.find(x=>String(x.gameNo)===fixtureEls.match.value);
  if(!game){notice('Seleziona una partita valida.','error');return;}
- const comp=fixtureEls.competition.value;
+ const compData=selectedFixtureCompetition();
+ const comp=compData?.name||fixtureEls.competition.value;
  const groupName=fixtureEls.group.options[fixtureEls.group.selectedIndex]?.textContent.split(' · ')[0]||'Girone';
- const confirmation=`Caricare nel tabellone?\n\n${game.home}\ncontro\n${game.away}\n\n${comp} · ${groupName} · Giornata ${game.round}\n${game.date} ore ${game.time}\n${game.venue}\n\nIl punteggio e i set della partita attualmente attiva verranno azzerati. I loghi ufficiali disponibili saranno collegati automaticamente; in mancanza di un logo ufficiale verrà conservato quello già caricato per la stessa squadra.`;
+ const phase=compData?.phase?` · ${compData.phase}`:'';
+ const confirmation=`Caricare nel tabellone?\n\n${game.home}\ncontro\n${game.away}\n\n${activeFixtureCommittee.name}\n${comp}${phase} · ${groupName} · Giornata ${game.round}\n${game.date} ore ${game.time}\n${game.venue}\n\nIl punteggio e i set della partita attualmente attiva verranno azzerati. I loghi già presenti per le stesse squadre saranno conservati.`;
  if(!confirm(confirmation))return;
  const next=JSON.parse(JSON.stringify(state));
  const preserveHomeLogo=state.homeName===game.home?state.homeLogo:'';
@@ -1145,17 +1207,17 @@ async function importSelectedFixture(){
  const officialAwayLogo=fixtureTeamLogo(groupData,game.away);
  next.homeName=game.home;next.awayName=game.away;
  next.homeLogo=officialHomeLogo||preserveHomeLogo;next.awayLogo=officialAwayLogo||preserveAwayLogo;
- next.event=`${comp} · ${groupName} · Giornata ${game.round}`;
+ next.event=`${comp}${phase} · ${groupName} · Giornata ${game.round}`;
  next.format=5;next.setIndex=0;next.homeScore=0;next.awayScore=0;next.homeSets=0;next.awaySets=0;
  next.homeTimeouts=0;next.awayTimeouts=0;next.sets=[];next.serving='none';next.finished=false;
- next.fixture={committee:fixtureCatalog.committee.name,committeeId:fixtureCatalog.committee.id,competition:comp,group:groupName,groupId,round:game.round,gameNo:game.gameNo,date:game.date,time:game.time,venue:game.venue,source:'fipav-api-snapshot',snapshotDate:fixtureCatalog.snapshotDate,sourceUrl:groupData.sourceUrl};
+ next.fixture={committee:activeFixtureCommittee.name,committeeId:activeFixtureCommittee.id,committeeCode:activeFixtureCommittee.code,competition:comp,competitionCode:compData?.code||'',competitionPhase:compData?.phase||'',competitionSourceId:compData?.sourceId||'',group:groupName,groupId,officialGroup:groupData.officialGroup||groupName,round:game.round,gameNo:game.gameNo,date:game.date,time:game.time,venue:game.venue,source:activeFixtureCommittee.source,snapshotDate:fixtureSnapshotDate(),sourceUrl:groupData.sourceUrl};
  history=[];next.history=[];
  try{
   await persist(next);
   logoDraft={home:undefined,away:undefined};
   $('homeLogoFile').value='';$('awayLogoFile').value='';
   render();updateLogoStatuses();
-  notice(`Gara ${game.gameNo} caricata. Il tabellone LIVE è stato azzerato e sincronizzato.`, 'ok');
+  notice(`Gara ${game.gameNo} caricata da ${activeFixtureCommittee.name}. Il tabellone LIVE è stato azzerato e sincronizzato.`, 'ok');
  }catch(error){notice('Non sono riuscito a caricare la gara: '+(error.message||error),'error');}
 }
 void initFixturePicker();

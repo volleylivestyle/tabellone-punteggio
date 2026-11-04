@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Aggiorna i calendari dei gironi del Comitato Varese usando l'API JSON FIPAV.
+"""Aggiorna i calendari FIPAVOnline del Comitato Territoriale Varese.
+
+Il catalogo include anche Milano-Monza-Lecco: i dati SOL già acquisiti sono
+conservati come snapshot e non vengono alterati da questo processo, perché
+SOL usa una pagina Blazor Server e non è documentato qui un endpoint calendario
+JSON equivalente all'API FIPAVOnline.
 
 Il programma gira in GitHub Actions (server-side), quindi non è soggetto al
 blocco CORS che impedisce al browser GitHub Pages di leggere l'API.
@@ -184,9 +189,10 @@ def make_snapshot(competition: str, gender: str, group_name: str, group_id: str,
     }
 
 
-def all_catalog_groups(catalog: dict[str, Any]) -> list[dict[str, str]]:
+def all_catalog_groups(committee: dict[str, Any]) -> list[dict[str, str]]:
+    """Restituisce i gironi FIPAV di un singolo comitato."""
     items: list[dict[str, str]] = []
-    for competition in catalog.get("groups", []):
+    for competition in committee.get("groups", []):
         if not isinstance(competition, dict):
             continue
         comp_name = clean(competition.get("name"))
@@ -210,53 +216,105 @@ def main() -> int:
         print(f"ERRORE: non trovo {CATALOG_PATH}", file=sys.stderr)
         return 1
     catalog = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
-    groups = all_catalog_groups(catalog)
-    if not groups:
-        print("ERRORE: il catalogo non contiene gironi", file=sys.stderr)
-        return 1
 
-    snapshots = catalog.setdefault("groupSnapshots", {})
+    # V11.3 multi-comitato. Compatibilità con il vecchio schema V11.2.
+    if isinstance(catalog.get("committees"), list):
+        committees = catalog["committees"]
+    else:
+        legacy = {
+            "id": catalog.get("committee", {}).get("id", "04020"),
+            "name": catalog.get("committee", {}).get("name", "Comitato Territoriale Varese"),
+            "source": "fipavonline",
+            "selectionUrl": catalog.get("officialSelectionUrl"),
+            "snapshotDate": catalog.get("snapshotDate"),
+            "groups": catalog.get("groups", []),
+            "groupSnapshots": catalog.get("groupSnapshots", {}),
+        }
+        committees = [legacy]
+        catalog["committees"] = committees
+
     updated: list[str] = []
     failed: list[tuple[str, str]] = []
-    print(f"Gironi presenti nel catalogo: {len(groups)}")
+    skipped: list[str] = []
+    sync_groups: list[tuple[dict[str, Any], dict[str, str]]] = []
 
-    for index, group in enumerate(groups, start=1):
+    for committee in committees:
+        if not isinstance(committee, dict):
+            continue
+        source = clean(committee.get("source"))
+        name = clean(committee.get("name")) or clean(committee.get("id")) or "Comitato"
+        if source == "fipavonline":
+            groups = all_catalog_groups(committee)
+            for group in groups:
+                sync_groups.append((committee, group))
+            print(f"{name}: {len(groups)} gironi FIPAVOnline da sincronizzare")
+        elif source == "sol-blazor-snapshot":
+            snapshots = committee.get("groupSnapshots", {})
+            match_count = sum(len(g.get("matches", [])) for g in snapshots.values() if isinstance(g, dict))
+            skipped.append(f"{name}: {match_count} partite SOL conservate dallo snapshot")
+            print(f"{name}: conservo lo snapshot SOL ({match_count} partite); nessuna chiamata FIPAVOnline")
+        else:
+            skipped.append(f"{name}: sorgente {source or 'non specificata'} non configurata")
+            print(f"{name}: sorgente {source or 'non specificata'} non configurata; dati invariati")
+
+    if not sync_groups:
+        print("ERRORE: nessun girone FIPAVOnline disponibile per la sincronizzazione.", file=sys.stderr)
+        return 1
+
+    total = len(sync_groups)
+    for index, (committee, group) in enumerate(sync_groups, start=1):
         group_id = group["id"]
-        print(f"[{index}/{len(groups)}] {group['competition']} - {group['name']} ({group_id})", flush=True)
+        committee_name = clean(committee.get("name")) or clean(committee.get("id"))
+        print(f"[{index}/{total}] {committee_name} · {group['competition']} - {group['name']} ({group_id})", flush=True)
         try:
             data = fetch_calendar(group_id)
             snapshot = make_snapshot(
                 group["competition"], group["gender"], group["name"], group_id, data
             )
+            snapshots = committee.setdefault("groupSnapshots", {})
             snapshots[group_id] = snapshot
-            updated.append(f"{group_id}:{len(snapshot['matches'])}")
+            updated.append(f"{committee_name}/{group_id}:{len(snapshot['matches'])}")
             print(f"  OK: {len(snapshot['matches'])} partite, {len(snapshot['teams'])} squadre, "
                   f"{snapshot['counts']['rounds']} giornate", flush=True)
         except Exception as exc:  # conserva lo snapshot precedente per questo girone
-            failed.append((group_id, str(exc)))
+            failed.append((f"{committee_name}/{group_id}", str(exc)))
             print(f"  ERRORE: {exc}; mantengo i dati precedenti", flush=True)
-        if index < len(groups):
+        if index < total:
             time.sleep(DELAY_BETWEEN_REQUESTS)
 
     if not updated:
         print("Nessun girone aggiornato: catalogo non modificato.", file=sys.stderr)
         return 1
 
-    catalog["snapshotDate"] = datetime.now(timezone.utc).date().isoformat()
-    catalog["version"] = "github-fipav-api-1"
+    today = datetime.now(timezone.utc).date().isoformat()
+    for committee in committees:
+        if isinstance(committee, dict) and clean(committee.get("source")) == "fipavonline":
+            committee["snapshotDate"] = today
+            committee["snapshotNote"] = (
+                "Calendari acquisiti dal servizio JSON utilizzato dal sito pubblico FIPAVOnline; "
+                "gli aggiornamenti sono eseguiti server-side da GitHub Actions. "
+                "I gironi non raggiungibili mantengono l'ultimo snapshot valido."
+            )
+    catalog["snapshotDate"] = today
+    catalog["version"] = "volley-live-v11.3"
     catalog["snapshotNote"] = (
-        "Catalogo campionati e gironi C.T. Varese. I calendari sono acquisiti dal servizio "
-        "JSON utilizzato dal sito pubblico FIPAVOnline; gli aggiornamenti sono eseguiti "
-        "server-side da GitHub Actions. I gironi non raggiungibili mantengono l'ultimo snapshot valido."
+        "Catalogo Volley Live per i soli Comitati Territoriali Varese e Milano-Monza-Lecco. "
+        "Varese viene sincronizzato tramite API JSON FIPAVOnline. Milano-Monza-Lecco mantiene "
+        "gli snapshot SOL acquisiti; il processo FIPAV non modifica tali dati."
     )
+
     tmp_path = CATALOG_PATH.with_suffix(".json.tmp")
     tmp_path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     tmp_path.replace(CATALOG_PATH)
 
     print("\nRIEPILOGO")
-    print(f"Aggiornati ({len(updated)}/{len(groups)}): " + ", ".join(updated))
+    print(f"Gironi FIPAV aggiornati ({len(updated)}/{total}): " + ", ".join(updated))
+    if skipped:
+        print("Comitati/sorgenti mantenuti invariati:")
+        for item in skipped:
+            print(f"  - {item}")
     if failed:
-        print(f"Non aggiornati ({len(failed)}):")
+        print(f"Gironi non aggiornati ({len(failed)}):")
         for group_id, error in failed:
             print(f"  - {group_id}: {error}")
         print("Per questi gironi resta disponibile l'ultimo snapshot valido, se presente.")
