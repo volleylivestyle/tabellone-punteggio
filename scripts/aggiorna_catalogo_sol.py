@@ -110,21 +110,40 @@ def parse_match_cells(cells: list[str], round_no: int, group_id: str) -> dict[st
 
 
 async def wait_for_rows(page) -> None:
-    await page.wait_for_selector("table.rz-grid-table tbody tr.rz-data-row", timeout=ELEMENT_TIMEOUT_MS)
+    """Attende l'elenco SOL dei campionati.
+
+    Nel markup catturato da SOL le righe hanno la classe rz-data-row, ma il
+    contenitore tabellare può non avere la classe rz-grid-table. Non vincolare
+    quindi il selettore al tag/classe del genitore.
+    """
+    await page.wait_for_selector("tr.rz-data-row", state="visible", timeout=ELEMENT_TIMEOUT_MS)
 
 
 async def open_selection_page(page) -> None:
+    print("SOL: apertura elenco campionati...", flush=True)
     await page.goto(SOL_URL, wait_until="domcontentloaded", timeout=NAV_TIMEOUT_MS)
-    await wait_for_rows(page)
-    # Il portale usa Radzen; attendiamo che la griglia sia popolata, non solo SSR.
-    await page.wait_for_function(
-        "() => document.querySelectorAll('table.rz-grid-table tbody tr.rz-data-row').length >= 10",
-        timeout=ELEMENT_TIMEOUT_MS,
-    )
+    try:
+        await wait_for_rows(page)
+        # Nell'elenco campionati SOL usa tr.rz-data-row. Il calendario usa
+        # invece td.rz-cell-data e non deve essere confuso con questa griglia.
+        await page.wait_for_function(
+            "() => document.querySelectorAll('tr.rz-data-row').length >= 10",
+            timeout=ELEMENT_TIMEOUT_MS,
+        )
+    except Exception:
+        try:
+            await page.screenshot(path=str(ROOT / "sol-debug-selection.png"), full_page=True)
+            (ROOT / "sol-debug-selection.html").write_text(await page.content(), encoding="utf-8")
+        except Exception as debug_exc:
+            print(f"SOL: diagnostica elenco non disponibile: {debug_exc}", flush=True)
+        visible_text = clean((await page.locator("body").inner_text())[:1200])
+        print(f"SOL: DOM elenco campionati non pronto. URL={page.url}; testo={visible_text}", flush=True)
+        raise
+    print(f"SOL: elenco campionati pronto ({await page.locator('tr.rz-data-row').count()} righe).", flush=True)
 
 
 async def read_competitions(page, existing: list[dict[str, Any]]) -> list[dict[str, str]]:
-    rows = await page.locator("table.rz-grid-table tbody tr.rz-data-row").all()
+    rows = await page.locator("tr.rz-data-row").all()
     known_by_code = {clean(c.get("code")): c for c in existing if clean(c.get("code"))}
     out: list[dict[str, str]] = []
     for index, row in enumerate(rows):
@@ -163,7 +182,7 @@ async def read_competitions(page, existing: list[dict[str, Any]]) -> list[dict[s
 
 
 async def click_competition(page, row_index: int) -> tuple[str, str]:
-    rows = page.locator("table.rz-grid-table tbody tr.rz-data-row")
+    rows = page.locator("tr.rz-data-row")
     row = rows.nth(row_index)
     try:
         await row.locator(":scope > td").nth(2).click(timeout=10_000)
@@ -180,35 +199,49 @@ async def click_competition(page, row_index: int) -> tuple[str, str]:
 
 
 async def discover_group_tabs(page) -> list[str]:
-    """Legge le schede Radzen SOL dalla navigazione reale del TabView.
+    """Individua i gironi nelle schede SOL A/B/C... dopo il render Blazor.
 
-    Nelle catture HAR SOL le schede A-F sono elementi <li> dentro
-    .rz-tabview-nav. Non hanno l'attributo role="tab": usare li[role=tab]
-    restituisce zero risultati e lascia nel catalogo soltanto lo snapshot A.
+    L'HAR del 04/11 mostra le schede A-F come <li> in .rz-tabview-nav.
+    L'elenco Squadre contiene inoltre una tabella Radzen con la colonna Gir.
+    che costituisce un fallback affidabile se le schede non sono ancora visibili.
     """
-    selectors = [
-        ".rz-tabview-nav > li",
-        "ul[role='tablist'] > li",
-        "[role='tablist'] > li",
-    ]
-    tabs = None
-    for selector in selectors:
-        candidate = page.locator(selector)
-        if await candidate.count():
-            tabs = candidate
-            break
-    if tabs is None:
-        raise RuntimeError("SOL: navigazione gironi non trovata (.rz-tabview-nav)")
+    try:
+        await page.wait_for_function(
+            "() => Array.from(document.querySelectorAll('.rz-tabview-nav > li'))"
+            ".some(el => /^[A-Z0-9]{1,3}$/.test((el.innerText || '').trim().toUpperCase()))",
+            timeout=12_000,
+        )
+    except PlaywrightTimeoutError:
+        # Si può ancora ricavare il gruppo dalla tabella Squadre.
+        pass
 
-    labels = await tabs.all_inner_texts()
     groups: list[str] = []
-    for raw in labels:
+    tabs = page.locator(".rz-tabview-nav > li, ul[role='tablist'] > li, [role='tablist'] > li")
+    for raw in await tabs.all_inner_texts():
         label = clean(raw).upper()
         match = re.fullmatch(r"(?:GIRONE\s*)?([A-Z0-9]{1,3})", label)
         if match:
             group = match.group(1)
             if group not in groups:
                 groups.append(group)
+
+    # Fallback: la tabella Squadre mostra le colonne Logo, Gir., Squadra,
+    # Società e Comune. Le righe non hanno la classe rz-data-row.
+    if not groups:
+        tables = page.locator("table.rz-grid-table")
+        for ti in range(await tables.count()):
+            table = tables.nth(ti)
+            headers = [clean(x).lower() for x in await table.locator("thead th").all_inner_texts()]
+            if not any("gir" in h for h in headers) or not any("squadra" in h for h in headers):
+                continue
+            for row in await table.locator("tbody tr:not(.rz-datatable-emptymessage-row)").all():
+                cells = [clean(x) for x in await row.locator(":scope > td").all_inner_texts()]
+                if len(cells) >= 3 and re.fullmatch(r"[A-Z0-9]{1,3}", cells[1].upper()):
+                    letter = cells[1].upper()
+                    if letter not in groups:
+                        groups.append(letter)
+        groups.sort()
+
     return groups
 
 
@@ -223,7 +256,7 @@ async def extract_roster_teams(page, group_letter: str) -> list[str]:
             headers = [clean(x).lower() for x in await table.locator("thead th").all_inner_texts()]
             if not any("gir" in h for h in headers) or not any("squadra" in h for h in headers):
                 continue
-            rows = await table.locator("tbody tr.rz-data-row").all()
+            rows = await table.locator("tbody tr:not(.rz-datatable-emptymessage-row)").all()
             for row in rows:
                 cells = [clean(x) for x in await row.locator(":scope > td").all_inner_texts()]
                 if len(cells) >= 3 and cells[1].upper() == group_letter:
@@ -242,16 +275,12 @@ async def extract_roster_teams(page, group_letter: str) -> list[str]:
 async def open_group_calendar(page, route_url: str, group_letter: str) -> None:
     """Apre una scheda girone e poi il relativo Calendario ufficiale."""
     await page.goto(route_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT_MS)
-    await page.locator(".rz-tabview-nav > li").first.wait_for(
-        state="visible", timeout=ELEMENT_TIMEOUT_MS
-    )
-
     tab_selector = ".rz-tabview-nav > li"
     tab = page.locator(tab_selector).filter(
         has_text=re.compile(rf"^\s*{re.escape(group_letter)}\s*$", re.I)
     ).first
-    if await tab.count() == 0:
-        raise RuntimeError(f"Scheda girone {group_letter} non trovata nel TabView SOL")
+    # La route cambia prima che Blazor completi il render delle schede A-F.
+    await tab.wait_for(state="visible", timeout=ELEMENT_TIMEOUT_MS)
     await tab.click(timeout=15_000)
     await page.wait_for_function(
         "letter => Array.from(document.querySelectorAll('.rz-tabview-nav > li'))"
@@ -266,9 +295,12 @@ async def open_group_calendar(page, route_url: str, group_letter: str) -> None:
     ).first
     await calendar_button.wait_for(state="visible", timeout=ELEMENT_TIMEOUT_MS)
     await calendar_button.click(timeout=15_000)
+    print(f"SOL: attendo righe calendario per Girone {group_letter}...", flush=True)
     await page.wait_for_function(
         "() => document.body.innerText.includes('Calendario Ufficiale') && "
-        "document.querySelectorAll('table.rz-grid-table tbody tr.rz-data-row').length > 0",
+        "Array.from(document.querySelectorAll('table.rz-grid-table tbody tr:not(.rz-datatable-emptymessage-row)'))"
+        ".some(row => row.querySelectorAll(':scope > td.rz-cell-data').length >= 6 && "
+        "!!(row.getClientRects().length && getComputedStyle(row).visibility !== 'hidden'))",
         timeout=ELEMENT_TIMEOUT_MS,
     )
 
@@ -277,7 +309,7 @@ async def scrape_calendar_rows(page, group_letter: str, group_id: str) -> list[d
     raw_rows = await page.evaluate("""() => {
       const headers = Array.from(document.querySelectorAll('div.bg-primary.text-white.text-center.fw-bold'));
       const visible = el => !!(el && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden');
-      const rows = Array.from(document.querySelectorAll('table.rz-grid-table tbody tr.rz-data-row')).filter(visible);
+      const rows = Array.from(document.querySelectorAll('table.rz-grid-table tbody tr:not(.rz-datatable-emptymessage-row)')).filter(row => visible(row) && row.querySelectorAll(':scope > td.rz-cell-data').length >= 6);
       return rows.map(row => {
         const cells = Array.from(row.querySelectorAll(':scope > td')).map(td => (td.innerText || '').trim());
         const grid = row.closest('.rz-data-grid') || row.closest('table');
@@ -287,6 +319,7 @@ async def scrape_calendar_rows(page, group_letter: str, group_id: str) -> list[d
         return { cells, round: match ? Number(match[1]) : 0 };
       });
     }""")
+    print(f"SOL: righe calendario DOM individuate per Girone {group_letter}: {len(raw_rows)}", flush=True)
     matches: list[dict[str, Any]] = []
     seen: set[tuple[int, str, str]] = set()
     fallback_round = 1
@@ -367,7 +400,7 @@ async def sync_sol(committee: dict[str, Any]) -> tuple[int, int, list[str]]:
                     await open_selection_page(page)
                     # Legge di nuovo la riga per indice, perché dopo il click
                     # la griglia viene ricreata dal circuito Blazor.
-                    row = page.locator("table.rz-grid-table tbody tr.rz-data-row").filter(has_text=re.compile(rf"\b{re.escape(code)}\b")).first
+                    row = page.locator("tr.rz-data-row").filter(has_text=re.compile(rf"\b{re.escape(code)}\b")).first
                     await row.wait_for(state="visible", timeout=ELEMENT_TIMEOUT_MS)
                     try:
                         await row.locator(":scope > td").nth(2).click(timeout=10_000)
@@ -487,7 +520,7 @@ def main() -> int:
         return 1
 
     catalog["snapshotDate"] = datetime.now(timezone.utc).date().isoformat()
-    catalog["version"] = "volley-live-v11.3-completa"
+    catalog["version"] = "volley-live-v11.3.3-fix-sol-grid-selectors"
     tmp_path = CATALOG_PATH.with_suffix(".json.tmp")
     tmp_path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     tmp_path.replace(CATALOG_PATH)
