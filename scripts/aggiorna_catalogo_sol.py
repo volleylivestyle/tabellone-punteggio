@@ -110,35 +110,88 @@ def parse_match_cells(cells: list[str], round_no: int, group_id: str) -> dict[st
 
 
 async def wait_for_rows(page) -> None:
-    """Attende l'elenco SOL dei campionati.
-
-    Nel markup catturato da SOL le righe hanno la classe rz-data-row, ma il
-    contenitore tabellare può non avere la classe rz-grid-table. Non vincolare
-    quindi il selettore al tag/classe del genitore.
-    """
+    """Attende le righe della lista SOL dopo aver selezionato la stagione."""
     await page.wait_for_selector("tr.rz-data-row", state="visible", timeout=ELEMENT_TIMEOUT_MS)
+
+
+async def select_season_2026_2027(page) -> None:
+    """Seleziona 2026/2027 nel Radzen DropDown obbligatorio di /campionatiris.
+
+    La diagnostica sol-sync-diagnostics.zip del 05/11/2026 mostra il problema
+    originario: la pagina viene renderizzata con input#stagione = 'seleziona',
+    la griglia contiene soltanto rz-datatable-emptymessage-row e il caricatore
+    resta attivo. La lista dei campionati viene caricata solo dopo questa scelta.
+    """
+    dropdown = page.locator("div.rz-dropdown:has(input#stagione)").first
+    await dropdown.wait_for(state="visible", timeout=ELEMENT_TIMEOUT_MS)
+    label_locator = dropdown.locator(".rz-dropdown-label")
+    current_label = clean(await label_locator.first.inner_text()) if await label_locator.count() else ""
+    season_pattern = re.compile(r"2026\s*(?:/|-|–)\s*2027|2026\s*(?:/|-|–)\s*27", re.I)
+    if season_pattern.search(current_label):
+        print(f"SOL: stagione già selezionata: {current_label}", flush=True)
+        return
+
+    dropdown_id = await dropdown.get_attribute("id")
+    await page.wait_for_timeout(1200)  # lascia completare l'avvio del circuito Blazor Server
+    await dropdown.click(timeout=15_000)
+    panel = page.locator(f"#popup-{dropdown_id}") if dropdown_id else page.locator(".rz-dropdown-panel:visible").first
+    await panel.wait_for(state="visible", timeout=15_000)
+
+    option_selector = ".rz-dropdown-item, [role='option']"
+    options = panel.locator(option_selector)
+    try:
+        await page.wait_for_function(
+            "selector => { const p=document.querySelector(selector); "
+            "return !!p && p.querySelectorAll('.rz-dropdown-item,[role=\\\"option\\\"]').length > 0; }",
+            arg=f"#popup-{dropdown_id}" if dropdown_id else ".rz-dropdown-panel",
+            timeout=15_000,
+        )
+    except PlaywrightTimeoutError:
+        pass
+
+    option_labels = [clean(x) for x in await options.all_inner_texts()]
+    print(f"SOL: opzioni stagione disponibili ({len(option_labels)}): {option_labels}", flush=True)
+
+    target_index = next((i for i, value in enumerate(option_labels) if season_pattern.search(value)), None)
+    if target_index is None:
+        target_index = next((i for i, value in enumerate(option_labels)
+                             if re.search(r"^\s*2026(?:\D|$)", value)), None)
+    if target_index is None:
+        try:
+            await page.screenshot(path=str(ROOT / "sol-debug-season.png"), full_page=True)
+            (ROOT / "sol-debug-season.html").write_text(await page.content(), encoding="utf-8")
+        except Exception:
+            pass
+        raise RuntimeError(
+            "Stagione 2026/2027 non trovata nel menu SOL. "
+            f"Opzioni visibili: {option_labels or 'nessuna'}. "
+            "La pagina resta senza campionati: catalogo precedente conservato."
+        )
+
+    await options.nth(target_index).click(timeout=15_000)
+    await page.wait_for_function(
+        "() => { const d=document.querySelector('input#stagione')?.closest('.rz-dropdown'); "
+        "const t=d?.querySelector('.rz-dropdown-label')?.innerText || ''; "
+        "const rows=Array.from(document.querySelectorAll('tr.rz-data-row')).filter(r=>r.getClientRects().length); "
+        "return /2026/.test(t) && rows.length > 0; }",
+        timeout=ELEMENT_TIMEOUT_MS,
+    )
+    selected_label = clean(await label_locator.first.inner_text()) if await label_locator.count() else option_labels[target_index]
+    print(f"SOL: stagione selezionata e griglia caricata: {selected_label}", flush=True)
 
 
 async def open_selection_page(page) -> None:
     print("SOL: apertura elenco campionati...", flush=True)
     await page.goto(SOL_URL, wait_until="domcontentloaded", timeout=NAV_TIMEOUT_MS)
-    try:
-        await wait_for_rows(page)
-        # Nell'elenco campionati SOL usa tr.rz-data-row. Il calendario usa
-        # invece td.rz-cell-data e non deve essere confuso con questa griglia.
-        await page.wait_for_function(
-            "() => document.querySelectorAll('tr.rz-data-row').length >= 10",
-            timeout=ELEMENT_TIMEOUT_MS,
-        )
-    except Exception:
-        try:
-            await page.screenshot(path=str(ROOT / "sol-debug-selection.png"), full_page=True)
-            (ROOT / "sol-debug-selection.html").write_text(await page.content(), encoding="utf-8")
-        except Exception as debug_exc:
-            print(f"SOL: diagnostica elenco non disponibile: {debug_exc}", flush=True)
-        visible_text = clean((await page.locator("body").inner_text())[:1200])
-        print(f"SOL: DOM elenco campionati non pronto. URL={page.url}; testo={visible_text}", flush=True)
-        raise
+    await page.locator("input#stagione").wait_for(state="attached", timeout=ELEMENT_TIMEOUT_MS)
+    # La lista campionati non viene caricata al semplice accesso alla route:
+    # il dropdown stagione parte dal placeholder 'seleziona'.
+    await select_season_2026_2027(page)
+    await wait_for_rows(page)
+    await page.wait_for_function(
+        "() => document.querySelectorAll('tr.rz-data-row').length >= 10",
+        timeout=ELEMENT_TIMEOUT_MS,
+    )
     print(f"SOL: elenco campionati pronto ({await page.locator('tr.rz-data-row').count()} righe).", flush=True)
 
 
