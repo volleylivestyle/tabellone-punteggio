@@ -3,7 +3,6 @@ name: Aggiorna calendari Volley Live (Varese + Milano-Monza-Lecco)
 on:
   workflow_dispatch:
   schedule:
-    # Una volta al giorno; avvio manuale disponibile dalla scheda Actions.
     - cron: "23 5 * * *"
   push:
     paths:
@@ -22,30 +21,47 @@ concurrency:
 jobs:
   aggiorna:
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       - name: Scarica il repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Prepara Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Installa Playwright e Chromium per il portale SOL
+      # VARESE: esegui il sincronizzatore ripristinato sulla base V11.2.
+      - name: Sincronizza tutti i gironi FIPAVOnline di Varese (comportamento V11.2)
+        id: sync_varese
+        continue-on-error: true
+        run: python -u scripts/aggiorna_catalogo_fipav.py
+
+      # CRUCIALE: pubblica subito gli aggiornamenti Varese, prima di SOL.
+      # Un errore successivo del crawler Milano non può annullare questo commit.
+      - name: Salva subito il catalogo Varese
+        if: steps.sync_varese.outcome == 'success'
+        run: |
+          if git diff --quiet -- catalogo-fipav-v11.json; then
+            echo "Varese: nessuna variazione da pubblicare."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add catalogo-fipav-v11.json
+          git commit -m "Ripristina sincronizzazione calendari Varese"
+          git push
+
+      - name: Segnala indisponibilità FIPAV senza bloccare SOL
+        if: steps.sync_varese.outcome == 'failure'
+        run: |
+          echo "ATTENZIONE: Varese non ha aggiornato calendari in questa esecuzione; gli snapshot esistenti sono conservati. SOL prosegue separatamente."
+
+      - name: Installa Playwright e Chromium per SOL
         run: |
           python -m pip install --upgrade pip
           python -m pip install playwright
           python -m playwright install --with-deps chromium
-
-      - name: Sincronizza i gironi FIPAVOnline di Varese
-        id: sync_varese
-        continue-on-error: true
-        run: python scripts/aggiorna_catalogo_fipav.py
-
-      - name: Segnala eventuale indisponibilità FIPAV senza bloccare Milano
-        if: steps.sync_varese.outcome == 'failure'
-        run: echo "AVVISO - sincronizzazione Varese non riuscita; proseguo comunque con SOL Milano-Monza-Lecco."
 
       - name: Sincronizza campionati, gironi e calendari SOL di Milano-Monza-Lecco
         id: sync_milano
@@ -53,22 +69,42 @@ jobs:
           set -o pipefail
           python -u scripts/aggiorna_catalogo_sol.py 2>&1 | tee sol-sync.log
 
-      - name: Riepilogo catalogo multi-comitato
-        if: success()
+      - name: Salva gli aggiornamenti SOL (senza coinvolgere il commit Varese)
+        if: steps.sync_milano.outcome == 'success'
         run: |
+          if git diff --quiet -- catalogo-fipav-v11.json; then
+            echo "SOL: nessuna variazione da pubblicare."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add catalogo-fipav-v11.json
+          git commit -m "Aggiorna calendari SOL Milano-Monza-Lecco"
+          git push
+
+      - name: Riepilogo multi-comitato
+        if: always()
+        run: |
+          {
+            echo "## Sincronizzazione Volley Live"
+            echo "- Varese: **${{ steps.sync_varese.outcome }}**"
+            echo "- Milano-Monza-Lecco (SOL): **${{ steps.sync_milano.outcome }}**"
+          } >> "$GITHUB_STEP_SUMMARY"
           python - <<'PY'
           import json
           from pathlib import Path
-          data = json.loads(Path("catalogo-fipav-v11.json").read_text(encoding="utf-8"))
-          for committee in data.get("committees", []):
-              comps = committee.get("groups", [])
-              groups = sum(len(c.get("groups", [])) for c in comps)
-              snaps = committee.get("groupSnapshots", {})
-              matches = sum(len(x.get("matches", [])) for x in snaps.values())
-              print(f"{committee.get('name')}: {len(comps)} campionati, {groups} gironi, {len(snaps)} calendari, {matches} gare")
+          p=Path("catalogo-fipav-v11.json")
+          if p.exists():
+              data=json.loads(p.read_text(encoding="utf-8"))
+              for c in data.get("committees", []):
+                  comps=c.get("groups", [])
+                  groups=sum(len(x.get("groups", [])) for x in comps)
+                  snaps=c.get("groupSnapshots", {})
+                  matches=sum(len(x.get("matches", [])) for x in snaps.values() if isinstance(x,dict))
+                  print(f"{c.get('name')}: {len(comps)} campionati, {groups} gironi, {len(snaps)} calendari, {matches} partite")
           PY
 
-      - name: Conserva log sincronizzazione SOL in caso di errore
+      - name: Conserva diagnostica SOL in caso di errore
         if: failure()
         uses: actions/upload-artifact@v4
         with:
@@ -79,15 +115,3 @@ jobs:
             sol-debug-*.html
           if-no-files-found: ignore
           retention-days: 7
-
-      - name: Salva il catalogo aggiornato
-        run: |
-          if git diff --quiet -- catalogo-fipav-v11.json; then
-            echo "Nessuna variazione nei calendari: nessun commit necessario."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add catalogo-fipav-v11.json
-          git commit -m "Aggiorna calendari Volley Live Varese e Milano-Monza-Lecco"
-          git push
