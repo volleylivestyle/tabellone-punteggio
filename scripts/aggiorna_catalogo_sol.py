@@ -126,14 +126,27 @@ async def select_season_2026_2027(page) -> None:
         print(f"SOL: stagione già selezionata: {current_label}", flush=True)
         return
 
-    # Nel markup acquisito il popup è annidato nel componente dropdown. Gli ID
-    # Radzen cambiano fra prerender HTML e primo RenderBatch Blazor: non usare
-    # page.locator(f"#popup-{id}") né conservare ID generati dal server.
-    panel = dropdown.locator(".rz-dropdown-panel").first
-    await panel.wait_for(state="attached", timeout=ELEMENT_TIMEOUT_MS)
+    # Radzen inizialmente renderizza il popup dentro il dropdown, ma quando
+    # Radzen.openPopup viene eseguito lo sposta con document.body.appendChild.
+    # Per questo il locator relativo al dropdown smette di trovare il pannello
+    # proprio dopo il click. Ricaviamo l'ID DAL DOM corrente dopo il primo
+    # render Blazor e poi usiamo un locator globale, valido prima e dopo lo
+    # spostamento del popup nel body.
+    nested_panel = dropdown.locator(".rz-dropdown-panel").first
+    await nested_panel.wait_for(state="attached", timeout=ELEMENT_TIMEOUT_MS)
     root_id = await dropdown.get_attribute("id") or "(assente)"
-    panel_id = await panel.get_attribute("id") or "(assente)"
-    print(f"SOL: dropdown stagione pronto; root={root_id}, popup={panel_id} (selettore relativo)", flush=True)
+    panel_id = await nested_panel.get_attribute("id") or ""
+    if not panel_id:
+        if root_id == "(assente)":
+            raise RuntimeError("SOL: impossibile ricavare l'ID dinamico del dropdown stagione.")
+        panel_id = f"popup-{root_id}"
+    panel = page.locator(f'[id="{panel_id}"]').first
+    await panel.wait_for(state="attached", timeout=ELEMENT_TIMEOUT_MS)
+    print(
+        f"SOL: dropdown stagione pronto; root={root_id}, popup={panel_id} "
+        "(locator globale: Radzen sposta il popup in document.body)",
+        flush=True,
+    )
 
     async def open_menu() -> None:
         trigger = dropdown.locator(".rz-dropdown-trigger").first
@@ -156,6 +169,13 @@ async def select_season_2026_2027(page) -> None:
         await panel.wait_for(state="visible", timeout=12_000)
 
     await open_menu()
+    popup_state = await page.evaluate(
+        "(id) => { const p=document.getElementById(id); return p ? "
+        "{display:getComputedStyle(p).display, parent:p.parentElement?.tagName, "
+        "open:p.classList.contains('rz-open'), text:(p.innerText||'').trim().slice(0,300)} : null; }",
+        panel_id,
+    )
+    print(f"SOL: stato popup stagione dopo apertura: {popup_state}", flush=True)
     options = panel.locator(".rz-dropdown-item, [role='option']")
     try:
         await options.first.wait_for(state="visible", timeout=12_000)
@@ -622,7 +642,7 @@ def main() -> int:
         return 1
 
     catalog["snapshotDate"] = datetime.now(timezone.utc).date().isoformat()
-    catalog["version"] = "volley-live-v11.3.5-fix-radzen-season-dropdown"
+    catalog["version"] = "volley-live-v11.3.7-fix-radzen-popup-portal"
     tmp_path = CATALOG_PATH.with_suffix(".json.tmp")
     tmp_path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     tmp_path.replace(CATALOG_PATH)
