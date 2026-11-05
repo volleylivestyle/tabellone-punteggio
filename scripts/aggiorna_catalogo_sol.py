@@ -115,13 +115,21 @@ async def wait_for_rows(page) -> None:
 
 
 async def select_season_2026_2027(page) -> None:
-    """Seleziona 2026/2027 usando l'evento Blazor del root e il popup globale.
+    """Seleziona la stagione 2026/2027 con il ciclo reale Radzen/Blazor.
 
-    Non costruisce l'ID del popup dal root: il markup SOL/Radzen ha un popup
-    reale nel DOM, ma Radzen può spostarlo sotto document.body. Un locator
-    globale per classe continua a identificare lo stesso nodo anche dopo il
-    portal; inoltre aspettiamo display/rz-open, non la visibilità geometrica
-    Playwright (che fallisce con popup temporaneamente a altezza zero).
+    SOL usa Radzen 8.7.5. Il click Blazor può provocare un nuovo render e
+    rigenerare GetId()/PopupID. Per questo il popup trovato prima del click
+    non è necessariamente quello ancora montato dopo il callback server.
+
+    Strategia:
+    1) click sul trigger visibile, così Blazor esegue l'eventuale callback Open;
+    2) rilettura del root e del popup *dopo* il round-trip Blazor;
+    3) chiamata idempotente a Radzen.openPopup sul popup corrente, usando
+       l'API JS effettivamente presente in Radzen.Blazor.js 8.7.5;
+    4) attesa delle opzioni realmente renderizzate prima di selezionare.
+
+    Non si usa togglePopup: se Blazor ha già aperto il vecchio popup, toggle
+    rischierebbe di richiuderlo. openPopup invece imposta display=block.
     """
     dropdown = page.locator("div.rz-dropdown:has(input#stagione)").first
     await dropdown.wait_for(state="visible", timeout=ELEMENT_TIMEOUT_MS)
@@ -133,111 +141,113 @@ async def select_season_2026_2027(page) -> None:
         print(f"SOL: stagione già selezionata: {current_label}", flush=True)
         return
 
-    # Locator globale: sopravvive al trasferimento del popup nel body.
-    panels = page.locator("div.rz-dropdown-panel")
-    await panels.first.wait_for(state="attached", timeout=ELEMENT_TIMEOUT_MS)
-
-    root_id = await dropdown.get_attribute("id") or "(assente)"
-    initial_panel_info = await page.evaluate("""() => {
+    before = await page.evaluate("""() => {
         const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
-        const p = d?.querySelector('.rz-dropdown-panel') || document.querySelector('.rz-dropdown-panel');
-        return p ? {id:p.id || '', display:p.style.display || '', cls:p.className || '',
-                    parent:p.parentElement?.tagName || '', items:p.querySelectorAll('.rz-dropdown-item,[role=option]').length}
-                 : null;
+        const p = d ? (document.getElementById(`popup-${d.id}`) || d.querySelector('.rz-dropdown-panel')) : null;
+        return {
+            rootId: d?.id || '', rootClass: d?.className || '',
+            label: d?.querySelector('.rz-dropdown-label')?.innerText || '',
+            trigger: !!d?.querySelector('.rz-dropdown-trigger'),
+            popupId: p?.id || '', popupDisplay: p?.style.display || '',
+            items: p?.querySelectorAll('.rz-dropdown-item,[role=option]').length || 0,
+            radzenOpenPopup: typeof window.Radzen?.openPopup === 'function'
+        };
+    }""")
+    print(f"SOL: dropdown stagione pronto; stato iniziale={before}", flush=True)
+
+    if not before.get("trigger"):
+        raise RuntimeError(f"SOL: trigger Radzen stagione non trovato. Stato DOM: {before}")
+    if not before.get("radzenOpenPopup"):
+        raise RuntimeError("SOL: Radzen.openPopup non disponibile; Radzen.Blazor.js 8.7.5 non inizializzato.")
+
+    # Il click sul trigger è il gesto utente previsto dal componente Radzen.
+    # Non cliccare l'input readonly (tabindex=-1) né il root sopra il suo centro.
+    trigger = dropdown.locator(".rz-dropdown-trigger").first
+    await trigger.click(timeout=15_000)
+
+    # Attendi il round-trip Blazor: la callback Open può rigenerare il root e
+    # il relativo PopupID. Non riutilizzare riferimenti DOM/ID precedenti.
+    try:
+        await page.wait_for_function("""(oldId) => {
+            const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
+            const p = d ? (document.getElementById(`popup-${d.id}`) || d.querySelector('.rz-dropdown-panel')) : null;
+            const n = p?.querySelectorAll('.rz-dropdown-item,[role=option]').length || 0;
+            return !!d && (d.id !== oldId || n > 0 || p?.style.display === 'block');
+        }""", arg=before.get("rootId", ""), timeout=10_000)
+    except PlaywrightTimeoutError:
+        # Non è ancora un errore definitivo: alcune pagine non cambiano GetId
+        # quando il callback termina. Proseguiamo rileggendo il DOM corrente.
+        pass
+
+    after_click = await page.evaluate("""() => {
+        const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
+        const p = d ? (document.getElementById(`popup-${d.id}`) || d.querySelector('.rz-dropdown-panel')) : null;
+        return {
+            rootId: d?.id || '', rootClass: d?.className || '',
+            label: d?.querySelector('.rz-dropdown-label')?.innerText || '',
+            popupId: p?.id || '', popupDisplay: p?.style.display || '',
+            popupClass: p?.className || '', popupParent: p?.parentElement?.tagName || '',
+            items: p?.querySelectorAll('.rz-dropdown-item,[role=option]').length || 0,
+            popupText: (p?.innerText || '').trim().slice(0, 300),
+            radzenOpenPopup: typeof window.Radzen?.openPopup === 'function'
+        };
     }""")
     print(
-        f"SOL: dropdown stagione pronto; root={root_id}; pannello DOM={initial_panel_info}",
+        "SOL: dopo click Blazor; "
+        f"root prima={before.get('rootId')} root corrente={after_click.get('rootId')}; "
+        f"stato={after_click}",
         flush=True,
     )
 
-    async def popup_is_open() -> bool:
-        return bool(await page.evaluate("""() => {
-            const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
-            const expected = d?.id ? `popup-${d.id}` : '';
-            let p = expected ? document.getElementById(expected) : null;
-            if (!p) p = document.querySelector('div.rz-dropdown-panel');
-            return !!p && (p.style.display !== 'none' || p.classList.contains('rz-open'));
-        }"""))
-
-    if not await popup_is_open():
-        # Nel componente Radzen l'evento Blazor @onclick è sul root .rz-dropdown.
-        # Clicchiamo il root, non il trigger interno né l'input readonly nascosto.
-        await dropdown.click(timeout=15_000)
-        try:
-            await page.wait_for_function("""() => {
-                const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
-                const expected = d?.id ? `popup-${d.id}` : '';
-                let p = expected ? document.getElementById(expected) : null;
-                if (!p) p = document.querySelector('div.rz-dropdown-panel');
-                return !!p && (p.style.display !== 'none' || p.classList.contains('rz-open'));
-            }""", timeout=12_000)
-        except PlaywrightTimeoutError:
-            # Secondo tentativo tramite tastiera sul medesimo root Blazor.
-            await dropdown.focus()
-            await dropdown.press("ArrowDown")
-            try:
-                await page.wait_for_function("""() => {
-                    const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
-                    const expected = d?.id ? `popup-${d.id}` : '';
-                    let p = expected ? document.getElementById(expected) : null;
-                    if (!p) p = document.querySelector('div.rz-dropdown-panel');
-                    return !!p && (p.style.display !== 'none' || p.classList.contains('rz-open'));
-                }""", timeout=8_000)
-            except PlaywrightTimeoutError as exc:
-                diag = await page.evaluate("""() => {
-                    const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
-                    const ps = Array.from(document.querySelectorAll('.rz-dropdown-panel')).map(p => ({
-                        id:p.id || '', display:p.style.display || '', cls:p.className || '',
-                        parent:p.parentElement?.tagName || '', text:(p.innerText||'').trim().slice(0,200),
-                        rect:(()=>{const r=p.getBoundingClientRect();return {w:r.width,h:r.height}})()
-                    }));
-                    return {rootId:d?.id || '', rootClass:d?.className || '',
-                            rootExpanded:d?.getAttribute('aria-expanded'),
-                            rootDisabled:d?.getAttribute('aria-disabled'), panels:ps,
-                            radzen:typeof window.Radzen, ready:document.readyState};
-                }""")
-                try:
-                    await page.screenshot(path=str(ROOT / "sol-debug-season-open.png"), full_page=True)
-                    (ROOT / "sol-debug-season-open.html").write_text(await page.content(), encoding="utf-8")
-                except Exception:
-                    pass
-                raise RuntimeError(
-                    "SOL: il click Blazor sul dropdown stagione non ha aperto il popup. "
-                    f"Diagnostica DOM: {diag}. Catalogo precedente conservato."
-                ) from exc
-
-    # Il pannello può essere stato portato sotto document.body: non usare ID
-    # calcolati o locator relativi al dropdown.
-    panel = page.locator("div.rz-dropdown-panel").first
-    state = await page.evaluate("""() => {
+    # Recupera il popup ricreato dal render Blazor e aprilo con la funzione
+    # ufficiale Radzen 8.7.5. openPopup (non togglePopup) è intenzionalmente
+    # usato per rendere l'operazione idempotente.
+    opened = await page.evaluate("""() => {
         const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
-        const expected = d?.id ? `popup-${d.id}` : '';
-        let p = expected ? document.getElementById(expected) : null;
-        if (!p) p = document.querySelector('div.rz-dropdown-panel');
-        return p ? {id:p.id || '',display:p.style.display || '',className:p.className || '',
-                    parent:p.parentElement?.tagName || '',items:p.querySelectorAll('.rz-dropdown-item,[role=option]').length,
-                    text:(p.innerText||'').trim().slice(0,500)} : null;
+        if (!d) return {ok:false, reason:'root stagione assente'};
+        const id = `popup-${d.id}`;
+        const p = document.getElementById(id) || d.querySelector('.rz-dropdown-panel') || document.querySelector('.rz-dropdown-panel');
+        if (!p) return {ok:false, reason:'pannello stagione assente', rootId:d.id};
+        if (typeof window.Radzen?.openPopup !== 'function')
+            return {ok:false, reason:'Radzen.openPopup non disponibile', rootId:d.id, popupId:p.id};
+        if (p.style.display !== 'block' && !p.classList.contains('rz-open')) {
+            window.Radzen.openPopup(d, p.id, true, null, null, null, null, null, true, false);
+        }
+        return {
+            ok: p.style.display === 'block' || p.classList.contains('rz-open'),
+            rootId:d.id, popupId:p.id, display:p.style.display || '',
+            className:p.className || '', parent:p.parentElement?.tagName || '',
+            items:p.querySelectorAll('.rz-dropdown-item,[role=option]').length || 0,
+            text:(p.innerText || '').trim().slice(0,300)
+        };
     }""")
-    print(f"SOL: popup stagione aperto; stato DOM={state}", flush=True)
+    print(f"SOL: apertura diretta Radzen sul popup corrente: {opened}", flush=True)
+    if not opened.get("ok"):
+        raise RuntimeError(f"SOL: Radzen.openPopup non è riuscito ad aprire il popup corrente: {opened}")
 
-    # Non aspettiamo 'visible': un popup Radzen vuoto può avere altezza zero.
-    # Attendiamo invece gli item effettivi renderizzati dal componente Blazor.
+    # La callback Open del componente può popolare la lista lato server dopo
+    # il primo render. Aspettiamo gli item, non solo il pannello grafico.
     try:
         await page.wait_for_function("""() => {
             const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
-            const expected = d?.id ? `popup-${d.id}` : '';
-            let p = expected ? document.getElementById(expected) : null;
-            if (!p) p = document.querySelector('div.rz-dropdown-panel');
-            return !!p && p.querySelectorAll('.rz-dropdown-item,[role=option]').length > 0;
-        }""", timeout=15_000)
+            const p = d ? (document.getElementById(`popup-${d.id}`) || document.querySelector('.rz-dropdown-panel')) : null;
+            return !!p && (p.style.display === 'block' || p.classList.contains('rz-open')) &&
+                p.querySelectorAll('.rz-dropdown-item,[role=option]').length > 0;
+        }""", timeout=20_000)
     except PlaywrightTimeoutError as exc:
         details = await page.evaluate("""() => {
-            const d=document.querySelector('input#stagione')?.closest('.rz-dropdown');
-            const p=d?.querySelector('.rz-dropdown-panel') || document.querySelector('.rz-dropdown-panel');
-            return {rootId:d?.id || '', label:d?.querySelector('.rz-dropdown-label')?.innerText || '',
-                    panelId:p?.id || '', panelDisplay:p?.style.display || '',
-                    panelClass:p?.className || '', panelHTML:p?.innerHTML?.slice(0,1500) || '',
-                    panelParent:p?.parentElement?.tagName || ''};
+            const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
+            const p = d ? (document.getElementById(`popup-${d.id}`) || document.querySelector('.rz-dropdown-panel')) : null;
+            return {
+                rootId:d?.id || '', rootClass:d?.className || '',
+                label:d?.querySelector('.rz-dropdown-label')?.innerText || '',
+                expanded:d?.getAttribute('aria-expanded') || null,
+                popupId:p?.id || '', display:p?.style.display || '',
+                popupClass:p?.className || '', parent:p?.parentElement?.tagName || '',
+                html:p?.innerHTML?.slice(0,1800) || '',
+                items:p?.querySelectorAll('.rz-dropdown-item,[role=option]').length || 0,
+                radzen:typeof window.Radzen, ws:typeof window.Blazor
+            };
         }""")
         try:
             await page.screenshot(path=str(ROOT / "sol-debug-season-items.png"), full_page=True)
@@ -245,8 +255,8 @@ async def select_season_2026_2027(page) -> None:
         except Exception:
             pass
         raise RuntimeError(
-            "SOL: popup aperto ma Blazor non ha renderizzato opzioni stagione. "
-            f"Dettagli: {details}. Catalogo precedente conservato."
+            "SOL: popup Radzen aperto, ma il server Blazor non ha fornito opzioni stagione. "
+            f"Diagnostica DOM: {details}. Catalogo precedente conservato."
         ) from exc
 
     options = page.locator("div.rz-dropdown-panel .rz-dropdown-item, div.rz-dropdown-panel [role='option']")
@@ -258,14 +268,9 @@ async def select_season_2026_2027(page) -> None:
         target_index = next((i for i, value in enumerate(option_labels)
                              if re.search(r"^\s*2026(?:\D|$)", value)), None)
     if target_index is None:
-        try:
-            await page.screenshot(path=str(ROOT / "sol-debug-season-options.png"), full_page=True)
-            (ROOT / "sol-debug-season-options.html").write_text(await page.content(), encoding="utf-8")
-        except Exception:
-            pass
         raise RuntimeError(
             "Stagione 2026/2027 non trovata nel menu SOL. "
-            f"Opzioni visibili: {option_labels or 'nessuna'}. Catalogo precedente conservato."
+            f"Opzioni disponibili: {option_labels or 'nessuna'}. Catalogo precedente conservato."
         )
 
     await options.nth(target_index).click(timeout=15_000)
@@ -702,7 +707,7 @@ def main() -> int:
         return 1
 
     catalog["snapshotDate"] = datetime.now(timezone.utc).date().isoformat()
-    catalog["version"] = "volley-live-v11.3.8-fix-radzen-dropdown-state"
+    catalog["version"] = "volley-live-v11.3.9-radzen-open-popup-after-blazor-render"
     tmp_path = CATALOG_PATH.with_suffix(".json.tmp")
     tmp_path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     tmp_path.replace(CATALOG_PATH)
