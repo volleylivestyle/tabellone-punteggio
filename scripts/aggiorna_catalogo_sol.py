@@ -115,7 +115,14 @@ async def wait_for_rows(page) -> None:
 
 
 async def select_season_2026_2027(page) -> None:
-    """Seleziona 2026/2027 dal Radzen DropDown, senza dipendere dagli ID runtime."""
+    """Seleziona 2026/2027 usando l'evento Blazor del root e il popup globale.
+
+    Non costruisce l'ID del popup dal root: il markup SOL/Radzen ha un popup
+    reale nel DOM, ma Radzen può spostarlo sotto document.body. Un locator
+    globale per classe continua a identificare lo stesso nodo anche dopo il
+    portal; inoltre aspettiamo display/rz-open, non la visibilità geometrica
+    Playwright (che fallisce con popup temporaneamente a altezza zero).
+    """
     dropdown = page.locator("div.rz-dropdown:has(input#stagione)").first
     await dropdown.wait_for(state="visible", timeout=ELEMENT_TIMEOUT_MS)
     label_locator = dropdown.locator(".rz-dropdown-label").first
@@ -126,81 +133,134 @@ async def select_season_2026_2027(page) -> None:
         print(f"SOL: stagione già selezionata: {current_label}", flush=True)
         return
 
-    # Radzen inizialmente renderizza il popup dentro il dropdown, ma quando
-    # Radzen.openPopup viene eseguito lo sposta con document.body.appendChild.
-    # Per questo il locator relativo al dropdown smette di trovare il pannello
-    # proprio dopo il click. Ricaviamo l'ID DAL DOM corrente dopo il primo
-    # render Blazor e poi usiamo un locator globale, valido prima e dopo lo
-    # spostamento del popup nel body.
-    nested_panel = dropdown.locator(".rz-dropdown-panel").first
-    await nested_panel.wait_for(state="attached", timeout=ELEMENT_TIMEOUT_MS)
+    # Locator globale: sopravvive al trasferimento del popup nel body.
+    panels = page.locator("div.rz-dropdown-panel")
+    await panels.first.wait_for(state="attached", timeout=ELEMENT_TIMEOUT_MS)
+
     root_id = await dropdown.get_attribute("id") or "(assente)"
-    panel_id = await nested_panel.get_attribute("id") or ""
-    if not panel_id:
-        if root_id == "(assente)":
-            raise RuntimeError("SOL: impossibile ricavare l'ID dinamico del dropdown stagione.")
-        panel_id = f"popup-{root_id}"
-    panel = page.locator(f'[id="{panel_id}"]').first
-    await panel.wait_for(state="attached", timeout=ELEMENT_TIMEOUT_MS)
+    initial_panel_info = await page.evaluate("""() => {
+        const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
+        const p = d?.querySelector('.rz-dropdown-panel') || document.querySelector('.rz-dropdown-panel');
+        return p ? {id:p.id || '', display:p.style.display || '', cls:p.className || '',
+                    parent:p.parentElement?.tagName || '', items:p.querySelectorAll('.rz-dropdown-item,[role=option]').length}
+                 : null;
+    }""")
     print(
-        f"SOL: dropdown stagione pronto; root={root_id}, popup={panel_id} "
-        "(locator globale: Radzen sposta il popup in document.body)",
+        f"SOL: dropdown stagione pronto; root={root_id}; pannello DOM={initial_panel_info}",
         flush=True,
     )
 
-    async def open_menu() -> None:
-        trigger = dropdown.locator(".rz-dropdown-trigger").first
-        await trigger.click(timeout=15_000)
-        try:
-            await panel.wait_for(state="visible", timeout=8_000)
-            return
-        except PlaywrightTimeoutError:
-            pass
-        # Fallback 1: etichetta visibile del componente.
-        await dropdown.locator(".rz-dropdown-label").first.click(timeout=10_000)
-        try:
-            await panel.wait_for(state="visible", timeout=8_000)
-            return
-        except PlaywrightTimeoutError:
-            pass
-        # Fallback 2: comportamento da tastiera accessibile Radzen.
-        await dropdown.focus()
-        await dropdown.press("ArrowDown")
-        await panel.wait_for(state="visible", timeout=12_000)
+    async def popup_is_open() -> bool:
+        return bool(await page.evaluate("""() => {
+            const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
+            const expected = d?.id ? `popup-${d.id}` : '';
+            let p = expected ? document.getElementById(expected) : null;
+            if (!p) p = document.querySelector('div.rz-dropdown-panel');
+            return !!p && (p.style.display !== 'none' || p.classList.contains('rz-open'));
+        }"""))
 
-    await open_menu()
-    popup_state = await page.evaluate(
-        "(id) => { const p=document.getElementById(id); return p ? "
-        "{display:getComputedStyle(p).display, parent:p.parentElement?.tagName, "
-        "open:p.classList.contains('rz-open'), text:(p.innerText||'').trim().slice(0,300)} : null; }",
-        panel_id,
-    )
-    print(f"SOL: stato popup stagione dopo apertura: {popup_state}", flush=True)
-    options = panel.locator(".rz-dropdown-item, [role='option']")
-    try:
-        await options.first.wait_for(state="visible", timeout=12_000)
-    except PlaywrightTimeoutError:
-        option_labels = [clean(x) for x in await options.all_inner_texts()]
+    if not await popup_is_open():
+        # Nel componente Radzen l'evento Blazor @onclick è sul root .rz-dropdown.
+        # Clicchiamo il root, non il trigger interno né l'input readonly nascosto.
+        await dropdown.click(timeout=15_000)
         try:
-            await page.screenshot(path=str(ROOT / "sol-debug-season.png"), full_page=True)
-            (ROOT / "sol-debug-season.html").write_text(await page.content(), encoding="utf-8")
+            await page.wait_for_function("""() => {
+                const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
+                const expected = d?.id ? `popup-${d.id}` : '';
+                let p = expected ? document.getElementById(expected) : null;
+                if (!p) p = document.querySelector('div.rz-dropdown-panel');
+                return !!p && (p.style.display !== 'none' || p.classList.contains('rz-open'));
+            }""", timeout=12_000)
+        except PlaywrightTimeoutError:
+            # Secondo tentativo tramite tastiera sul medesimo root Blazor.
+            await dropdown.focus()
+            await dropdown.press("ArrowDown")
+            try:
+                await page.wait_for_function("""() => {
+                    const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
+                    const expected = d?.id ? `popup-${d.id}` : '';
+                    let p = expected ? document.getElementById(expected) : null;
+                    if (!p) p = document.querySelector('div.rz-dropdown-panel');
+                    return !!p && (p.style.display !== 'none' || p.classList.contains('rz-open'));
+                }""", timeout=8_000)
+            except PlaywrightTimeoutError as exc:
+                diag = await page.evaluate("""() => {
+                    const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
+                    const ps = Array.from(document.querySelectorAll('.rz-dropdown-panel')).map(p => ({
+                        id:p.id || '', display:p.style.display || '', cls:p.className || '',
+                        parent:p.parentElement?.tagName || '', text:(p.innerText||'').trim().slice(0,200),
+                        rect:(()=>{const r=p.getBoundingClientRect();return {w:r.width,h:r.height}})()
+                    }));
+                    return {rootId:d?.id || '', rootClass:d?.className || '',
+                            rootExpanded:d?.getAttribute('aria-expanded'),
+                            rootDisabled:d?.getAttribute('aria-disabled'), panels:ps,
+                            radzen:typeof window.Radzen, ready:document.readyState};
+                }""")
+                try:
+                    await page.screenshot(path=str(ROOT / "sol-debug-season-open.png"), full_page=True)
+                    (ROOT / "sol-debug-season-open.html").write_text(await page.content(), encoding="utf-8")
+                except Exception:
+                    pass
+                raise RuntimeError(
+                    "SOL: il click Blazor sul dropdown stagione non ha aperto il popup. "
+                    f"Diagnostica DOM: {diag}. Catalogo precedente conservato."
+                ) from exc
+
+    # Il pannello può essere stato portato sotto document.body: non usare ID
+    # calcolati o locator relativi al dropdown.
+    panel = page.locator("div.rz-dropdown-panel").first
+    state = await page.evaluate("""() => {
+        const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
+        const expected = d?.id ? `popup-${d.id}` : '';
+        let p = expected ? document.getElementById(expected) : null;
+        if (!p) p = document.querySelector('div.rz-dropdown-panel');
+        return p ? {id:p.id || '',display:p.style.display || '',className:p.className || '',
+                    parent:p.parentElement?.tagName || '',items:p.querySelectorAll('.rz-dropdown-item,[role=option]').length,
+                    text:(p.innerText||'').trim().slice(0,500)} : null;
+    }""")
+    print(f"SOL: popup stagione aperto; stato DOM={state}", flush=True)
+
+    # Non aspettiamo 'visible': un popup Radzen vuoto può avere altezza zero.
+    # Attendiamo invece gli item effettivi renderizzati dal componente Blazor.
+    try:
+        await page.wait_for_function("""() => {
+            const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
+            const expected = d?.id ? `popup-${d.id}` : '';
+            let p = expected ? document.getElementById(expected) : null;
+            if (!p) p = document.querySelector('div.rz-dropdown-panel');
+            return !!p && p.querySelectorAll('.rz-dropdown-item,[role=option]').length > 0;
+        }""", timeout=15_000)
+    except PlaywrightTimeoutError as exc:
+        details = await page.evaluate("""() => {
+            const d=document.querySelector('input#stagione')?.closest('.rz-dropdown');
+            const p=d?.querySelector('.rz-dropdown-panel') || document.querySelector('.rz-dropdown-panel');
+            return {rootId:d?.id || '', label:d?.querySelector('.rz-dropdown-label')?.innerText || '',
+                    panelId:p?.id || '', panelDisplay:p?.style.display || '',
+                    panelClass:p?.className || '', panelHTML:p?.innerHTML?.slice(0,1500) || '',
+                    panelParent:p?.parentElement?.tagName || ''};
+        }""")
+        try:
+            await page.screenshot(path=str(ROOT / "sol-debug-season-items.png"), full_page=True)
+            (ROOT / "sol-debug-season-items.html").write_text(await page.content(), encoding="utf-8")
         except Exception:
             pass
         raise RuntimeError(
-            "Il menu stagione SOL si è aperto ma non contiene opzioni visibili. "
-            f"root={root_id}, popup={panel_id}, opzioni={option_labels or 'nessuna'}."
-        )
+            "SOL: popup aperto ma Blazor non ha renderizzato opzioni stagione. "
+            f"Dettagli: {details}. Catalogo precedente conservato."
+        ) from exc
 
+    options = page.locator("div.rz-dropdown-panel .rz-dropdown-item, div.rz-dropdown-panel [role='option']")
     option_labels = [clean(x) for x in await options.all_inner_texts()]
     print(f"SOL: opzioni stagione disponibili ({len(option_labels)}): {option_labels}", flush=True)
+
     target_index = next((i for i, value in enumerate(option_labels) if season_pattern.search(value)), None)
     if target_index is None:
         target_index = next((i for i, value in enumerate(option_labels)
                              if re.search(r"^\s*2026(?:\D|$)", value)), None)
     if target_index is None:
         try:
-            await page.screenshot(path=str(ROOT / "sol-debug-season.png"), full_page=True)
-            (ROOT / "sol-debug-season.html").write_text(await page.content(), encoding="utf-8")
+            await page.screenshot(path=str(ROOT / "sol-debug-season-options.png"), full_page=True)
+            (ROOT / "sol-debug-season-options.html").write_text(await page.content(), encoding="utf-8")
         except Exception:
             pass
         raise RuntimeError(
@@ -208,14 +268,14 @@ async def select_season_2026_2027(page) -> None:
             f"Opzioni visibili: {option_labels or 'nessuna'}. Catalogo precedente conservato."
         )
 
-    # La locator è relativa al popup vivo, quindi resta valida anche se Blazor
-    # sostituisce il markup durante il ciclo di render.
     await options.nth(target_index).click(timeout=15_000)
     await page.wait_for_function(
-        "() => { const d=document.querySelector('input#stagione')?.closest('.rz-dropdown'); "
-        "const t=d?.querySelector('.rz-dropdown-label')?.innerText || ''; "
-        "const rows=Array.from(document.querySelectorAll('tr.rz-data-row')).filter(r=>r.getClientRects().length); "
-        "return /2026/.test(t) && rows.length > 0; }",
+        """() => {
+            const d=document.querySelector('input#stagione')?.closest('.rz-dropdown');
+            const t=d?.querySelector('.rz-dropdown-label')?.innerText || '';
+            const rows=Array.from(document.querySelectorAll('tr.rz-data-row')).filter(r=>r.getClientRects().length);
+            return /2026/.test(t) && rows.length > 0;
+        }""",
         timeout=ELEMENT_TIMEOUT_MS,
     )
     selected_label = clean(await label_locator.inner_text()) if await label_locator.count() else option_labels[target_index]
@@ -642,7 +702,7 @@ def main() -> int:
         return 1
 
     catalog["snapshotDate"] = datetime.now(timezone.utc).date().isoformat()
-    catalog["version"] = "volley-live-v11.3.7-fix-radzen-popup-portal"
+    catalog["version"] = "volley-live-v11.3.8-fix-radzen-dropdown-state"
     tmp_path = CATALOG_PATH.with_suffix(".json.tmp")
     tmp_path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     tmp_path.replace(CATALOG_PATH)
