@@ -115,43 +115,64 @@ async def wait_for_rows(page) -> None:
 
 
 async def select_season_2026_2027(page) -> None:
-    """Seleziona 2026/2027 nel Radzen DropDown obbligatorio di /campionatiris.
-
-    La diagnostica sol-sync-diagnostics.zip del 05/11/2026 mostra il problema
-    originario: la pagina viene renderizzata con input#stagione = 'seleziona',
-    la griglia contiene soltanto rz-datatable-emptymessage-row e il caricatore
-    resta attivo. La lista dei campionati viene caricata solo dopo questa scelta.
-    """
+    """Seleziona 2026/2027 dal Radzen DropDown, senza dipendere dagli ID runtime."""
     dropdown = page.locator("div.rz-dropdown:has(input#stagione)").first
     await dropdown.wait_for(state="visible", timeout=ELEMENT_TIMEOUT_MS)
-    label_locator = dropdown.locator(".rz-dropdown-label")
-    current_label = clean(await label_locator.first.inner_text()) if await label_locator.count() else ""
+    label_locator = dropdown.locator(".rz-dropdown-label").first
     season_pattern = re.compile(r"2026\s*(?:/|-|–)\s*2027|2026\s*(?:/|-|–)\s*27", re.I)
+
+    current_label = clean(await label_locator.inner_text()) if await label_locator.count() else ""
     if season_pattern.search(current_label):
         print(f"SOL: stagione già selezionata: {current_label}", flush=True)
         return
 
-    dropdown_id = await dropdown.get_attribute("id")
-    await page.wait_for_timeout(1200)  # lascia completare l'avvio del circuito Blazor Server
-    await dropdown.click(timeout=15_000)
-    panel = page.locator(f"#popup-{dropdown_id}") if dropdown_id else page.locator(".rz-dropdown-panel:visible").first
-    await panel.wait_for(state="visible", timeout=15_000)
+    # Nel markup acquisito il popup è annidato nel componente dropdown. Gli ID
+    # Radzen cambiano fra prerender HTML e primo RenderBatch Blazor: non usare
+    # page.locator(f"#popup-{id}") né conservare ID generati dal server.
+    panel = dropdown.locator(".rz-dropdown-panel").first
+    await panel.wait_for(state="attached", timeout=ELEMENT_TIMEOUT_MS)
+    root_id = await dropdown.get_attribute("id") or "(assente)"
+    panel_id = await panel.get_attribute("id") or "(assente)"
+    print(f"SOL: dropdown stagione pronto; root={root_id}, popup={panel_id} (selettore relativo)", flush=True)
 
-    option_selector = ".rz-dropdown-item, [role='option']"
-    options = panel.locator(option_selector)
+    async def open_menu() -> None:
+        trigger = dropdown.locator(".rz-dropdown-trigger").first
+        await trigger.click(timeout=15_000)
+        try:
+            await panel.wait_for(state="visible", timeout=8_000)
+            return
+        except PlaywrightTimeoutError:
+            pass
+        # Fallback 1: etichetta visibile del componente.
+        await dropdown.locator(".rz-dropdown-label").first.click(timeout=10_000)
+        try:
+            await panel.wait_for(state="visible", timeout=8_000)
+            return
+        except PlaywrightTimeoutError:
+            pass
+        # Fallback 2: comportamento da tastiera accessibile Radzen.
+        await dropdown.focus()
+        await dropdown.press("ArrowDown")
+        await panel.wait_for(state="visible", timeout=12_000)
+
+    await open_menu()
+    options = panel.locator(".rz-dropdown-item, [role='option']")
     try:
-        await page.wait_for_function(
-            "selector => { const p=document.querySelector(selector); "
-            "return !!p && p.querySelectorAll('.rz-dropdown-item,[role=\\\"option\\\"]').length > 0; }",
-            arg=f"#popup-{dropdown_id}" if dropdown_id else ".rz-dropdown-panel",
-            timeout=15_000,
-        )
+        await options.first.wait_for(state="visible", timeout=12_000)
     except PlaywrightTimeoutError:
-        pass
+        option_labels = [clean(x) for x in await options.all_inner_texts()]
+        try:
+            await page.screenshot(path=str(ROOT / "sol-debug-season.png"), full_page=True)
+            (ROOT / "sol-debug-season.html").write_text(await page.content(), encoding="utf-8")
+        except Exception:
+            pass
+        raise RuntimeError(
+            "Il menu stagione SOL si è aperto ma non contiene opzioni visibili. "
+            f"root={root_id}, popup={panel_id}, opzioni={option_labels or 'nessuna'}."
+        )
 
     option_labels = [clean(x) for x in await options.all_inner_texts()]
     print(f"SOL: opzioni stagione disponibili ({len(option_labels)}): {option_labels}", flush=True)
-
     target_index = next((i for i, value in enumerate(option_labels) if season_pattern.search(value)), None)
     if target_index is None:
         target_index = next((i for i, value in enumerate(option_labels)
@@ -164,10 +185,11 @@ async def select_season_2026_2027(page) -> None:
             pass
         raise RuntimeError(
             "Stagione 2026/2027 non trovata nel menu SOL. "
-            f"Opzioni visibili: {option_labels or 'nessuna'}. "
-            "La pagina resta senza campionati: catalogo precedente conservato."
+            f"Opzioni visibili: {option_labels or 'nessuna'}. Catalogo precedente conservato."
         )
 
+    # La locator è relativa al popup vivo, quindi resta valida anche se Blazor
+    # sostituisce il markup durante il ciclo di render.
     await options.nth(target_index).click(timeout=15_000)
     await page.wait_for_function(
         "() => { const d=document.querySelector('input#stagione')?.closest('.rz-dropdown'); "
@@ -176,16 +198,43 @@ async def select_season_2026_2027(page) -> None:
         "return /2026/.test(t) && rows.length > 0; }",
         timeout=ELEMENT_TIMEOUT_MS,
     )
-    selected_label = clean(await label_locator.first.inner_text()) if await label_locator.count() else option_labels[target_index]
+    selected_label = clean(await label_locator.inner_text()) if await label_locator.count() else option_labels[target_index]
     print(f"SOL: stagione selezionata e griglia caricata: {selected_label}", flush=True)
 
 
 async def open_selection_page(page) -> None:
     print("SOL: apertura elenco campionati...", flush=True)
-    await page.goto(SOL_URL, wait_until="domcontentloaded", timeout=NAV_TIMEOUT_MS)
-    await page.locator("input#stagione").wait_for(state="attached", timeout=ELEMENT_TIMEOUT_MS)
-    # La lista campionati non viene caricata al semplice accesso alla route:
-    # il dropdown stagione parte dal placeholder 'seleziona'.
+    # Registra il listener prima di goto: il WebSocket può aprirsi rapidamente.
+    ready = asyncio.Event()
+    state = {"seen": False, "received": 0}
+
+    def on_websocket(ws) -> None:
+        if "/_blazor" not in ws.url:
+            return
+        state["seen"] = True
+
+        def on_frame(_payload) -> None:
+            state["received"] += 1
+            if state["received"] >= 5:
+                ready.set()
+
+        ws.on("framereceived", on_frame)
+
+    page.on("websocket", on_websocket)
+    try:
+        await page.goto(SOL_URL, wait_until="domcontentloaded", timeout=NAV_TIMEOUT_MS)
+        await page.locator("input#stagione").wait_for(state="attached", timeout=ELEMENT_TIMEOUT_MS)
+        try:
+            await asyncio.wait_for(ready.wait(), timeout=45)
+        except asyncio.TimeoutError as exc:
+            raise RuntimeError(
+                "Circuito Blazor SOL non interattivo prima della selezione stagione "
+                f"(websocket={state['seen']}, frame ricevuti={state['received']})."
+            ) from exc
+        print(f"SOL: primo render Blazor completato ({state['received']} frame ricevuti)", flush=True)
+    finally:
+        page.remove_listener("websocket", on_websocket)
+
     await select_season_2026_2027(page)
     await wait_for_rows(page)
     await page.wait_for_function(
@@ -573,7 +622,7 @@ def main() -> int:
         return 1
 
     catalog["snapshotDate"] = datetime.now(timezone.utc).date().isoformat()
-    catalog["version"] = "volley-live-v11.3.3-fix-sol-grid-selectors"
+    catalog["version"] = "volley-live-v11.3.5-fix-radzen-season-dropdown"
     tmp_path = CATALOG_PATH.with_suffix(".json.tmp")
     tmp_path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     tmp_path.replace(CATALOG_PATH)
