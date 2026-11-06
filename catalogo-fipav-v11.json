@@ -1,6 +1,6 @@
 {
   "version": "volley-live-v11.3.6-varese-v112-core",
-  "snapshotDate": "2026-11-05",
+  "snapshotDate": "2026-11-06",
   "snapshotNote": "Volley Live per i soli Comitati Territoriali Varese e Milano-Monza-Lecco. Varese: API JSON FIPAVOnline. Milano-Monza-Lecco: catalogo e calendari sincronizzati da SOL tramite Playwright in GitHub Actions.",
   "committees": [
     {
@@ -9,7 +9,7 @@
       "name": "Comitato Territoriale Varese",
       "source": "fipavonline",
       "selectionUrl": "https://pallavolo.spaziocommerciale.com/index.php?page=selezione",
-      "snapshotDate": "2026-11-05",
+      "snapshotDate": "2026-11-06",
       "snapshotNote": "Calendari del C.T. Varese acquisiti dal servizio JSON FIPAVOnline. Ogni girone viene tentato indipendentemente; i gironi non raggiungibili mantengono l'ultimo snapshot valido.",
       "groups": [
         {
@@ -3751,8 +3751,15 @@
               "venue": "PALESTRA COMUNALE GIULIO GALLI - VIA A.M. CERIANI 23 - UBOLDO",
               "home": "NEW VOLLEY UBOLDO CSDC ODONTOIATRIA",
               "away": "INSUBRIA BEACH ARENA GALLARATE U19",
-              "result": null,
-              "partials": []
+              "result": [
+                3,
+                0
+              ],
+              "partials": [
+                "25/10",
+                "25/12",
+                "25/8"
+              ]
             },
             {
               "date": "07/11/2026",
@@ -3795,8 +3802,15 @@
               "venue": "PALESTRA SCUOLE MEDIE LEONARDO DA VINCI - Via Renato Colli, 6 - AZZATE",
               "home": "VALBOSSA VOLLEY",
               "away": "QUASARS INDUNO",
-              "result": null,
-              "partials": []
+              "result": [
+                3,
+                0
+              ],
+              "partials": [
+                "25/10",
+                "25/13",
+                "25/13"
+              ]
             },
             {
               "date": "05/11/2026",
@@ -3806,8 +3820,15 @@
               "venue": "TENSOSTRUTTURA - VIA PIAVE - CASTRONNO",
               "home": "CASTRONNO GIALLA",
               "away": "HYDRA CASSANO",
-              "result": null,
-              "partials": []
+              "result": [
+                0,
+                3
+              ],
+              "partials": [
+                "10/25",
+                "16/25",
+                "21/25"
+              ]
             },
             {
               "date": "13/11/2026",
@@ -5745,8 +5766,8 @@
           ],
           "counts": {
             "totalMatches": 210,
-            "completedMatches": 27,
-            "upcomingMatches": 183,
+            "completedMatches": 30,
+            "upcomingMatches": 180,
             "rounds": 30
           },
           "teamLogos": {
@@ -20373,8 +20394,17 @@
               "venue": "PALESTRA SCUOLE MEDIE - Via piave, 2 - VERGIATE",
               "home": "ASD PALLAVOLO VERGIATE",
               "away": "VB  ANGERA U15F",
-              "result": null,
-              "partials": []
+              "result": [
+                2,
+                3
+              ],
+              "partials": [
+                "25/19",
+                "25/15",
+                "14/25",
+                "23/25",
+                "13/15"
+              ]
             },
             {
               "date": "07/11/2026",
@@ -20863,8 +20893,8 @@
           ],
           "counts": {
             "totalMatches": 56,
-            "completedMatches": 11,
-            "upcomingMatches": 45,
+            "completedMatches": 12,
+            "upcomingMatches": 44,
             "rounds": 14
           },
           "teamLogos": {
@@ -27483,8 +27513,17 @@
               "venue": "PALESTRA COMUNALE - PIAZZA MAURI - JERAGO CON ORAGO",
               "home": "NDGS ORAGO 19 ECCELLENZA",
               "away": "CO-BIT UYBA BUSTO ARSIZIO",
-              "result": null,
-              "partials": []
+              "result": [
+                2,
+                3
+              ],
+              "partials": [
+                "23/25",
+                "23/25",
+                "25/21",
+                "25/21",
+                "8/15"
+              ]
             },
             {
               "date": "08/11/2026",
@@ -27948,8 +27987,8 @@
           ],
           "counts": {
             "totalMatches": 56,
-            "completedMatches": 12,
-            "upcomingMatches": 44,
+            "completedMatches": 13,
+            "upcomingMatches": 43,
             "rounds": 14
           },
           "teamLogos": {
