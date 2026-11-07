@@ -1,6 +1,6 @@
 {
   "version": "volley-live-v11.3.6-varese-v112-core",
-  "snapshotDate": "2026-11-06",
+  "snapshotDate": "2026-11-07",
   "snapshotNote": "Volley Live per i soli Comitati Territoriali Varese e Milano-Monza-Lecco. Varese: API JSON FIPAVOnline. Milano-Monza-Lecco: catalogo e calendari sincronizzati da SOL tramite Playwright in GitHub Actions.",
   "committees": [
     {
@@ -9,7 +9,7 @@
       "name": "Comitato Territoriale Varese",
       "source": "fipavonline",
       "selectionUrl": "https://pallavolo.spaziocommerciale.com/index.php?page=selezione",
-      "snapshotDate": "2026-11-06",
+      "snapshotDate": "2026-11-07",
       "snapshotNote": "Calendari del C.T. Varese acquisiti dal servizio JSON FIPAVOnline. Ogni girone viene tentato indipendentemente; i gironi non raggiungibili mantengono l'ultimo snapshot valido.",
       "groups": [
         {
@@ -915,8 +915,15 @@
               "venue": "PALESTRA SCUOLE MEDIE E.FERMI - via enrico fermi 1 - VENEGONO INFERIORE",
               "home": "FULL VOLLEY ARCOBALENO-CISTELLUM U19",
               "away": "REMAX CLASS EAGLES",
-              "result": null,
-              "partials": []
+              "result": [
+                0,
+                3
+              ],
+              "partials": [
+                "9/25",
+                "12/25",
+                "20/25"
+              ]
             },
             {
               "date": "04/11/2026",
@@ -944,8 +951,15 @@
               "venue": "PALESTRA COMUNALE - VIA SAN GIOVANNI BOSCO - ROVELLASCA",
               "home": "CENTRO CAR CAZZARO SARONNO",
               "away": "GERMAN AUTO PANTA REI",
-              "result": null,
-              "partials": []
+              "result": [
+                3,
+                0
+              ],
+              "partials": [
+                "25/18",
+                "25/23",
+                "25/23"
+              ]
             },
             {
               "date": "06/11/2026",
@@ -955,8 +969,16 @@
               "venue": "PALESTRA SCUOLE MEDIE - VIA CAPO SILE - CARONNO PERTUSELLA",
               "home": "ROSSELLA ETS CARONNO PERTUSELLA",
               "away": "SEVEN LAKES - PRO BODIO LOMNAGO",
-              "result": null,
-              "partials": []
+              "result": [
+                3,
+                1
+              ],
+              "partials": [
+                "25/21",
+                "24/26",
+                "25/19",
+                "25/17"
+              ]
             },
             {
               "date": "03/11/2026",
@@ -3181,8 +3203,8 @@
           ],
           "counts": {
             "totalMatches": 240,
-            "completedMatches": 34,
-            "upcomingMatches": 206,
+            "completedMatches": 37,
+            "upcomingMatches": 203,
             "rounds": 30
           },
           "teamLogos": {
@@ -3740,8 +3762,16 @@
               "venue": "PALESTRA SCUOLA LEONARDO DA VINCI - VIA DEI PLATANI 5 - CASTELLANZA",
               "home": "DUO VOLLEY GOBBO ALLESTIMENTI NERA",
               "away": "ATLAS SAN FERMO",
-              "result": null,
-              "partials": []
+              "result": [
+                3,
+                1
+              ],
+              "partials": [
+                "21/25",
+                "25/17",
+                "25/13",
+                "25/17"
+              ]
             },
             {
               "date": "05/11/2026",
@@ -3780,8 +3810,16 @@
               "venue": "PALAZZETTO   - VIA GASPAROTTO - MALNATE",
               "home": "STELLA AZZURRA PALLAVOLO",
               "away": "CUS INSUBRIA VOLLEY VARESE",
-              "result": null,
-              "partials": []
+              "result": [
+                1,
+                3
+              ],
+              "partials": [
+                "22/25",
+                "18/25",
+                "25/22",
+                "16/25"
+              ]
             },
             {
               "date": "07/11/2026",
@@ -5766,8 +5804,8 @@
           ],
           "counts": {
             "totalMatches": 210,
-            "completedMatches": 30,
-            "upcomingMatches": 180,
+            "completedMatches": 32,
+            "upcomingMatches": 178,
             "rounds": 30
           },
           "teamLogos": {
@@ -6036,8 +6074,15 @@
               "venue": "PALAZZETTO DELLO SPORT S.PERTINI - via g. matteotti - angolo via carducci - SUMIRAGO",
               "home": "ASD VOLLEY SUMIRAGO",
               "away": "VB  ANGERA 2DF",
-              "result": null,
-              "partials": []
+              "result": [
+                0,
+                3
+              ],
+              "partials": [
+                "19/25",
+                "16/25",
+                "25/27"
+              ]
             },
             {
               "date": "19/02/2027",
@@ -7622,8 +7667,8 @@
           ],
           "counts": {
             "totalMatches": 156,
-            "completedMatches": 12,
-            "upcomingMatches": 144,
+            "completedMatches": 13,
+            "upcomingMatches": 143,
             "rounds": 26
           },
           "teamLogos": {
@@ -7960,8 +8005,15 @@
               "venue": "PALESTRA COMUNALE schizzarotto - VIA  MARCORA, 81 - CAVARIA CON PREMEZZO",
               "home": "INSUBRIA BEACH ARENA",
               "away": "A.S.D. NUOVA PALLAVOLO SOMMA-II DIVISIONE BIANCA",
-              "result": null,
-              "partials": []
+              "result": [
+                0,
+                3
+              ],
+              "partials": [
+                "23/25",
+                "8/25",
+                "16/25"
+              ]
             },
             {
               "date": "06/11/2026",
@@ -7971,8 +8023,15 @@
               "venue": "PALESTRA SCUOLE ELEMENTARI CARDUCCI - VIA UNITA' D'ITALIA, 29 - OLGIATE OLONA",
               "home": "VOLLEY PLUS FVG U14",
               "away": "PALLAVOLO TRADATE",
-              "result": null,
-              "partials": []
+              "result": [
+                0,
+                3
+              ],
+              "partials": [
+                "14/25",
+                "16/25",
+                "25/27"
+              ]
             },
             {
               "date": "08/11/2026",
@@ -9770,8 +9829,8 @@
           ],
           "counts": {
             "totalMatches": 182,
-            "completedMatches": 13,
-            "upcomingMatches": 169,
+            "completedMatches": 15,
+            "upcomingMatches": 167,
             "rounds": 26
           },
           "teamLogos": {
@@ -10891,8 +10950,16 @@
               "venue": "PALESTRA SCUOLE ELEMENTARI E. FERMI - via roma 14 ingr. da VIA RUGABELLA - CARNAGO",
               "home": "TECH MASTERS ROVATE U15",
               "away": "ASD PALLAVOLO VERGIATE",
-              "result": null,
-              "partials": []
+              "result": [
+                1,
+                3
+              ],
+              "partials": [
+                "25/23",
+                "14/25",
+                "18/25",
+                "18/25"
+              ]
             },
             {
               "date": "18/11/2026",
@@ -11832,8 +11899,8 @@
           ],
           "counts": {
             "totalMatches": 90,
-            "completedMatches": 0,
-            "upcomingMatches": 90,
+            "completedMatches": 1,
+            "upcomingMatches": 89,
             "rounds": 18
           },
           "teamLogos": {
@@ -13946,7 +14013,7 @@
             },
             {
               "date": "08/11/2026",
-              "time": "15.00",
+              "time": "11.00",
               "round": 1,
               "gameNo": 3591,
               "venue": "PALASPORT FELICE DOZIO CAMPO B   - VIA BIFFI 5 - SARONNO",
@@ -15725,8 +15792,8 @@
               "partials": []
             },
             {
-              "date": "15/03/2027",
-              "time": "20.00",
+              "date": "21/03/2027",
+              "time": "15.30",
               "round": 18,
               "gameNo": 3766,
               "venue": "PALESTRA COMUNALE - VIA P. SELVINI 23 - BIANDRONNO",
@@ -15846,8 +15913,17 @@
               "venue": "PALESTRA SCUOLA SECONDARIA BASSETTI - via bogni 2 sesto calende - SESTO CALENDE",
               "home": "PALLAVOLO SESTESE",
               "away": "VOLLEY NETWORK'S SATINOX ACCIAI",
-              "result": null,
-              "partials": []
+              "result": [
+                3,
+                2
+              ],
+              "partials": [
+                "20/25",
+                "25/18",
+                "19/25",
+                "25/21",
+                "15/13"
+              ]
             },
             {
               "date": "14/11/2026",
@@ -16258,7 +16334,7 @@
             },
             {
               "date": "30/01/2027",
-              "time": "17.00",
+              "time": "18.30",
               "round": 11,
               "gameNo": 3821,
               "venue": "PALAZZETTO KAROL WOITYLA - VIA CARREGGIA - CARDANO AL CAMPO",
@@ -16600,8 +16676,8 @@
           ],
           "counts": {
             "totalMatches": 72,
-            "completedMatches": 0,
-            "upcomingMatches": 72,
+            "completedMatches": 1,
+            "upcomingMatches": 71,
             "rounds": 18
           },
           "teamLogos": {
@@ -17845,8 +17921,8 @@
               "partials": []
             },
             {
-              "date": "23/01/2027",
-              "time": "15.30",
+              "date": "15/01/2027",
+              "time": "19.45",
               "round": 13,
               "gameNo": 4106,
               "venue": "PALESTRA SCUOLE MEDIE - Via piave, 2 - VERGIATE",
@@ -18527,7 +18603,7 @@
             },
             {
               "date": "08/11/2026",
-              "time": "15.00",
+              "time": "18.00",
               "round": 2,
               "gameNo": 4175,
               "venue": "PALESTRA COMUNALE - VIA MEDICI - CANTELLO",
@@ -18582,8 +18658,16 @@
               "venue": "CENTRO SPORTIVO POLIFUNZIONALE - VIA MADONNA - CUASSO AL MONTE",
               "home": "CSI VOLLEY BISUSCHIO",
               "away": "ASD PALLAVOLO ARCISATE",
-              "result": null,
-              "partials": []
+              "result": [
+                1,
+                3
+              ],
+              "partials": [
+                "20/25",
+                "25/14",
+                "18/25",
+                "24/26"
+              ]
             },
             {
               "date": "14/11/2026",
@@ -18841,8 +18925,8 @@
           ],
           "counts": {
             "totalMatches": 30,
-            "completedMatches": 5,
-            "upcomingMatches": 25,
+            "completedMatches": 6,
+            "upcomingMatches": 24,
             "rounds": 14
           },
           "teamLogos": {
@@ -20951,8 +21035,15 @@
               "venue": "PALESTRA I MAGGIO - VIA DE AMICIS  S. MACARIO DI SAMARATE - S. MACARIO - SAMARATE",
               "home": "G.S. ASTRA",
               "away": "SCHOOL OF SPORT RS OSF",
-              "result": null,
-              "partials": []
+              "result": [
+                3,
+                0
+              ],
+              "partials": [
+                "25/21",
+                "25/17",
+                "25/20"
+              ]
             },
             {
               "date": "18/10/2026",
@@ -21635,8 +21726,8 @@
           ],
           "counts": {
             "totalMatches": 56,
-            "completedMatches": 12,
-            "upcomingMatches": 44,
+            "completedMatches": 13,
+            "upcomingMatches": 43,
             "rounds": 14
           },
           "teamLogos": {
@@ -23767,8 +23858,8 @@
               "partials": []
             },
             {
-              "date": "07/11/2026",
-              "time": "18.30",
+              "date": "24/11/2026",
+              "time": "20.30",
               "round": 4,
               "gameNo": 7015,
               "venue": "PALESTRA COMUNALE L.GANNA - VIA CROCI 9 - INDUNO OLONA",
@@ -25993,10 +26084,10 @@
             },
             {
               "date": "14/11/2026",
-              "time": "18.30",
+              "time": "15.30",
               "round": 5,
               "gameNo": 7185,
-              "venue": "PALAZZETTO DELLO SPORT - VIA D. CHIESA 13B - VENEGONO INFERIORE",
+              "venue": "PALESTRA SCUOLE MEDIE E.FERMI - via enrico fermi 1 - VENEGONO INFERIORE",
               "home": "FULL VOLLEY ARCOBALENO-CISTELLUM FUCSIA",
               "away": "VBC CASSANO SMF SRL",
               "result": null,
@@ -31552,8 +31643,8 @@
               "partials": []
             },
             {
-              "date": "17/04/2027",
-              "time": "20.30",
+              "date": "16/04/2027",
+              "time": "21.15",
               "round": 18,
               "gameNo": 1776,
               "venue": "PALAZZETTO DELLO SPORT - via molino di mezzo 30 - PORTO CERESIO",
@@ -31906,11 +31997,11 @@
               "partials": []
             },
             {
-              "date": "08/11/2026",
-              "time": "15.00",
+              "date": "02/12/2026",
+              "time": "20.00",
               "round": 9,
               "gameNo": 4625,
-              "venue": "PALESTRA SCOLASTICA - VIA VERDI  - MORNAGO",
+              "venue": "PALESTRA SCUOLE MEDIE FERMI - Via goffredo mameli, 16 - MORAZZONE",
               "home": "INSUBRIA VOLLEY MORNAGO",
               "away": "YAKA VOLLEY NERA",
               "result": null,
@@ -33108,8 +33199,15 @@
               "venue": "PALESTRA COLOMBO-VIA C. COLOMBO, 22 - CANTU'",
               "home": "LIBERTAS BRIANZA CANTU' VERDE",
               "away": "PRO PATRIA",
-              "result": null,
-              "partials": []
+              "result": [
+                0,
+                3
+              ],
+              "partials": [
+                "18/25",
+                "25/27",
+                "22/25"
+              ]
             },
             {
               "date": "07/11/2026",
@@ -33587,8 +33685,8 @@
           ],
           "counts": {
             "totalMatches": 56,
-            "completedMatches": 11,
-            "upcomingMatches": 45,
+            "completedMatches": 12,
+            "upcomingMatches": 44,
             "rounds": 14
           },
           "teamLogos": {
@@ -33776,8 +33874,15 @@
               "venue": "PALESTRA SCUOLE MEDIE - VIA tullio del grande, 109 - ISPRA",
               "home": "PALLAVOLO VERBANO",
               "away": "LIBERTAS BRIANZA CANTU' BIANCA",
-              "result": null,
-              "partials": []
+              "result": [
+                0,
+                3
+              ],
+              "partials": [
+                "22/25",
+                "24/26",
+                "17/25"
+              ]
             },
             {
               "date": "07/11/2026",
@@ -34134,8 +34239,8 @@
           ],
           "counts": {
             "totalMatches": 42,
-            "completedMatches": 7,
-            "upcomingMatches": 35,
+            "completedMatches": 8,
+            "upcomingMatches": 34,
             "rounds": 14
           },
           "teamLogos": {
