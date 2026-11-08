@@ -1,0 +1,115 @@
+name: Applica hotfix SOL calendario provvisorio
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  hotfix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Correggi riconoscimento Calendario Ufficiale e Provvisorio
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import ast
+          import re
+
+          path = Path("scripts/aggiorna_catalogo_sol.py")
+          if not path.is_file():
+              raise SystemExit(f"File non trovato: {path}; nessuna modifica salvata.")
+
+          source = path.read_text(encoding="utf-8")
+          marker = "# HOTFIX SOL: accetta Calendario Provvisorio (AST V1)"
+          if marker in source:
+              print("HOTFIX calendario provvisorio già presente; nessuna modifica necessaria.")
+              raise SystemExit(0)
+
+          try:
+              tree = ast.parse(source, filename=str(path))
+          except SyntaxError as exc:
+              raise SystemExit(f"File Python non analizzabile: {exc}; nessuna modifica salvata.")
+
+          matches = [
+              node for node in ast.walk(tree)
+              if isinstance(node, ast.AsyncFunctionDef) and node.name == "open_group_calendar"
+          ]
+          if len(matches) != 1:
+              raise SystemExit(
+                  "Attesa una sola funzione async open_group_calendar, "
+                  f"trovate {len(matches)}; nessuna modifica salvata."
+              )
+
+          fn = matches[0]
+          lines = source.splitlines(keepends=True)
+          start = fn.lineno - 1
+          end = fn.end_lineno
+          function_source = "".join(lines[start:end])
+
+          old = "calendario ufficiale"
+          new = "(?:calendario ufficiale|calendario provvisorio)"
+          occurrences = function_source.count(old)
+          if occurrences != 2:
+              raise SystemExit(
+                  "La funzione open_group_calendar non corrisponde alla struttura attesa: "
+                  f"trovate {occurrences} occorrenze del controllo 'calendario ufficiale' (attese 2). "
+                  "Nessuna modifica salvata."
+              )
+
+          updated_function = function_source.replace(old, new)
+          if updated_function.count(new) != 2 or "/calendario ufficiale/i" in updated_function:
+              raise SystemExit("Verifica sostituzione non superata; nessuna modifica salvata.")
+
+          def_indent = re.match(r"^[ \t]*", lines[start]).group(0)
+          updated_lines = lines[:start] + [def_indent + marker + "\n"] + updated_function.splitlines(keepends=True) + lines[end:]
+          updated = "".join(updated_lines)
+          try:
+              updated_tree = ast.parse(updated, filename=str(path))
+              compile(updated_tree, str(path), "exec")
+          except SyntaxError as exc:
+              raise SystemExit(f"Patch non valida: {exc}; nessuna modifica salvata.")
+
+          updated_matches = [
+              node for node in ast.walk(updated_tree)
+              if isinstance(node, ast.AsyncFunctionDef) and node.name == "open_group_calendar"
+          ]
+          if len(updated_matches) != 1:
+              raise SystemExit("Verifica AST finale non superata; nessuna modifica salvata.")
+          updated_fn = updated_matches[0]
+          updated_function_check = "\n".join(updated.splitlines()[updated_fn.lineno - 1:updated_fn.end_lineno])
+          if updated_function_check.count(new) != 2 or "/calendario ufficiale/i" in updated_function_check:
+              raise SystemExit("I due controlli calendario non sono stati aggiornati; nessuna modifica salvata.")
+
+          tmp = path.with_suffix(path.suffix + ".hotfix.tmp")
+          tmp.write_text(updated, encoding="utf-8")
+          tmp.replace(path)
+          print(
+              "HOTFIX applicato: open_group_calendar riconosce Calendario Ufficiale "
+              "e Calendario Provvisorio; firma e resto del file conservati; sintassi verificata."
+          )
+          PY
+
+      - name: Verifica diff e registra commit
+        shell: bash
+        run: |
+          set -e
+          git diff --check
+          python -m py_compile scripts/aggiorna_catalogo_sol.py
+          git diff --stat -- scripts/aggiorna_catalogo_sol.py
+          if git diff --quiet -- scripts/aggiorna_catalogo_sol.py; then
+            echo "Nessuna modifica da registrare."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/aggiorna_catalogo_sol.py
+          git commit -m "Fix SOL provisional calendar detection"
+          git push origin HEAD:main
