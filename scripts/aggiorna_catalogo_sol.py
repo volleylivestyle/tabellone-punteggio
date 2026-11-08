@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import re
 import sys
 from datetime import datetime, timezone
@@ -121,32 +122,125 @@ async def wait_for_rows(page) -> None:
 
 
 async def wait_for_selection_ready(page, websocket_state: dict[str, Any] | None = None) -> None:
-    """Attende il render *completo* del catalogo SOL 2026/2027.
+    """Ripristina la sessione SOL e seleziona 2026/2027 prima di leggere la griglia.
 
-    Le catture HAR/SignalR mostrano il ciclo effettivo: il primo HTML SSR
-    contiene il placeholder "seleziona" e la griglia vuota; il server invia poi
-    ulteriori RenderBatch. Solo il batch finale valorizza il dropdown a
-    2026/2027 e inserisce tutte le 18 righe dei campionati. Contare i primi
-    cinque frame non è quindi un criterio di prontezza: può far interagire
-    Radzen mentre il catalogo è ancora in caricamento e il popup è vuoto.
+    La pagina SOL interroga localStorage.getItem("UserSession") durante
+    l'inizializzazione Blazor Server. Il browser reale che ha prodotto il HAR
+    aveva un valore già presente; il context Playwright effimero di GitHub
+    Actions parte invece senza localStorage. La chiave viene quindi inizializzata
+    da SOL_USER_SESSION (GitHub Actions secret), senza stamparne mai il valore.
 
-    La stagione è già selezionata dal render completo: non si apre né si forza
-    il popup. Si procede solo quando etichetta e righe reali sono entrambe pronte.
+    Il menu stagione può essere già selezionato dal server. Se resta sul
+    placeholder, si apre il vero trigger Radzen e si sceglie l'opzione 2026/2027
+    quando il server l'ha effettivamente renderizzata. Solo dopo si attende la
+    griglia delle competizioni.
     """
-    await page.locator("input#stagione").wait_for(state="attached", timeout=ELEMENT_TIMEOUT_MS)
+    dropdown = page.locator("div.rz-dropdown:has(input#stagione)").first
+    await dropdown.wait_for(state="visible", timeout=ELEMENT_TIMEOUT_MS)
+    season_pattern = re.compile(r"2026\s*(?:/|-|–)\s*2027|2026\s*(?:/|-|–)\s*27", re.I)
+
+    def _label_locator():
+        return dropdown.locator(".rz-dropdown-label").first
+
+    async def current_label() -> str:
+        loc = _label_locator()
+        return clean(await loc.inner_text()) if await loc.count() else ""
+
+    label = await current_label()
+    if not season_pattern.search(label):
+        # Aspetta che il server abbia terminato il primo caricamento delle
+        # opzioni oppure che abbia già impostato la stagione di default.
+        try:
+            await page.wait_for_function(
+                r"""() => {
+                    const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
+                    const label = (d?.querySelector('.rz-dropdown-label')?.innerText || '').trim();
+                    const options = Array.from(document.querySelectorAll(
+                        '.rz-dropdown-panel .rz-dropdown-item, .rz-dropdown-panel [role="option"], .rz-dropdown-items .rz-dropdown-item'
+                    ));
+                    return /2026\s*(?:\/|-|–)\s*2027/i.test(label) ||
+                        options.some(x => /2026\s*(?:\/|-|–)\s*2027/i.test(x.innerText || ''));
+                }""",
+                timeout=30_000,
+            )
+        except PlaywrightTimeoutError:
+            pass
+
+        label = await current_label()
+        if not season_pattern.search(label):
+            trigger = dropdown.locator(".rz-dropdown-trigger").first
+            if await trigger.count() == 0:
+                raise RuntimeError("SOL: trigger del menu stagione non trovato.")
+            await trigger.click(timeout=15_000)
+
+            try:
+                await page.wait_for_function(
+                    r"""() => Array.from(document.querySelectorAll(
+                        '.rz-dropdown-panel .rz-dropdown-item, .rz-dropdown-panel [role="option"], .rz-dropdown-items .rz-dropdown-item'
+                    )).some(x => /2026\s*(?:\/|-|–)\s*2027/i.test(x.innerText || ''))""",
+                    timeout=30_000,
+                )
+            except PlaywrightTimeoutError as exc:
+                details = await page.evaluate("""() => {
+                    const input = document.querySelector('input#stagione');
+                    const d = input?.closest('.rz-dropdown');
+                    const all = Array.from(document.querySelectorAll(
+                        '.rz-dropdown-panel, .rz-dropdown-items, .rz-dropdown-item, [role="option"]'
+                    ));
+                    const visible = el => !!(el && el.getClientRects().length &&
+                        getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none');
+                    return {
+                        seasonValue: input?.value || '',
+                        seasonLabel: d?.querySelector('.rz-dropdown-label')?.innerText?.trim() || '',
+                        popup: all.filter(visible).slice(0, 20).map(x => ({
+                            tag: x.tagName, cls: String(x.className || ''),
+                            text: (x.innerText || '').trim().slice(0, 120)
+                        })),
+                        userSessionPresent: !!localStorage.getItem('UserSession'),
+                        userSessionLength: (localStorage.getItem('UserSession') || '').length,
+                        visibleSpinners: Array.from(document.querySelectorAll('.spinner')).filter(visible).length,
+                        blazorError: (() => { const e=document.querySelector('#blazor-error-ui'); return e && visible(e) ? (e.innerText||'').trim() : ''; })(),
+                        pageText: (document.body.innerText || '').trim().slice(0, 1200)
+                    };
+                }""")
+                try:
+                    await page.screenshot(path=str(ROOT / "sol-debug-season-options-empty.png"), full_page=True)
+                    (ROOT / "sol-debug-season-options-empty.html").write_text(
+                        await page.content(), encoding="utf-8"
+                    )
+                except Exception:
+                    pass
+                frames = (websocket_state or {}).get("received", "n/d")
+                raise RuntimeError(
+                    "SOL: il server non ha renderizzato l'opzione 2026/2027. "
+                    f"Frame WebSocket ricevuti={frames}; DOM={details}. "
+                    "Verificare il segreto SOL_USER_SESSION; nessun dato è stato modificato."
+                ) from exc
+
+            options = page.locator(
+                '.rz-dropdown-panel .rz-dropdown-item, '
+                '.rz-dropdown-panel [role="option"], '
+                '.rz-dropdown-items .rz-dropdown-item'
+            )
+            option_index = None
+            for i in range(await options.count()):
+                if season_pattern.search(clean(await options.nth(i).inner_text())):
+                    option_index = i
+                    break
+            if option_index is None:
+                raise RuntimeError("SOL: opzione 2026/2027 rilevata ma non individuabile nel menu Radzen.")
+            await options.nth(option_index).click(timeout=15_000)
+
     try:
         await page.wait_for_function(
-            r"""expected => {
-                const input = document.querySelector('input#stagione');
-                const root = input?.closest('.rz-dropdown');
-                const label = (root?.querySelector('.rz-dropdown-label')?.innerText || '').trim();
+            r"""() => {
+                const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
+                const label = (d?.querySelector('.rz-dropdown-label')?.innerText || '').trim();
                 const rows = Array.from(document.querySelectorAll(
                     'table.rz-grid-table tbody tr.rz-data-row'
                 )).filter(row => row.getClientRects().length > 0);
-                const seasonReady = /2026\s*(?:\/|-|–)\s*2027/i.test(label);
-                return seasonReady && rows.length >= expected;
+                return /2026\s*(?:\/|-|–)\s*2027/i.test(label) && rows.length >= 18;
             }""",
-            arg=EXPECTED_COMPETITIONS,
             timeout=SOL_READY_TIMEOUT_MS,
         )
     except PlaywrightTimeoutError as exc:
@@ -157,18 +251,21 @@ async def wait_for_selection_ready(page, websocket_state: dict[str, Any] | None 
                 'table.rz-grid-table tbody tr.rz-data-row'
             )).filter(row => row.getClientRects().length > 0);
             const visible = el => !!(el && el.getClientRects().length &&
-                getComputedStyle(el).visibility !== 'hidden' &&
-                getComputedStyle(el).display !== 'none');
+                getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none');
+            const err = document.querySelector('#blazor-error-ui');
             return {
                 url: location.href,
                 readyState: document.readyState,
                 seasonValue: input?.value || '',
                 seasonLabel: root?.querySelector('.rz-dropdown-label')?.innerText?.trim() || '',
                 dropdownOptions: document.querySelectorAll(
-                    '.rz-dropdown-panel .rz-dropdown-item, .rz-dropdown-panel [role="option"]'
+                    '.rz-dropdown-panel .rz-dropdown-item, .rz-dropdown-panel [role="option"], .rz-dropdown-items .rz-dropdown-item'
                 ).length,
                 competitionRows: rows.length,
                 visibleSpinners: Array.from(document.querySelectorAll('.spinner')).filter(visible).length,
+                userSessionPresent: !!localStorage.getItem('UserSession'),
+                userSessionLength: (localStorage.getItem('UserSession') || '').length,
+                blazorError: err && visible(err) ? (err.innerText || '').trim() : '',
                 gridHeaders: Array.from(document.querySelectorAll('table.rz-grid-table thead'))
                     .map(x => (x.innerText || '').trim()).slice(0, 2),
                 pageText: (document.body.innerText || '').trim().slice(0, 1800)
@@ -184,9 +281,9 @@ async def wait_for_selection_ready(page, websocket_state: dict[str, Any] | None 
         frames = (websocket_state or {}).get("received", "n/d")
         errors = (websocket_state or {}).get("errors", [])
         raise RuntimeError(
-            "SOL: il render Blazor del catalogo 2026/2027 non è terminato. "
-            f"Attesi almeno {EXPECTED_COMPETITIONS} campionati; frame WebSocket ricevuti={frames}; "
-            f"errori pagina={errors}; DOM={details}. Il catalogo precedente è conservato."
+            "SOL: catalogo 2026/2027 non disponibile dopo il ripristino della sessione. "
+            f"Frame WebSocket ricevuti={frames}; errori pagina={errors}; DOM={details}. "
+            "Catalogo precedente conservato."
         ) from exc
 
     state = await page.evaluate("""() => {
@@ -201,7 +298,7 @@ async def wait_for_selection_ready(page, websocket_state: dict[str, Any] | None 
     suffix = f"; frame WebSocket ricevuti={frames}" if frames is not None else ""
     print(
         f"SOL: catalogo Blazor pronto: stagione {state['season']}, "
-        f"{state['competitions']} competizioni (menu stagione non aperto){suffix}.",
+        f"{state['competitions']} competizioni{suffix}.",
         flush=True,
     )
 
@@ -605,6 +702,15 @@ async def sync_sol(committee: dict[str, Any]) -> tuple[int, int, list[str]]:
     staged_snapshots: dict[str, dict[str, Any]] = {}
     groups_updated = 0
 
+    sol_user_session = os.environ.get("SOL_USER_SESSION", "").strip()
+    if not sol_user_session:
+        raise RuntimeError(
+            "Segreto GitHub SOL_USER_SESSION mancante. Il portale SOL legge "
+            "localStorage.UserSession durante l'avvio Blazor; il browser GitHub Actions "
+            "è effimero e non eredita la sessione del browser personale. "
+            "Configurare SOL_USER_SESSION nelle Actions secrets."
+        )
+
     async with async_playwright() as p:
         browser = await p.chromium.launch(
             headless=True,
@@ -614,6 +720,22 @@ async def sync_sol(committee: dict[str, Any]) -> tuple[int, int, list[str]]:
             locale="it-IT",
             timezone_id="Europe/Rome",
             viewport={"width": 1440, "height": 1200},
+        )
+        # Non stampare né salvare il token. Viene inizializzato prima di ogni script
+        # della pagina e soltanto per l'origine ufficiale SOL.
+        origin_json = json.dumps("https://www.sol.milano.federvolley.it")
+        token_json = json.dumps(sol_user_session)
+        await context.add_init_script(
+            script=(
+                "(() => { if (location.origin === " + origin_json + ") { "
+                "try { localStorage.setItem('UserSession', " + token_json + "); } catch (_) {} "
+                "} })();"
+            )
+        )
+        print(
+            f"SOL: sessione browser predisposta da secret GitHub (UserSession presente; "
+            f"lunghezza={len(sol_user_session)} caratteri; valore non registrato).",
+            flush=True,
         )
         page = await context.new_page()
         page.set_default_timeout(ELEMENT_TIMEOUT_MS)
@@ -777,7 +899,7 @@ def main() -> int:
         return 1
 
     catalog["snapshotDate"] = datetime.now(timezone.utc).date().isoformat()
-    catalog["version"] = "volley-live-v11.3.12-sol-wait-blazor-catalog-ready-all-milano"
+    catalog["version"] = "volley-live-v11.3.13-sol-restore-user-session-all-milano"
     tmp_path = CATALOG_PATH.with_suffix(".json.tmp")
     tmp_path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     tmp_path.replace(CATALOG_PATH)
