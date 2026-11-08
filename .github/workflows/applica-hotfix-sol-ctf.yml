@@ -1,0 +1,301 @@
+name: Applica hotfix SOL sigle duplicate
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  hotfix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Correggi identificazione competizioni SOL
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          import sys
+          import textwrap
+
+          path = Path("scripts/aggiorna_catalogo_sol.py")
+          if not path.is_file():
+              raise SystemExit(f"File non trovato: {path}")
+          source = path.read_text(encoding="utf-8")
+
+          marker = "# HOTFIX SOL: identificazione univoca tramite riga e sourceId"
+          if marker in source:
+              print("HOTFIX già applicato: nessuna modifica necessaria.")
+              raise SystemExit(0)
+
+          def replace_once(old: str, new: str, label: str) -> None:
+              global source
+              count = source.count(old)
+              if count != 1:
+                  raise SystemExit(
+                      f"Applicazione interrotta: blocco '{label}' trovato {count} volte, attesa 1. "
+                      "Il file è diverso dalla versione prevista; nessuna modifica salvata."
+                  )
+              source = source.replace(old, new, 1)
+
+          start = source.find("async def read_competitions(")
+          end = source.find("async def discover_group_tabs(", start)
+          if start < 0 or end < 0:
+              raise SystemExit("Funzioni SOL non riconosciute; nessuna modifica salvata.")
+
+          replacement = textwrap.dedent(r'''async def read_competitions(page, existing: list[dict[str, Any]]) -> list[dict[str, str]]:
+              """Legge tutte le righe SOL; la sigla non è trattata come chiave univoca."""
+              rows = page.locator("tr.rz-data-row")
+              known_by_code: dict[str, list[dict[str, Any]]] = {}
+              known_codes: dict[str, str] = {}
+              for item in existing:
+                  if not isinstance(item, dict):
+                      continue
+                  known_code = clean(item.get("code"))
+                  if known_code:
+                      known_by_code.setdefault(known_code.casefold(), []).append(item)
+                      known_codes.setdefault(known_code.casefold(), known_code)
+
+              out: list[dict[str, str]] = []
+              for index in range(await rows.count()):
+                  row = rows.nth(index)
+                  if not await row.is_visible():
+                      continue
+                  cells = [clean(x) for x in await row.locator(":scope > td").all_inner_texts()]
+                  if len(cells) < 3:
+                      continue
+
+                  code = clean(cells[1]) if len(cells) > 1 else ""
+                  if not re.fullmatch(r"[A-Za-z0-9]{2,5}", code):
+                      row_text = clean(" ".join(cells))
+                      code = next((candidate for candidate in known_codes.values()
+                                   if re.search(rf"(?<![A-Za-z0-9]){re.escape(candidate)}(?![A-Za-z0-9])", row_text, re.I)), "")
+                  if not code:
+                      continue
+
+                  name = clean(cells[2]) if len(cells) > 2 else ""
+                  phase = clean(cells[3]) if len(cells) > 3 else ""
+                  old_candidates = known_by_code.get(code.casefold(), [])
+                  exact_old = [item for item in old_candidates
+                               if (not name or clean(item.get("name")).casefold() == name.casefold())
+                               and (not phase or clean(item.get("phase")).casefold() == phase.casefold())]
+                  old = exact_old[0] if len(exact_old) == 1 else (
+                      old_candidates[0] if len(old_candidates) == 1 else {}
+                  )
+
+                  if not name:
+                      name = clean(old.get("name"))
+                  if not phase:
+                      phase = clean(old.get("phase"))
+                  gender = clean(old.get("gender"))
+                  try:
+                      image = row.locator(":scope > td").nth(0).locator("img").first
+                      image_src = clean(await image.get_attribute("src")) if await image.count() else ""
+                      image_alt = clean(await image.get_attribute("alt")) if await image.count() else ""
+                      image_hint = f"{image_src} {image_alt}".lower()
+                      if "female" in image_hint or "femmin" in image_hint:
+                          gender = "femminile"
+                      elif "male" in image_hint or "masch" in image_hint:
+                          gender = "maschile"
+                  except Exception:
+                      pass
+                  if not gender:
+                      gender = "femminile" if re.search(r"femminile", name, re.I) else "maschile"
+                  if not name:
+                      raise RuntimeError(f"SOL: nome mancante per la competizione {code}; riga={cells}")
+
+                  # L'indice identifica la riga concreta anche quando la sigla è condivisa.
+                  out.append({
+                      "code": code,
+                      "name": name,
+                      "phase": phase,
+                      "gender": gender,
+                      "_rowIndex": str(index),
+                  })
+
+              expected_min = max(EXPECTED_COMPETITIONS, len(existing))
+              if len(out) < expected_min:
+                  raise RuntimeError(
+                      f"SOL: pagina campionati incompleta: lette {len(out)} competizioni; "
+                      f"attese almeno {expected_min}. Codici rilevati: {[x['code'] for x in out]}"
+                  )
+              return out
+
+
+          async def click_competition(page, comp: dict[str, str]) -> tuple[str, str, str]:
+              """Apre la riga SOL esatta, verificandone sigla, denominazione e fase."""
+              code = clean(comp.get("code"))
+              name = clean(comp.get("name"))
+              phase = clean(comp.get("phase"))
+              try:
+                  row_index = int(comp.get("_rowIndex", "-1"))
+              except (TypeError, ValueError):
+                  row_index = -1
+
+              rows = page.locator("tr.rz-data-row")
+
+              async def row_matches(row) -> bool:
+                  if not await row.is_visible():
+                      return False
+                  cells = row.locator(":scope > td")
+                  if await cells.count() < 3:
+                      return False
+                  actual_code = clean(await cells.nth(1).inner_text())
+                  actual_name = clean(await cells.nth(2).inner_text())
+                  actual_phase = clean(await cells.nth(3).inner_text()) if await cells.count() > 3 else ""
+                  return (
+                      actual_code.casefold() == code.casefold()
+                      and actual_name.casefold() == name.casefold()
+                      and (not phase or actual_phase.casefold() == phase.casefold())
+                  )
+
+              target = None
+              count = await rows.count()
+              if 0 <= row_index < count:
+                  candidate = rows.nth(row_index)
+                  if await row_matches(candidate):
+                      target = candidate
+
+              # Se SOL ha riordinato la griglia dopo il render, usa la tripla completa,
+              # mai la sola sigla. Se resta ambiguità, interrompe senza scegliere a caso.
+              if target is None:
+                  matches = []
+                  for index in range(count):
+                      candidate = rows.nth(index)
+                      if await row_matches(candidate):
+                          matches.append(candidate)
+                  if len(matches) == 1:
+                      target = matches[0]
+                  elif not matches:
+                      raise RuntimeError(
+                          f"SOL: riga non trovata per {code} · {name} · {phase} (indice originario {row_index})"
+                      )
+                  else:
+                      raise RuntimeError(
+                          f"SOL: più righe identiche per {code} · {name} · {phase}; "
+                          "impossibile scegliere in sicurezza."
+                      )
+
+              target_cell = target.locator(":scope > td").nth(2)
+              clickable = target_cell.locator(".cursor-pointer").first
+              if await clickable.count():
+                  await clickable.click(timeout=15_000)
+              else:
+                  await target_cell.click(timeout=15_000)
+
+              await page.wait_for_function(
+                  "() => /\\/calendarioris\\/\\d+\\/\\d+/.test(location.pathname)",
+                  timeout=ELEMENT_TIMEOUT_MS,
+              )
+              match = re.search(r"/calendarioris/(\d+)/(\d+)", page.url)
+              if not match:
+                  raise RuntimeError(
+                      f"SOL: route calendario non riconosciuta dopo il click su {code} · {name}: {page.url}"
+                  )
+              competition_id, season = match.group(1), match.group(2)
+              route_url = f"https://www.sol.milano.federvolley.it/calendarioris/{competition_id}/{season}"
+              await wait_for_competition_route_ready(page)
+              return competition_id, season, route_url
+
+
+          ''')
+          source = source[:start] + marker + "\n" + replacement + source[end:]
+
+          replace_once(
+              '''    previous_by_code = {
+                  clean(c.get("code")): c for c in previous_groups
+                  if isinstance(c, dict) and clean(c.get("code"))
+              }
+          ''',
+              '''    def comp_identity(item: dict[str, Any]) -> tuple[str, str, str]:
+                  return tuple(clean(item.get(key)).casefold() for key in ("code", "name", "phase"))
+
+              previous_by_source_id: dict[str, dict[str, Any]] = {}
+              previous_by_identity: dict[tuple[str, str, str], list[dict[str, Any]]] = {}
+              for item in previous_groups:
+                  if not isinstance(item, dict):
+                      continue
+                  source_id = clean(item.get("sourceId"))
+                  if source_id:
+                      previous_by_source_id[source_id] = item
+                  previous_by_identity.setdefault(comp_identity(item), []).append(item)
+          ''',
+              "mappa delle competizioni precedenti",
+          )
+
+          replace_once(
+              '''                old = previous_by_code.get(code, {})
+          ''',
+              '''                identity = comp_identity(comp)
+                          old_candidates = previous_by_identity.get(identity, [])
+                          old = old_candidates[0] if len(old_candidates) == 1 else {}
+          ''',
+              "recupero competizione precedente",
+          )
+
+          replace_once(
+              '''                    competition_id, season, route_url = await click_competition(page, code)
+          ''',
+              '''                    competition_id, season, route_url = await click_competition(page, comp)
+                              old = previous_by_source_id.get(competition_id, old)
+          ''',
+              "apertura competizione per riga",
+          )
+
+          replace_once(
+              '''    current_codes = {item["code"] for item in staged_competitions}
+              for old in previous_groups:
+                  if isinstance(old, dict) and clean(old.get("code")) not in current_codes:
+                      staged_competitions.append(old)
+          ''',
+              '''    current_source_ids = {clean(item.get("sourceId")) for item in staged_competitions if clean(item.get("sourceId"))}
+              current_identities = {comp_identity(item) for item in staged_competitions}
+              for old in previous_groups:
+                  if not isinstance(old, dict):
+                      continue
+                  old_source_id = clean(old.get("sourceId"))
+                  if old_source_id:
+                      preserve_old = old_source_id not in current_source_ids
+                  else:
+                      preserve_old = comp_identity(old) not in current_identities
+                  if preserve_old:
+                      staged_competitions.append(old)
+          ''',
+              "conservazione competizioni storiche",
+          )
+
+          replace_once(
+              'catalog["version"] = "volley-live-v11.3.13-sol-restore-user-session-all-milano"',
+              'catalog["version"] = "volley-live-v11.3.14-sol-duplicate-codes-by-row-and-source-id"',
+              "versione catalogo",
+          )
+
+          compile(source, str(path), "exec")
+          tmp = path.with_suffix(path.suffix + ".hotfix.tmp")
+          tmp.write_text(source, encoding="utf-8")
+          tmp.replace(path)
+          print("HOTFIX applicato e sintassi Python verificata.")
+          print("Correzioni: sigle duplicate ammesse; click per riga verificata; riuso e conservazione tramite sourceId.")
+          PY
+
+      - name: Verifica modifica e crea commit
+        shell: bash
+        run: |
+          git diff --check
+          python -m py_compile scripts/aggiorna_catalogo_sol.py
+          git diff --stat -- scripts/aggiorna_catalogo_sol.py
+          if git diff --quiet -- scripts/aggiorna_catalogo_sol.py; then
+            echo "Nessuna modifica da registrare (hotfix già applicato)."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/aggiorna_catalogo_sol.py
+          git commit -m "Fix duplicate SOL competition codes"
+          git push origin HEAD:main
