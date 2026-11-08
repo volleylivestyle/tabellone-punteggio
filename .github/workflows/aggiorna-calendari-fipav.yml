@@ -41,6 +41,8 @@ jobs:
         run: python scripts/aggiorna_catalogo_fipav.py
 
       - name: Sincronizza campionati, gironi e calendari SOL di Milano-Monza-Lecco
+        env:
+          SOL_USER_SESSION: ${{ secrets.SOL_USER_SESSION }}
         run: python scripts/aggiorna_catalogo_sol.py
 
       - name: Carica diagnostica SOL in caso di errore
