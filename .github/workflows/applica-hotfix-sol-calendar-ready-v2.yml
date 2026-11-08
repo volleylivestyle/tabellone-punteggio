@@ -1,0 +1,157 @@
+name: Applica hotfix SOL attesa pagina calendario V2
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  hotfix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Correggi readiness pagina dettaglio SOL (riconoscimento AST)
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import ast
+          import re
+          import textwrap
+
+          path = Path("scripts/aggiorna_catalogo_sol.py")
+          if not path.is_file():
+              raise SystemExit(f"File non trovato: {path}; nessuna modifica salvata.")
+
+          source = path.read_text(encoding="utf-8")
+          marker = "# HOTFIX SOL: readiness su tab Squadre + gironi (AST V2)"
+          if marker in source:
+              print("HOTFIX V2 già presente; nessuna modifica necessaria.")
+              raise SystemExit(0)
+
+          try:
+              tree = ast.parse(source, filename=str(path))
+          except SyntaxError as exc:
+              raise SystemExit(f"Il file Python attuale non è analizzabile: {exc}; nessuna modifica salvata.")
+
+          matches = [
+              node for node in ast.walk(tree)
+              if isinstance(node, ast.AsyncFunctionDef)
+              and node.name == "wait_for_competition_route_ready"
+          ]
+          if len(matches) != 1:
+              raise SystemExit(
+                  "Attesa una sola funzione async wait_for_competition_route_ready, "
+                  f"trovate {len(matches)}; nessuna modifica salvata."
+              )
+
+          fn = matches[0]
+          if not fn.body:
+              raise SystemExit("La funzione readiness è vuota; nessuna modifica salvata.")
+
+          # AST identifica i confini reali della funzione anche con firma multilinea,
+          # annotazioni di ritorno o commenti: niente ricerca regex della firma.
+          lines = source.splitlines(keepends=True)
+          body_start = fn.body[0].lineno - 1
+          body_end = fn.end_lineno
+          body_indent = re.match(r"^[ \t]*", lines[body_start]).group(0)
+
+          new_body = textwrap.dedent(r'''\
+          """Attende che il dettaglio SOL abbia renderizzato Squadre e i gironi.
+
+          Il calendario non è ancora presente all'apertura della route: viene
+          caricato soltanto dopo la selezione di una scheda-girone.
+          """
+          try:
+              await page.wait_for_function(
+                  r"""() => {
+                      const visible = el => !!(el && el.getClientRects().length &&
+                          getComputedStyle(el).display !== 'none' &&
+                          getComputedStyle(el).visibility !== 'hidden' && !el.hidden);
+                      const routeOk = /\/calendarioris\/\d+\/\d+\/?$/.test(location.pathname);
+                      const tabs = Array.from(document.querySelectorAll('li[role="tab"]')).filter(visible);
+                      const labels = tabs.map(el => (el.innerText || '').trim().replace(/\s+/g, ' ').toUpperCase());
+                      const hasTeams = labels.includes('SQUADRE');
+                      const hasGroup = labels.some(label => /^[A-Z][A-Z0-9]{0,2}$/.test(label));
+                      const spinnerVisible = Array.from(document.querySelectorAll('.spinner')).some(visible);
+                      const errorBox = document.querySelector('#blazor-error-ui');
+                      const blazorErrorVisible = visible(errorBox) && /unhandled error/i.test(errorBox.innerText || '');
+                      return routeOk && hasTeams && hasGroup && !spinnerVisible && !blazorErrorVisible;
+                  }""",
+                  timeout=ELEMENT_TIMEOUT_MS,
+              )
+          except Exception as exc:
+              try:
+                  state = await page.evaluate(r"""() => {
+                      const visible = el => !!(el && el.getClientRects().length &&
+                          getComputedStyle(el).display !== 'none' &&
+                          getComputedStyle(el).visibility !== 'hidden' && !el.hidden);
+                      return {
+                          url: location.href,
+                          readyState: document.readyState,
+                          tabs: Array.from(document.querySelectorAll('li[role="tab"]')).filter(visible).map(el => (el.innerText || '').trim()),
+                          spinnerVisible: Array.from(document.querySelectorAll('.spinner')).some(visible),
+                          blazorErrorVisible: visible(document.querySelector('#blazor-error-ui')),
+                          bodyTitle: (document.querySelector('.rz-panel-titlebar h6')?.innerText || '').trim()
+                      };
+                  }""")
+              except Exception as diagnostic_exc:
+                  state = {"diagnosticError": str(diagnostic_exc)}
+              raise RuntimeError(
+                  f"SOL: pagina dettaglio non pronta prima della selezione del girone; "
+                  f"stato={state}; causa={exc}"
+              ) from exc
+
+          print("SOL: pagina dettaglio pronta (tab Squadre e schede-girone renderizzate).", flush=True)
+          ''')
+          replacement_lines = [(body_indent + line if line.strip() else line) for line in new_body.splitlines(keepends=True)]
+
+          updated_lines = lines[:body_start] + replacement_lines + lines[body_end:]
+          updated = marker + "\n" + "".join(updated_lines)
+
+          # Verifica strutturale: la funzione e i suoi riferimenti devono restare validi.
+          try:
+              updated_tree = ast.parse(updated, filename=str(path))
+              compile(updated_tree, str(path), "exec")
+          except SyntaxError as exc:
+              raise SystemExit(f"Patch non valida: {exc}; nessuna modifica salvata.")
+
+          updated_fn = [
+              node for node in ast.walk(updated_tree)
+              if isinstance(node, ast.AsyncFunctionDef)
+              and node.name == "wait_for_competition_route_ready"
+          ]
+          if len(updated_fn) != 1:
+              raise SystemExit("Verifica AST finale non superata; nessuna modifica salvata.")
+          if "tab Squadre e schede-girone renderizzate" not in updated:
+              raise SystemExit("Marker readiness mancante; nessuna modifica salvata.")
+          if updated.count("wait_for_competition_route_ready(") < 2:
+              raise SystemExit("Riferimenti alla funzione non coerenti; nessuna modifica salvata.")
+
+          # Scrive prima su file temporaneo; sostituisce il sorgente solo dopo tutti i controlli.
+          tmp = path.with_suffix(path.suffix + ".hotfix.tmp")
+          tmp.write_text(updated, encoding="utf-8")
+          tmp.replace(path)
+          print("HOTFIX V2 applicato: firma originale conservata, corpo sostituito e sintassi verificata.")
+          PY
+
+      - name: Verifica diff e registra commit
+        shell: bash
+        run: |
+          git diff --check
+          python -m py_compile scripts/aggiorna_catalogo_sol.py
+          git diff --stat -- scripts/aggiorna_catalogo_sol.py
+          if git diff --quiet -- scripts/aggiorna_catalogo_sol.py; then
+            echo "Nessuna modifica da registrare."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/aggiorna_catalogo_sol.py
+          git commit -m "Fix SOL detail readiness detection"
+          git push origin HEAD:main
