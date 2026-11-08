@@ -1,3 +1,4 @@
+# HOTFIX SOL: readiness su tab Squadre + gironi (AST V2)
 #!/usr/bin/env python3
 """Sincronizza TUTTI i campionati, tutte le fasi e tutti i gironi di Milano-Monza-Lecco dal portale SOL.
 
@@ -304,13 +305,53 @@ async def wait_for_selection_ready(page, websocket_state: dict[str, Any] | None 
 
 
 async def wait_for_competition_route_ready(page) -> None:
-    """Attende il render Blazor della pagina calendario, non il solo cambio URL."""
-    await page.wait_for_function("""() => {
-        const body = document.body?.innerText || '';
-        const tabs = Array.from(document.querySelectorAll('li[role="tab"]'));
-        const groups = tabs.filter(tab => /^[A-Z0-9]{1,3}$/i.test((tab.innerText || '').trim()));
-        return /Calendario Ufficiale/i.test(body) && groups.length > 0;
-    }""", timeout=SOL_READY_TIMEOUT_MS)
+    \
+    """Attende che il dettaglio SOL abbia renderizzato Squadre e i gironi.
+
+    Il calendario non è ancora presente all'apertura della route: viene
+    caricato soltanto dopo la selezione di una scheda-girone.
+    """
+    try:
+        await page.wait_for_function(
+            r"""() => {
+                const visible = el => !!(el && el.getClientRects().length &&
+                    getComputedStyle(el).display !== 'none' &&
+                    getComputedStyle(el).visibility !== 'hidden' && !el.hidden);
+                const routeOk = /\/calendarioris\/\d+\/\d+\/?$/.test(location.pathname);
+                const tabs = Array.from(document.querySelectorAll('li[role="tab"]')).filter(visible);
+                const labels = tabs.map(el => (el.innerText || '').trim().replace(/\s+/g, ' ').toUpperCase());
+                const hasTeams = labels.includes('SQUADRE');
+                const hasGroup = labels.some(label => /^[A-Z][A-Z0-9]{0,2}$/.test(label));
+                const spinnerVisible = Array.from(document.querySelectorAll('.spinner')).some(visible);
+                const errorBox = document.querySelector('#blazor-error-ui');
+                const blazorErrorVisible = visible(errorBox) && /unhandled error/i.test(errorBox.innerText || '');
+                return routeOk && hasTeams && hasGroup && !spinnerVisible && !blazorErrorVisible;
+            }""",
+            timeout=ELEMENT_TIMEOUT_MS,
+        )
+    except Exception as exc:
+        try:
+            state = await page.evaluate(r"""() => {
+                const visible = el => !!(el && el.getClientRects().length &&
+                    getComputedStyle(el).display !== 'none' &&
+                    getComputedStyle(el).visibility !== 'hidden' && !el.hidden);
+                return {
+                    url: location.href,
+                    readyState: document.readyState,
+                    tabs: Array.from(document.querySelectorAll('li[role="tab"]')).filter(visible).map(el => (el.innerText || '').trim()),
+                    spinnerVisible: Array.from(document.querySelectorAll('.spinner')).some(visible),
+                    blazorErrorVisible: visible(document.querySelector('#blazor-error-ui')),
+                    bodyTitle: (document.querySelector('.rz-panel-titlebar h6')?.innerText || '').trim()
+                };
+            }""")
+        except Exception as diagnostic_exc:
+            state = {"diagnosticError": str(diagnostic_exc)}
+        raise RuntimeError(
+            f"SOL: pagina dettaglio non pronta prima della selezione del girone; "
+            f"stato={state}; causa={exc}"
+        ) from exc
+
+    print("SOL: pagina dettaglio pronta (tab Squadre e schede-girone renderizzate).", flush=True)
 
 
 async def open_selection_page(page) -> None:
