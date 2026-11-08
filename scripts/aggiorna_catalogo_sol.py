@@ -360,21 +360,21 @@ async def open_selection_page(page) -> None:
     )
 
 
+# HOTFIX SOL: identificazione univoca tramite riga e sourceId
 async def read_competitions(page, existing: list[dict[str, Any]]) -> list[dict[str, str]]:
-    """Legge le righe della pagina campionati usando le colonne reali SOL.
-
-    Il DOM già osservato espone quattro celle: icona genere, sigla, nome,
-    fase. Non limitiamo la scansione ai soli codici già presenti nel JSON:
-    così una nuova competizione comparsa su SOL viene acquisita ugualmente.
-    """
+    """Legge tutte le righe SOL; la sigla non è trattata come chiave univoca."""
     rows = page.locator("tr.rz-data-row")
-    known_by_code = {
-        clean(c.get("code")): c for c in existing
-        if isinstance(c, dict) and clean(c.get("code"))
-    }
-    out: list[dict[str, str]] = []
-    seen: set[str] = set()
+    known_by_code: dict[str, list[dict[str, Any]]] = {}
+    known_codes: dict[str, str] = {}
+    for item in existing:
+        if not isinstance(item, dict):
+            continue
+        known_code = clean(item.get("code"))
+        if known_code:
+            known_by_code.setdefault(known_code.casefold(), []).append(item)
+            known_codes.setdefault(known_code.casefold(), known_code)
 
+    out: list[dict[str, str]] = []
     for index in range(await rows.count()):
         row = rows.nth(index)
         if not await row.is_visible():
@@ -383,28 +383,28 @@ async def read_competitions(page, existing: list[dict[str, Any]]) -> list[dict[s
         if len(cells) < 3:
             continue
 
-        # Nella riga SOL: td[1] = sigla; td[2] = denominazione; td[3] = fase.
         code = clean(cells[1]) if len(cells) > 1 else ""
         if not re.fullmatch(r"[A-Za-z0-9]{2,5}", code):
-            # Fallback per piccole variazioni del markup, mantenendo i codici
-            # del catalogo esistente come criterio di riconoscimento.
             row_text = clean(" ".join(cells))
-            code = next((candidate for candidate in known_by_code
+            code = next((candidate for candidate in known_codes.values()
                          if re.search(rf"(?<![A-Za-z0-9]){re.escape(candidate)}(?![A-Za-z0-9])", row_text, re.I)), "")
         if not code:
             continue
-        if code in seen:
-            raise RuntimeError(f"SOL: sigla competizione duplicata nella pagina campionati: {code}")
-        seen.add(code)
 
-        old = known_by_code.get(code, {})
         name = clean(cells[2]) if len(cells) > 2 else ""
         phase = clean(cells[3]) if len(cells) > 3 else ""
+        old_candidates = known_by_code.get(code.casefold(), [])
+        exact_old = [item for item in old_candidates
+                     if (not name or clean(item.get("name")).casefold() == name.casefold())
+                     and (not phase or clean(item.get("phase")).casefold() == phase.casefold())]
+        old = exact_old[0] if len(exact_old) == 1 else (
+            old_candidates[0] if len(old_candidates) == 1 else {}
+        )
+
         if not name:
             name = clean(old.get("name"))
         if not phase:
             phase = clean(old.get("phase"))
-
         gender = clean(old.get("gender"))
         try:
             image = row.locator(":scope > td").nth(0).locator("img").first
@@ -419,9 +419,10 @@ async def read_competitions(page, existing: list[dict[str, Any]]) -> list[dict[s
             pass
         if not gender:
             gender = "femminile" if re.search(r"femminile", name, re.I) else "maschile"
-
         if not name:
             raise RuntimeError(f"SOL: nome mancante per la competizione {code}; riga={cells}")
+
+        # L'indice identifica la riga concreta anche quando la sigla è condivisa.
         out.append({
             "code": code,
             "name": name,
@@ -430,32 +431,69 @@ async def read_competitions(page, existing: list[dict[str, Any]]) -> list[dict[s
             "_rowIndex": str(index),
         })
 
-    if len(out) < max(EXPECTED_COMPETITIONS, len(known_by_code)):
+    expected_min = max(EXPECTED_COMPETITIONS, len(existing))
+    if len(out) < expected_min:
         raise RuntimeError(
             f"SOL: pagina campionati incompleta: lette {len(out)} competizioni; "
-            f"attese almeno {max(EXPECTED_COMPETITIONS, len(known_by_code))}. "
-            f"Codici rilevati: {[x['code'] for x in out]}"
+            f"attese almeno {expected_min}. Codici rilevati: {[x['code'] for x in out]}"
         )
     return out
 
 
-async def click_competition(page, code: str) -> tuple[str, str, str]:
-    """Apre la competizione individuando la sigla nella seconda colonna."""
+async def click_competition(page, comp: dict[str, str]) -> tuple[str, str, str]:
+    """Apre la riga SOL esatta, verificandone sigla, denominazione e fase."""
+    code = clean(comp.get("code"))
+    name = clean(comp.get("name"))
+    phase = clean(comp.get("phase"))
+    try:
+        row_index = int(comp.get("_rowIndex", "-1"))
+    except (TypeError, ValueError):
+        row_index = -1
+
     rows = page.locator("tr.rz-data-row")
-    target = None
-    for index in range(await rows.count()):
-        row = rows.nth(index)
+
+    async def row_matches(row) -> bool:
+        if not await row.is_visible():
+            return False
         cells = row.locator(":scope > td")
         if await cells.count() < 3:
-            continue
+            return False
         actual_code = clean(await cells.nth(1).inner_text())
-        if actual_code == code:
-            target = row
-            break
-    if target is None:
-        raise RuntimeError(f"SOL: riga della competizione {code} non trovata nell'elenco aggiornato")
+        actual_name = clean(await cells.nth(2).inner_text())
+        actual_phase = clean(await cells.nth(3).inner_text()) if await cells.count() > 3 else ""
+        return (
+            actual_code.casefold() == code.casefold()
+            and actual_name.casefold() == name.casefold()
+            and (not phase or actual_phase.casefold() == phase.casefold())
+        )
 
-    # Il portale rende cliccabile la denominazione nella terza cella.
+    target = None
+    count = await rows.count()
+    if 0 <= row_index < count:
+        candidate = rows.nth(row_index)
+        if await row_matches(candidate):
+            target = candidate
+
+    # Se SOL ha riordinato la griglia dopo il render, usa la tripla completa,
+    # mai la sola sigla. Se resta ambiguità, interrompe senza scegliere a caso.
+    if target is None:
+        matches = []
+        for index in range(count):
+            candidate = rows.nth(index)
+            if await row_matches(candidate):
+                matches.append(candidate)
+        if len(matches) == 1:
+            target = matches[0]
+        elif not matches:
+            raise RuntimeError(
+                f"SOL: riga non trovata per {code} · {name} · {phase} (indice originario {row_index})"
+            )
+        else:
+            raise RuntimeError(
+                f"SOL: più righe identiche per {code} · {name} · {phase}; "
+                "impossibile scegliere in sicurezza."
+            )
+
     target_cell = target.locator(":scope > td").nth(2)
     clickable = target_cell.locator(".cursor-pointer").first
     if await clickable.count():
@@ -469,7 +507,9 @@ async def click_competition(page, code: str) -> tuple[str, str, str]:
     )
     match = re.search(r"/calendarioris/(\d+)/(\d+)", page.url)
     if not match:
-        raise RuntimeError(f"SOL: route del calendario non riconosciuta dopo il click su {code}: {page.url}")
+        raise RuntimeError(
+            f"SOL: route calendario non riconosciuta dopo il click su {code} · {name}: {page.url}"
+        )
     competition_id, season = match.group(1), match.group(2)
     route_url = f"https://www.sol.milano.federvolley.it/calendarioris/{competition_id}/{season}"
     await wait_for_competition_route_ready(page)
@@ -693,10 +733,18 @@ async def sync_sol(committee: dict[str, Any]) -> tuple[int, int, list[str]]:
     """Sincronizzazione completa e transazionale di tutti i campionati SOL."""
     previous_groups = committee.get("groups", [])
     previous_snapshots = committee.get("groupSnapshots", {})
-    previous_by_code = {
-        clean(c.get("code")): c for c in previous_groups
-        if isinstance(c, dict) and clean(c.get("code"))
-    }
+    def comp_identity(item: dict[str, Any]) -> tuple[str, str, str]:
+        return tuple(clean(item.get(key)).casefold() for key in ("code", "name", "phase"))
+
+    previous_by_source_id: dict[str, dict[str, Any]] = {}
+    previous_by_identity: dict[tuple[str, str, str], list[dict[str, Any]]] = {}
+    for item in previous_groups:
+        if not isinstance(item, dict):
+            continue
+        source_id = clean(item.get("sourceId"))
+        if source_id:
+            previous_by_source_id[source_id] = item
+        previous_by_identity.setdefault(comp_identity(item), []).append(item)
     warnings: list[str] = []
     staged_competitions: list[dict[str, Any]] = []
     staged_snapshots: dict[str, dict[str, Any]] = {}
@@ -746,7 +794,9 @@ async def sync_sol(committee: dict[str, Any]) -> tuple[int, int, list[str]]:
 
             for comp_index, comp in enumerate(competitions, start=1):
                 code = comp["code"]
-                old = previous_by_code.get(code, {})
+                identity = comp_identity(comp)
+                old_candidates = previous_by_identity.get(identity, [])
+                old = old_candidates[0] if len(old_candidates) == 1 else {}
                 print(
                     f"[{comp_index}/{len(competitions)}] {code} · {comp['name']} · {comp['phase']}",
                     flush=True,
@@ -756,7 +806,8 @@ async def sync_sol(committee: dict[str, Any]) -> tuple[int, int, list[str]]:
                     # click della riga porta a una route differente e non si
                     # dipende dal pulsante Back dell'interfaccia.
                     await open_selection_page(page)
-                    competition_id, season, route_url = await click_competition(page, code)
+                    competition_id, season, route_url = await click_competition(page, comp)
+                    old = previous_by_source_id.get(competition_id, old)
                     tab_letters = await discover_group_tabs(page)
                     if not tab_letters:
                         raise RuntimeError(
@@ -851,9 +902,17 @@ async def sync_sol(committee: dict[str, Any]) -> tuple[int, int, list[str]]:
 
     # Conserva eventuali competizioni storiche non mostrate dal portale, ma
     # non sovrascrive né rimuove snapshot esistenti fino alla validazione totale.
-    current_codes = {item["code"] for item in staged_competitions}
+    current_source_ids = {clean(item.get("sourceId")) for item in staged_competitions if clean(item.get("sourceId"))}
+    current_identities = {comp_identity(item) for item in staged_competitions}
     for old in previous_groups:
-        if isinstance(old, dict) and clean(old.get("code")) not in current_codes:
+        if not isinstance(old, dict):
+            continue
+        old_source_id = clean(old.get("sourceId"))
+        if old_source_id:
+            preserve_old = old_source_id not in current_source_ids
+        else:
+            preserve_old = comp_identity(old) not in current_identities
+        if preserve_old:
             staged_competitions.append(old)
 
     new_snapshots = dict(previous_snapshots) if isinstance(previous_snapshots, dict) else {}
@@ -899,7 +958,7 @@ def main() -> int:
         return 1
 
     catalog["snapshotDate"] = datetime.now(timezone.utc).date().isoformat()
-    catalog["version"] = "volley-live-v11.3.13-sol-restore-user-session-all-milano"
+    catalog["version"] = "volley-live-v11.3.14-sol-duplicate-codes-by-row-and-source-id"
     tmp_path = CATALOG_PATH.with_suffix(".json.tmp")
     tmp_path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     tmp_path.replace(CATALOG_PATH)
