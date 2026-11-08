@@ -1,0 +1,126 @@
+name: Applica hotfix SOL attesa pagina calendario
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  hotfix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Correggi criterio di pagina SOL pronta
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          import subprocess
+          import sys
+
+          path = Path("scripts/aggiorna_catalogo_sol.py")
+          if not path.is_file():
+              raise SystemExit(f"File non trovato: {path}")
+          source = path.read_text(encoding="utf-8")
+          marker = "# HOTFIX SOL: readiness su tab Squadre + gironi"
+          if marker in source:
+              print("HOTFIX già presente; nessuna modifica necessaria.")
+              raise SystemExit(0)
+
+          lines = source.splitlines(keepends=True)
+          start = None
+          signature = None
+          for i, line in enumerate(lines):
+              m = re.match(r"^(async\s+def\s+wait_for_competition_route_ready\s*\([^\n]*\)\s*:\s*)$", line.rstrip("\r\n"))
+              if m:
+                  start = i
+                  signature = m.group(1)
+                  break
+          if start is None:
+              raise SystemExit("Funzione wait_for_competition_route_ready non trovata nella forma attesa; nessuna modifica salvata.")
+
+          end = len(lines)
+          for i in range(start + 1, len(lines)):
+              if re.match(r"^(?:async\s+)?def\s+\w+\s*\(|^class\s+\w+\s*[:(]", lines[i]):
+                  end = i
+                  break
+
+          # Conserva la firma già presente nel file per non cambiare le chiamate.
+          replacement = signature + "\n" + r'''
+              """Attende il render della pagina dettaglio SOL, prima di selezionare un girone.
+
+              La pagina entra inizialmente nella scheda Squadre: il calendario compare solo
+              dopo il clic su una delle schede-girone (A, B, A1, A2, ...).
+              """
+              try:
+                  await page.wait_for_function(
+                      r"""() => {
+                          const visible = el => !!(el && el.getClientRects().length &&
+                              getComputedStyle(el).display !== 'none' &&
+                              getComputedStyle(el).visibility !== 'hidden' && !el.hidden);
+                          const routeOk = /\/calendarioris\/\d+\/\d+\/?$/.test(location.pathname);
+                          const tabs = Array.from(document.querySelectorAll('li[role="tab"]')).filter(visible);
+                          const labels = tabs.map(el => (el.innerText || '').trim().replace(/\s+/g, ' ').toUpperCase());
+                          const hasTeams = labels.includes('SQUADRE');
+                          const hasGroup = labels.some(label => /^[A-Z][A-Z0-9]{0,2}$/.test(label));
+                          const spinnerVisible = Array.from(document.querySelectorAll('.spinner')).some(visible);
+                          const errorBox = document.querySelector('#blazor-error-ui');
+                          const blazorErrorVisible = visible(errorBox) && /unhandled error/i.test(errorBox.innerText || '');
+                          return routeOk && hasTeams && hasGroup && !spinnerVisible && !blazorErrorVisible;
+                      }""",
+                      timeout=ELEMENT_TIMEOUT_MS,
+                  )
+              except Exception as exc:
+                  try:
+                      state = await page.evaluate(r"""() => {
+                          const visible = el => !!(el && el.getClientRects().length &&
+                              getComputedStyle(el).display !== 'none' &&
+                              getComputedStyle(el).visibility !== 'hidden' && !el.hidden);
+                          return {
+                              url: location.href,
+                              readyState: document.readyState,
+                              tabs: Array.from(document.querySelectorAll('li[role="tab"]')).filter(visible).map(el => (el.innerText || '').trim()),
+                              spinnerVisible: Array.from(document.querySelectorAll('.spinner')).some(visible),
+                              blazorErrorVisible: visible(document.querySelector('#blazor-error-ui')),
+                              bodyTitle: (document.querySelector('.rz-panel-titlebar h6')?.innerText || '').trim()
+                          };
+                      }""")
+                  except Exception as diagnostic_exc:
+                      state = {"diagnosticError": str(diagnostic_exc)}
+                  raise RuntimeError(f"SOL: pagina dettaglio non pronta prima della selezione del girone; stato={state}; causa={exc}") from exc
+
+              print("SOL: pagina dettaglio pronta (tab Squadre e schede-girone renderizzate).", flush=True)
+
+          '''
+          replacement = marker + "\n" + replacement
+          new_lines = lines[:start] + [replacement] + lines[end:]
+          updated = "".join(new_lines)
+          if updated == source:
+              raise SystemExit("Patch senza modifiche; annullo.")
+          compile(updated, str(path), "exec")
+          path.write_text(updated, encoding="utf-8")
+          print("Patch applicata e sintassi Python verificata.")
+
+          # Controlla che il helper continui a essere usato dal flusso normale.
+          if updated.count("wait_for_competition_route_ready(") < 3:
+              raise SystemExit("Controllo riferimenti helper non superato; annullo la patch.")
+          PY
+
+      - name: Commit hotfix
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/aggiorna_catalogo_sol.py
+          if git diff --cached --quiet; then
+            echo "Nessuna modifica da registrare."
+          else
+            git commit -m "Fix SOL competition detail readiness before group selection"
+            git push
+          fi
