@@ -1,0 +1,37 @@
+name: Test isolato sessione SOL
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-sessione-sol:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Scarica il repository
+        uses: actions/checkout@v4
+
+      - name: Prepara Python e Chromium
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Verifica se UserSession basta per caricare il catalogo SOL
+        env:
+          SOL_USER_SESSION: ${{ secrets.SOL_USER_SESSION }}
+        run: python scripts/test_sol_session.py
+
+      - name: Carica diagnostica in caso di errore
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-sessione-sol-diagnostica
+          path: |
+            sol-session-test.html
+            sol-session-test.png
+          if-no-files-found: ignore
+          retention-days: 3
