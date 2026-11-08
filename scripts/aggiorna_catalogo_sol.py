@@ -1,21 +1,16 @@
 #!/usr/bin/env python3
-"""Sincronizza la 1ª Divisione Femminile Milano-Monza-Lecco dal portale SOL.
+"""Sincronizza TUTTI i campionati, tutte le fasi e tutti i gironi di Milano-Monza-Lecco dal portale SOL.
 
-La stagione non viene selezionata dal dropdown Radzen: per la 1DF 2026/27
-si usa direttamente la route ufficiale già verificata /calendarioris/1001225/2026.
+SOL usa Blazor Server e Radzen. Per ogni campionato lo script ricava l'ID
+tecnico dalla route /calendarioris/{id}/{stagione}; per ogni girone legge la
+scheda Radzen già renderizzata. Il pulsante con icona "print" e title
+"Calendario" è un comando di stampa, non un passaggio per aprire i dati:
+le partite sono già presenti nella pagina dopo la selezione del girone.
 
-SOL è un'applicazione Blazor Server. Il suo catalogo/calendario non è esposto
-come un feed REST pubblico equivalente a FIPAVOnline: la sincronizzazione
-interagisce con le pagine pubbliche SOL tramite Chromium/Playwright, legge i
-campionati, le schede dei gironi e le tabelle del calendario ufficiale.
-
-Regole di sicurezza dei dati:
-- se il portale non risponde, non cancella alcun dato già acquisito;
-- una competizione viene aggiornata soltanto dopo aver identificato il suo ID
-  tecnico nella route ufficiale /calendarioris/{id}/{stagione};
-- un calendario viene sostituito soltanto se sono state lette partite valide;
-- gli ID dei gironi sono chiavi locali stabili (SOL-{idCampionato}-{girone}),
-  non ID ufficiali SOL.
+La sincronizzazione è transazionale: nessun dato SOL viene sostituito finché
+non sono stati letti e validati tutti i campionati e tutti i gironi scoperti.
+Se un singolo girone fallisce, il catalogo precedente resta intatto e il job
+termina FALLITO. Gli ID locali dei gironi sono SOL-{idCampionato}-{girone}.
 """
 from __future__ import annotations
 
@@ -34,7 +29,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CATALOG_PATH = ROOT / "catalogo-fipav-v11.json"
 SOL_URL = "https://www.sol.milano.federvolley.it/campionatiris"
 SEASON_ROUTE = "2026"  # stagione 2026/2027, documentata nelle catture HAR del 03-04/11/2026
-EXPECTED_COMPETITIONS = 18
+EXPECTED_COMPETITIONS = 18  # minimo atteso nel catalogo Milano 2026/2027
 NAV_TIMEOUT_MS = 60_000
 ELEMENT_TIMEOUT_MS = 35_000
 
@@ -54,6 +49,13 @@ def parse_date(value: str) -> str:
 def parse_time(value: str) -> str:
     m = re.search(r"\b([01]?\d|2[0-3])[.:]([0-5]\d)\b", value)
     return f"{int(m.group(1)):02d}:{m.group(2)}" if m else ""
+
+
+def normalize_group_label(value: Any) -> str:
+    """Restituisce la sigla del girone da tab come A, A1 o "Girone A"."""
+    label = clean(value).upper()
+    match = re.fullmatch(r"(?:GIRONE\s*)?([A-Z0-9]{1,3})", label)
+    return match.group(1) if match else ""
 
 
 def parse_match_cells(cells: list[str], round_no: int, group_id: str) -> dict[str, Any] | None:
@@ -333,105 +335,148 @@ async def open_selection_page(page) -> None:
 
 
 async def read_competitions(page, existing: list[dict[str, Any]]) -> list[dict[str, str]]:
-    rows = await page.locator("tr.rz-data-row").all()
-    known_by_code = {clean(c.get("code")): c for c in existing if clean(c.get("code"))}
+    """Legge le righe della pagina campionati usando le colonne reali SOL.
+
+    Il DOM già osservato espone quattro celle: icona genere, sigla, nome,
+    fase. Non limitiamo la scansione ai soli codici già presenti nel JSON:
+    così una nuova competizione comparsa su SOL viene acquisita ugualmente.
+    """
+    rows = page.locator("tr.rz-data-row")
+    known_by_code = {
+        clean(c.get("code")): c for c in existing
+        if isinstance(c, dict) and clean(c.get("code"))
+    }
     out: list[dict[str, str]] = []
-    for index, row in enumerate(rows):
+    seen: set[str] = set()
+
+    for index in range(await rows.count()):
+        row = rows.nth(index)
+        if not await row.is_visible():
+            continue
         cells = [clean(x) for x in await row.locator(":scope > td").all_inner_texts()]
-        text = clean(" ".join(cells))
-        code = next((token for token in re.findall(r"\b[A-Z0-9]{2,4}\b", text)
-                     if token in known_by_code), "")
-        if not code:
-            # Le sigle può essere già presente come label di prima colonna.
-            for candidate in known_by_code:
-                if re.search(rf"\b{re.escape(candidate)}\b", text):
-                    code = candidate
-                    break
+        if len(cells) < 3:
+            continue
+
+        # Nella riga SOL: td[1] = sigla; td[2] = denominazione; td[3] = fase.
+        code = clean(cells[1]) if len(cells) > 1 else ""
+        if not re.fullmatch(r"[A-Za-z0-9]{2,5}", code):
+            # Fallback per piccole variazioni del markup, mantenendo i codici
+            # del catalogo esistente come criterio di riconoscimento.
+            row_text = clean(" ".join(cells))
+            code = next((candidate for candidate in known_by_code
+                         if re.search(rf"(?<![A-Za-z0-9]){re.escape(candidate)}(?![A-Za-z0-9])", row_text, re.I)), "")
         if not code:
             continue
-        old = known_by_code[code]
-        name = clean(cells[2]) if len(cells) > 2 else clean(old.get("name"))
-        phase = clean(cells[3]) if len(cells) > 3 else clean(old.get("phase"))
-        # L'ordine delle colonne è icona-genere, sigla, campionato, fase.
-        if not name or name == code:
+        if code in seen:
+            raise RuntimeError(f"SOL: sigla competizione duplicata nella pagina campionati: {code}")
+        seen.add(code)
+
+        old = known_by_code.get(code, {})
+        name = clean(cells[2]) if len(cells) > 2 else ""
+        phase = clean(cells[3]) if len(cells) > 3 else ""
+        if not name:
             name = clean(old.get("name"))
         if not phase:
             phase = clean(old.get("phase"))
+
+        gender = clean(old.get("gender"))
+        try:
+            image = row.locator(":scope > td").nth(0).locator("img").first
+            image_src = clean(await image.get_attribute("src")) if await image.count() else ""
+            image_alt = clean(await image.get_attribute("alt")) if await image.count() else ""
+            image_hint = f"{image_src} {image_alt}".lower()
+            if "female" in image_hint or "femmin" in image_hint:
+                gender = "femminile"
+            elif "male" in image_hint or "masch" in image_hint:
+                gender = "maschile"
+        except Exception:
+            pass
+        if not gender:
+            gender = "femminile" if re.search(r"femminile", name, re.I) else "maschile"
+
+        if not name:
+            raise RuntimeError(f"SOL: nome mancante per la competizione {code}; riga={cells}")
         out.append({
             "code": code,
             "name": name,
             "phase": phase,
-            "gender": clean(old.get("gender")) or ("femminile" if "Femminile" in name else "maschile"),
+            "gender": gender,
             "_rowIndex": str(index),
         })
-    # Fallback: non facciamo scomparire le competizioni storiche se la griglia
-    # del portale restituisce momentaneamente solo una pagina parziale.
-    if len(out) < min(12, len(existing)):
-        raise RuntimeError(f"SOL ha restituito soltanto {len(out)} competizioni: catalogo non aggiornato")
+
+    if len(out) < max(EXPECTED_COMPETITIONS, len(known_by_code)):
+        raise RuntimeError(
+            f"SOL: pagina campionati incompleta: lette {len(out)} competizioni; "
+            f"attese almeno {max(EXPECTED_COMPETITIONS, len(known_by_code))}. "
+            f"Codici rilevati: {[x['code'] for x in out]}"
+        )
     return out
 
 
-async def click_competition(page, row_index: int) -> tuple[str, str]:
+async def click_competition(page, code: str) -> tuple[str, str, str]:
+    """Apre la competizione individuando la sigla nella seconda colonna."""
     rows = page.locator("tr.rz-data-row")
-    row = rows.nth(row_index)
-    try:
-        await row.locator(":scope > td").nth(2).click(timeout=10_000)
-    except Exception:
-        await row.click(timeout=10_000)
+    target = None
+    for index in range(await rows.count()):
+        row = rows.nth(index)
+        cells = row.locator(":scope > td")
+        if await cells.count() < 3:
+            continue
+        actual_code = clean(await cells.nth(1).inner_text())
+        if actual_code == code:
+            target = row
+            break
+    if target is None:
+        raise RuntimeError(f"SOL: riga della competizione {code} non trovata nell'elenco aggiornato")
+
+    # Il portale rende cliccabile la denominazione nella terza cella.
+    target_cell = target.locator(":scope > td").nth(2)
+    clickable = target_cell.locator(".cursor-pointer").first
+    if await clickable.count():
+        await clickable.click(timeout=15_000)
+    else:
+        await target_cell.click(timeout=15_000)
+
     await page.wait_for_function(
         "() => /\\/calendarioris\\/\\d+\\/\\d+/.test(location.pathname)",
         timeout=ELEMENT_TIMEOUT_MS,
     )
-    m = re.search(r"/calendarioris/(\d+)/(\d+)", page.url)
-    if not m:
-        raise RuntimeError(f"SOL non ha aperto la scheda del campionato (URL: {page.url})")
-    return m.group(1), m.group(2)
+    match = re.search(r"/calendarioris/(\d+)/(\d+)", page.url)
+    if not match:
+        raise RuntimeError(f"SOL: route del calendario non riconosciuta dopo il click su {code}: {page.url}")
+    competition_id, season = match.group(1), match.group(2)
+    route_url = f"https://www.sol.milano.federvolley.it/calendarioris/{competition_id}/{season}"
+    return competition_id, season, route_url
 
 
 async def discover_group_tabs(page) -> list[str]:
-    """Individua i gironi nelle schede SOL A/B/C... dopo il render Blazor.
-
-    L'HAR del 04/11 mostra le schede A-F come <li> in .rz-tabview-nav.
-    L'elenco Squadre contiene inoltre una tabella Radzen con la colonna Gir.
-    che costituisce un fallback affidabile se le schede non sono ancora visibili.
-    """
-    try:
-        await page.wait_for_function(
-            "() => Array.from(document.querySelectorAll('.rz-tabview-nav > li'))"
-            ".some(el => /^[A-Z0-9]{1,3}$/.test((el.innerText || '').trim().toUpperCase()))",
-            timeout=12_000,
-        )
-    except PlaywrightTimeoutError:
-        # Si può ancora ricavare il gruppo dalla tabella Squadre.
-        pass
-
+    """Legge tutte le schede-girone dalle tab Radzen reali (A, A1, A2, ...)."""
+    tabs = page.locator('li[role="tab"]')
+    await tabs.first.wait_for(state="visible", timeout=ELEMENT_TIMEOUT_MS)
+    labels = await tabs.all_inner_texts()
     groups: list[str] = []
-    tabs = page.locator(".rz-tabview-nav > li, ul[role='tablist'] > li, [role='tablist'] > li")
-    for raw in await tabs.all_inner_texts():
-        label = clean(raw).upper()
-        match = re.fullmatch(r"(?:GIRONE\s*)?([A-Z0-9]{1,3})", label)
-        if match:
-            group = match.group(1)
-            if group not in groups:
-                groups.append(group)
+    for raw in labels:
+        label = normalize_group_label(raw)
+        # Esclude Squadre e Classifica Gir. X; include sigle alfanumeriche
+        # osservate nel DOM come A1 e A2, oltre alle lettere B...K.
+        if label and label not in groups:
+            groups.append(label)
 
-    # Fallback: la tabella Squadre mostra le colonne Logo, Gir., Squadra,
-    # Società e Comune. Le righe non hanno la classe rz-data-row.
     if not groups:
+        # Fallback dalle righe della scheda Squadre, se le tab non sono ancora
+        # state renderizzate dal server Blazor.
         tables = page.locator("table.rz-grid-table")
         for ti in range(await tables.count()):
             table = tables.nth(ti)
             headers = [clean(x).lower() for x in await table.locator("thead th").all_inner_texts()]
             if not any("gir" in h for h in headers) or not any("squadra" in h for h in headers):
                 continue
-            for row in await table.locator("tbody tr:not(.rz-datatable-emptymessage-row)").all():
+            for row in await table.locator("tbody tr").all():
                 cells = [clean(x) for x in await row.locator(":scope > td").all_inner_texts()]
                 if len(cells) >= 3 and re.fullmatch(r"[A-Z0-9]{1,3}", cells[1].upper()):
-                    letter = cells[1].upper()
-                    if letter not in groups:
-                        groups.append(letter)
-        groups.sort()
-
+                    label = cells[1].upper()
+                    if label not in groups:
+                        groups.append(label)
     return groups
 
 
@@ -463,52 +508,106 @@ async def extract_roster_teams(page, group_letter: str) -> list[str]:
 
 
 async def open_group_calendar(page, route_url: str, group_letter: str) -> None:
-    """Apre una scheda girone e poi il relativo Calendario ufficiale."""
+    """Seleziona la scheda del girone e attende il calendario già renderizzato.
+
+    Evidenza DOM verificata: la pagina mostra già "Calendario Ufficiale" e le
+    righe delle partite dopo il render della scheda. Il pulsante
+    button[title="Calendario"] include l'icona "print" ed è quindi un comando
+    di stampa: NON va cliccato per accedere alle partite.
+    """
     await page.goto(route_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT_MS)
-    tab_selector = ".rz-tabview-nav > li"
-    tab = page.locator(tab_selector).filter(
-        has_text=re.compile(rf"^\s*{re.escape(group_letter)}\s*$", re.I)
-    ).first
-    # La route cambia prima che Blazor completi il render delle schede A-F.
-    await tab.wait_for(state="visible", timeout=ELEMENT_TIMEOUT_MS)
-    await tab.click(timeout=15_000)
+    tabs = page.locator('li[role="tab"]')
+    await tabs.first.wait_for(state="visible", timeout=ELEMENT_TIMEOUT_MS)
+
+    tab = None
+    for index in range(await tabs.count()):
+        candidate = tabs.nth(index)
+        label = normalize_group_label(await candidate.inner_text())
+        if label == group_letter.upper():
+            tab = candidate
+            break
+    if tab is None:
+        labels = [clean(x) for x in await tabs.all_inner_texts()]
+        raise RuntimeError(f"SOL: scheda Girone {group_letter} assente in {route_url}; schede={labels}")
+
+    selected = "rz-tabview-selected" in (await tab.get_attribute("class") or "")
+    if not selected:
+        await tab.click(timeout=15_000)
+
     await page.wait_for_function(
-        "letter => Array.from(document.querySelectorAll('.rz-tabview-nav > li'))"
+        "letter => Array.from(document.querySelectorAll('li[role=\\\"tab\\\"]'))"
         ".some(el => el.classList.contains('rz-tabview-selected') && "
         "(el.innerText || '').trim().toUpperCase() === letter)",
         arg=group_letter.upper(),
         timeout=ELEMENT_TIMEOUT_MS,
     )
 
-    calendar_button = page.locator("button.rz-button").filter(
-        has_text=re.compile(r"^\s*Calendario\s*$", re.I)
-    ).first
-    await calendar_button.wait_for(state="visible", timeout=ELEMENT_TIMEOUT_MS)
-    await calendar_button.click(timeout=15_000)
-    print(f"SOL: attendo righe calendario per Girone {group_letter}...", flush=True)
+    # La pagina aggiorna il contenuto del pannello dopo il callback Blazor.
+    # Individuiamo la griglia calendario dai suoi titoli (Gara/Data/Squadre/Campo)
+    # e dalle righe che contengono un numero gara e una data.
     await page.wait_for_function(
-        "() => document.body.innerText.includes('Calendario Ufficiale') && "
-        "Array.from(document.querySelectorAll('table.rz-grid-table tbody tr:not(.rz-datatable-emptymessage-row)'))"
-        ".some(row => row.querySelectorAll(':scope > td.rz-cell-data').length >= 6 && "
-        "!!(row.getClientRects().length && getComputedStyle(row).visibility !== 'hidden'))",
+        "letter => {"
+        " const visible = el => !!(el && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden');"
+        " const tabs = Array.from(document.querySelectorAll('li[role=\\\"tab\\\"]'));"
+        " const selected = tabs.find(el => el.classList.contains('rz-tabview-selected'));"
+        " if (!selected || (selected.innerText || '').trim().toUpperCase() !== letter) return false;"
+        " const body = (document.body.innerText || '').toUpperCase();"
+        " const groupHeading = new RegExp('GIRONE\\\\s+' + letter + '(?:\\\\s|$)', 'i').test(body);"
+        " const tables = Array.from(document.querySelectorAll('table.rz-grid-table')).filter(visible);"
+        " const ok = tables.some(table => {"
+        "   const head = (table.querySelector('thead')?.innerText || '').toLowerCase();"
+        "   const rows = Array.from(table.querySelectorAll('tbody tr')).filter(visible);"
+        "   const hasRows = rows.some(row => {"
+        "     const cells = Array.from(row.querySelectorAll(':scope > td'));"
+        "     return cells.length >= 6 && /^\\s*\\d+\\s*$/.test(cells[0]?.innerText || '') && /\\d{1,2}\\/\\d{1,2}\\/\\d{4}/.test(cells[1]?.innerText || '');"
+        "   });"
+        "   const hasHeaders = head.includes('gara') && head.includes('data') && head.includes('squadre') && head.includes('campo');"
+        "   return hasRows && (hasHeaders || /calendario ufficiale/i.test(body));"
+        " });"
+        " return groupHeading && /calendario ufficiale/i.test(body) && ok;"
+        "}",
+        arg=group_letter.upper(),
         timeout=ELEMENT_TIMEOUT_MS,
     )
+    print(f"SOL: Girone {group_letter} selezionato; calendario già presente nel pannello.", flush=True)
 
 
 async def scrape_calendar_rows(page, group_letter: str, group_id: str) -> list[dict[str, Any]]:
-    raw_rows = await page.evaluate("""() => {
-      const headers = Array.from(document.querySelectorAll('div.bg-primary.text-white.text-center.fw-bold'));
+    """Estrae tutte le tabelle del calendario, normalmente una per giornata."""
+    raw_rows = await page.evaluate(r"""() => {
       const visible = el => !!(el && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden');
-      const rows = Array.from(document.querySelectorAll('table.rz-grid-table tbody tr:not(.rz-datatable-emptymessage-row)')).filter(row => visible(row) && row.querySelectorAll(':scope > td.rz-cell-data').length >= 6);
-      return rows.map(row => {
-        const cells = Array.from(row.querySelectorAll(':scope > td')).map(td => (td.innerText || '').trim());
-        const grid = row.closest('.rz-data-grid') || row.closest('table');
-        const previous = headers.filter(h => (h.compareDocumentPosition(grid) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0);
-        const heading = previous.length ? (previous[previous.length - 1].innerText || '') : '';
-        const match = heading.match(/Giornata\\s*n\\.?\\s*(\\d+)/i);
-        return { cells, round: match ? Number(match[1]) : 0 };
+      const tables = Array.from(document.querySelectorAll('table.rz-grid-table')).filter(visible);
+      const rowHasMatch = row => {
+        const cells = Array.from(row.querySelectorAll(':scope > td'));
+        return cells.length >= 6 && /^\s*\d+\s*$/.test(cells[0]?.innerText || '') &&
+          /\d{1,2}\/\d{1,2}\/\d{4}/.test(cells[1]?.innerText || '');
+      };
+      let calendarTables = tables.filter(table => {
+        const head = (table.querySelector('thead')?.innerText || '').toLowerCase();
+        return head.includes('gara') && head.includes('data') && head.includes('squadre') && head.includes('campo');
       });
+      if (!calendarTables.length) {
+        calendarTables = tables.filter(table => Array.from(table.querySelectorAll('tbody tr')).some(row => visible(row) && rowHasMatch(row)));
+      }
+
+      const headings = Array.from(document.querySelectorAll(
+        'div.bg-primary.text-white.text-center.fw-bold, .bg-primary.text-white.text-center.fw-bold'
+      )).filter(visible);
+      const result = [];
+      for (const table of calendarTables) {
+        const grid = table.closest('.rz-data-grid') || table;
+        const previous = headings.filter(h => (h.compareDocumentPosition(grid) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0);
+        const heading = previous.length ? (previous[previous.length - 1].innerText || '') : '';
+        const match = heading.match(/Giornata\s*n\.?\s*(\d+)/i);
+        const rows = Array.from(table.querySelectorAll('tbody tr')).filter(row => visible(row) && rowHasMatch(row));
+        for (const row of rows) {
+          const cells = Array.from(row.querySelectorAll(':scope > td')).map(td => (td.innerText || '').trim());
+          result.push({ cells, round: match ? Number(match[1]) : 0 });
+        }
+      }
+      return result;
     }""")
+
     print(f"SOL: righe calendario DOM individuate per Girone {group_letter}: {len(raw_rows)}", flush=True)
     matches: list[dict[str, Any]] = []
     seen: set[tuple[int, str, str]] = set()
@@ -526,6 +625,10 @@ async def scrape_calendar_rows(page, group_letter: str, group_id: str) -> list[d
         matches.append(game)
         fallback_round = max(fallback_round, round_no)
     matches.sort(key=lambda x: (x["round"], x["gameNo"]))
+    if raw_rows and len(matches) != len(raw_rows):
+        raise RuntimeError(
+            f"Girone {group_letter}: {len(matches)} partite interpretate su {len(raw_rows)} righe calendario visibili"
+        )
     return matches
 
 
@@ -559,42 +662,17 @@ def make_snapshot(comp: dict[str, str], competition_id: str, season: str,
 
 
 async def sync_sol(committee: dict[str, Any]) -> tuple[int, int, list[str]]:
-    """Aggiorna la 1DF Milano usando la route SOL già verificata.
-
-    Non apre /campionatiris e non dipende dal dropdown stagione Radzen:
-    il menu in questo momento restituisce un popup vuoto anche quando viene
-    aperto graficamente. La route ufficiale della 1DF 2026/27 è nota e stabile.
-
-    La sostituzione dei sei snapshot è transazionale: se anche un solo girone
-    non produce esattamente 182 gare valide, non viene scritto nessun nuovo
-    calendario e il catalogo precedente resta intatto.
-    """
-    competition_code = "1DF"
-    competition_id = "1001225"
-    season = "2026"
-    route_url = f"https://www.sol.milano.federvolley.it/calendarioris/{competition_id}/{season}"
-    expected_groups = list("ABCDEF")
-    expected_matches_per_group = 182
-
+    """Sincronizzazione completa e transazionale di tutti i campionati SOL."""
     previous_groups = committee.get("groups", [])
-    previous_snapshots = committee.setdefault("groupSnapshots", {})
+    previous_snapshots = committee.get("groupSnapshots", {})
     previous_by_code = {
-        clean(item.get("code")): item
-        for item in previous_groups
-        if isinstance(item, dict) and clean(item.get("code"))
+        clean(c.get("code")): c for c in previous_groups
+        if isinstance(c, dict) and clean(c.get("code"))
     }
-    old_comp = previous_by_code.get(competition_code)
-    if not old_comp:
-        raise RuntimeError("Catalogo Milano: competizione 1DF non presente; nessuna modifica eseguita")
-
-    comp = {
-        "code": competition_code,
-        "name": clean(old_comp.get("name")) or "1ª Divisione Femminile",
-        "phase": clean(old_comp.get("phase")) or "PRIMA FASE",
-        "gender": clean(old_comp.get("gender")) or "femminile",
-    }
-    captured: dict[str, dict[str, Any]] = {}
     warnings: list[str] = []
+    staged_competitions: list[dict[str, Any]] = []
+    staged_snapshots: dict[str, dict[str, Any]] = {}
+    groups_updated = 0
 
     async with async_playwright() as p:
         browser = await p.chromium.launch(
@@ -609,84 +687,145 @@ async def sync_sol(committee: dict[str, Any]) -> tuple[int, int, list[str]]:
         page = await context.new_page()
         page.set_default_timeout(ELEMENT_TIMEOUT_MS)
         try:
-            for letter in expected_groups:
-                group_id = f"SOL-{competition_id}-{letter}"
-                print(f"SOL 1DF: apertura route diretta {route_url} · Girone {letter}", flush=True)
-                await open_group_calendar(page, route_url, letter)
-                matches = await scrape_calendar_rows(page, letter, group_id)
-                if len(matches) != expected_matches_per_group:
-                    raise RuntimeError(
-                        f"1DF Girone {letter}: lette {len(matches)} gare valide, "
-                        f"attese {expected_matches_per_group}. Nessuno snapshot 1DF sostituito."
-                    )
-                snapshot = make_snapshot(
-                    comp, competition_id, season, letter, group_id, matches
-                )
-                # La URL sorgente registrata è la route diretta, non la pagina elenco.
-                snapshot["sourceUrl"] = route_url
-                captured[letter] = snapshot
+            await open_selection_page(page)
+            competitions = await read_competitions(page, previous_groups)
+            print(f"SOL: individuate {len(competitions)} competizioni nella pagina pubblica", flush=True)
+
+            for comp_index, comp in enumerate(competitions, start=1):
+                code = comp["code"]
+                old = previous_by_code.get(code, {})
                 print(
-                    f"SOL 1DF: Girone {letter} OK · {len(matches)} gare · "
-                    f"{len(snapshot['teams'])} squadre · {snapshot['counts']['rounds']} giornate",
+                    f"[{comp_index}/{len(competitions)}] {code} · {comp['name']} · {comp['phase']}",
                     flush=True,
                 )
+                try:
+                    # Si riapre l'elenco stagione per ogni competizione: il
+                    # click della riga porta a una route differente e non si
+                    # dipende dal pulsante Back dell'interfaccia.
+                    await open_selection_page(page)
+                    competition_id, season, route_url = await click_competition(page, code)
+                    tab_letters = await discover_group_tabs(page)
+                    if not tab_letters:
+                        raise RuntimeError(
+                            f"SOL {code}: nessuna scheda-girone rilevata nella route {route_url}"
+                        )
+                    print(
+                        f"  ID SOL {competition_id}; gironi rilevati ({len(tab_letters)}): "
+                        f"{', '.join(tab_letters)}",
+                        flush=True,
+                    )
+
+                    group_entries: list[dict[str, Any]] = []
+                    for group_letter in tab_letters:
+                        group_id = f"SOL-{competition_id}-{group_letter}"
+                        await open_group_calendar(page, route_url, group_letter)
+                        matches = await scrape_calendar_rows(page, group_letter, group_id)
+                        if not matches:
+                            raise RuntimeError(
+                                f"{code} Girone {group_letter}: nessuna partita valida acquisita"
+                            )
+                        if len({m["gameNo"] for m in matches}) != len(matches):
+                            raise RuntimeError(
+                                f"{code} Girone {group_letter}: numeri gara duplicati nello snapshot"
+                            )
+
+                        snapshot = make_snapshot(
+                            comp, competition_id, season, group_letter, group_id, matches
+                        )
+                        snapshot["sourceUrl"] = route_url
+                        staged_snapshots[group_id] = snapshot
+                        group_entries.append({
+                            "id": group_id,
+                            "name": f"Girone {group_letter}",
+                            "label": f"Girone {group_letter}",
+                            "officialGroup": group_letter,
+                            "competitionId": competition_id,
+                            "sourceUrl": route_url,
+                        })
+                        print(
+                            f"    {group_letter}: {len(matches)} gare · "
+                            f"{len(snapshot['teams'])} squadre · "
+                            f"{snapshot['counts']['rounds']} giornate",
+                            flush=True,
+                        )
+
+                    # Tutti i gironi di questa competizione sono stati letti.
+                    staged_competitions.append({
+                        **(old if isinstance(old, dict) else {}),
+                        "code": code,
+                        "name": comp["name"],
+                        "phase": comp["phase"],
+                        "gender": comp["gender"],
+                        "sourceId": competition_id,
+                        "season": season,
+                        "groups": group_entries,
+                    })
+                    groups_updated += len(group_entries)
+                except Exception as exc:
+                    detail = f"{code}: {type(exc).__name__}: {exc}"
+                    warnings.append(detail)
+                    # Diagnostica allegata agli artefatti GitHub Actions.
+                    safe_code = re.sub(r"[^A-Za-z0-9_-]", "_", code)
+                    try:
+                        await page.screenshot(
+                            path=str(ROOT / f"sol-debug-{safe_code}.png"),
+                            full_page=True,
+                        )
+                        (ROOT / f"sol-debug-{safe_code}.html").write_text(
+                            await page.content(), encoding="utf-8"
+                        )
+                    except Exception as debug_exc:
+                        print(f"  Diagnostica {code} non disponibile: {debug_exc}", flush=True)
+                    raise RuntimeError(
+                        f"Sincronizzazione Milano interrotta su {code}; "
+                        "nessuno snapshot SOL è stato sostituito. " + detail
+                    ) from exc
         finally:
             await context.close()
             await browser.close()
 
-    if set(captured) != set(expected_groups):
+    if len(staged_competitions) != len(competitions):
         raise RuntimeError(
-            f"SOL 1DF incompleta: gironi acquisiti {sorted(captured)}; "
-            "attesi A-F. Catalogo precedente conservato."
+            f"SOL incompleta: {len(staged_competitions)}/{len(competitions)} campionati acquisiti"
         )
+    if groups_updated != len(staged_snapshots):
+        raise RuntimeError(
+            f"SOL incompleta: {groups_updated} gironi rilevati ma "
+            f"{len(staged_snapshots)} calendari acquisiti"
+        )
+    if groups_updated == 0:
+        raise RuntimeError("SOL non ha restituito alcun girone; catalogo precedente conservato")
 
-    # Commit in memoria soltanto dopo la validazione completa di tutti i sei gironi.
-    for letter in expected_groups:
-        group_id = f"SOL-{competition_id}-{letter}"
-        previous_snapshots[group_id] = captured[letter]
+    # Conserva eventuali competizioni storiche non mostrate dal portale, ma
+    # non sovrascrive né rimuove snapshot esistenti fino alla validazione totale.
+    current_codes = {item["code"] for item in staged_competitions}
+    for old in previous_groups:
+        if isinstance(old, dict) and clean(old.get("code")) not in current_codes:
+            staged_competitions.append(old)
 
-    group_entries = [
-        {
-            "id": f"SOL-{competition_id}-{letter}",
-            "name": f"Girone {letter}",
-            "label": f"Girone {letter}",
-            "officialGroup": letter,
-            "competitionId": competition_id,
-            "sourceUrl": route_url,
-        }
-        for letter in expected_groups
-    ]
-    updated_comp = {
-        **old_comp,
-        "code": competition_code,
-        "name": comp["name"],
-        "phase": comp["phase"],
-        "gender": comp["gender"],
-        "sourceId": competition_id,
-        "season": season,
-        "groups": group_entries,
-    }
-    committee["groups"] = [
-        updated_comp if clean(item.get("code")) == competition_code else item
-        for item in previous_groups
-    ]
-    committee["source"] = "sol-blazor-direct-route"
+    new_snapshots = dict(previous_snapshots) if isinstance(previous_snapshots, dict) else {}
+    new_snapshots.update(staged_snapshots)
+
+    # COMMIT unico: da qui in avanti tutti i campionati e tutti i gironi sono
+    # stati acquisiti. Prima di questo punto il JSON resta invariato.
+    committee["groups"] = staged_competitions
+    committee["groupSnapshots"] = new_snapshots
+    committee["source"] = "sol-blazor-snapshot"
     committee["season"] = "2026/2027"
     committee["snapshotDate"] = datetime.now(timezone.utc).date().isoformat()
     committee["snapshotCapturedAt"] = datetime.now(timezone.utc).isoformat()
     committee["snapshotNote"] = (
-        "Calendario 1ª Divisione Femminile 2026/2027 acquisito dalla route ufficiale SOL "
-        f"{route_url}; sei gironi A-F validati (182 gare ciascuno). "
-        "La sincronizzazione non dipende dal menu stagione Radzen. "
-        "Gli altri campionati Milano restano invariati."
+        f"Sincronizzazione completa SOL: {len(competitions)} campionati, "
+        f"{groups_updated} gironi e {len(staged_snapshots)} calendari acquisiti. "
+        "Ogni calendario è stato letto dalla scheda-girone già renderizzata; "
+        "il comando di stampa 'Calendario' non viene cliccato."
     )
     print(
-        "SOL riepilogo: 1DF aggiornata; 6 gironi, "
-        f"{sum(len(x['matches']) for x in captured.values())} gare complessive. "
-        "Gli altri campionati sono stati conservati.",
+        f"SOL riepilogo: {len(competitions)} campionati, {groups_updated} gironi, "
+        f"{len(staged_snapshots)} calendari aggiornati.",
         flush=True,
     )
-    return len(expected_groups), len(captured), warnings
+    return groups_updated, len(staged_snapshots), warnings
 
 
 def main() -> int:
@@ -703,17 +842,17 @@ def main() -> int:
         groups, snapshots, warnings = asyncio.run(sync_sol(committee))
     except Exception as exc:
         print(f"ERRORE: sincronizzazione SOL non completata: {exc}", file=sys.stderr)
-        print("I dati già presenti nel catalogo sono stati conservati; il job deve risultare FALLITO.", file=sys.stderr)
+        print("I dati SOL già presenti nel catalogo sono stati conservati; il job deve risultare FALLITO.", file=sys.stderr)
         return 1
 
     catalog["snapshotDate"] = datetime.now(timezone.utc).date().isoformat()
-    catalog["version"] = "volley-live-v11.3.10-sol-milano-direct-route-1df"
+    catalog["version"] = "volley-live-v11.3.11-sol-all-milano-tabs-no-print-click"
     tmp_path = CATALOG_PATH.with_suffix(".json.tmp")
     tmp_path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     tmp_path.replace(CATALOG_PATH)
     if warnings:
         print(f"SOL: {len(warnings)} avvisi. I dati validi e gli snapshot precedenti sono stati conservati.")
-    print(f"SOL: sincronizzazione completata; {groups} gironi, {snapshots} calendari 1DF aggiornati.")
+    print(f"SOL: sincronizzazione completa; tutti i campionati e i {groups} gironi aggiornati ({snapshots} calendari).")
     return 0
 
 

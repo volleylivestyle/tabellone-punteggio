@@ -11,7 +11,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827">
-<meta name="description" content="Tabellone pallavolo live con punteggio sincronizzato in tempo reale e anteprima della partita."><meta name="author" content="Fabio Marsico"><meta name="copyright" content="© 2026 Fabio Marsico — Volley Live. Tutti i diritti riservati nei limiti consentiti dalla legge."><title>Volley Live — V11.3 Varese + Milano-Monza-Lecco</title>
+<meta name="description" content="Tabellone pallavolo live con punteggio sincronizzato in tempo reale e anteprima della partita."><meta name="author" content="Fabio Marsico"><meta name="copyright" content="© 2026 Fabio Marsico — Volley Live. Tutti i diritti riservati nei limiti consentiti dalla legge."><title>Volley Live — V11.3.11 Varese + Milano-Monza-Lecco</title>
 <style>
 :root {
   color-scheme: dark;
@@ -416,7 +416,7 @@ html:fullscreen .points { min-height:clamp(180px,30vh,360px); font-size:clamp(7r
 <div id="fixtureDetails" class="fixture-details hide" aria-live="polite"></div>
 <section class="panel admin-only fixture-picker-panel" id="fixturePickerPanel">
   <h2>Seleziona una gara dai calendari federali <span class="fixture-demo-badge">VARESE · MILANO-MONZA-LECCO</span></h2>
-  <p class="fixture-source-note"><strong>Nota:</strong> Varese utilizza il servizio dati FIPAVOnline con aggiornamento automatico quotidiano. Milano-Monza-Lecco utilizza i dati ufficiali SOL acquisiti il 04/11/2026: in questa versione è disponibile il calendario completo della 1ª Divisione Femminile, Girone A. La selezione carica squadre e dettagli della gara; il punteggio LIVE parte da zero.</p>
+  <p class="fixture-source-note"><strong>Nota:</strong> Varese utilizza il servizio dati FIPAVOnline con aggiornamento automatico quotidiano. Milano-Monza-Lecco utilizza i calendari ufficiali SOL: campionati, fasi, gironi, squadre e partite vengono acquisiti automaticamente dal portale. La selezione carica squadre e dettagli della gara; il punteggio LIVE parte da zero.</p>
   <div class="fixture-picker-grid">
     <label class="field">Comitato Territoriale<select id="fixtureCommittee"><option value="04020">C.T. Varese</option><option value="LM06">C.T. Milano-Monza-Lecco</option></select></label>
     <label class="field">Campionato<select id="fixtureCompetition"></select></label>
@@ -1119,10 +1119,7 @@ function filterFixtureGames(){
 function updateFixtureGroups(preferId){
  const comp=selectedFixtureCompetition();
  fixtureEls.group.replaceChildren();
- if(!comp){
-  fixtureOption(fixtureEls.group,'','Seleziona prima un campionato',true);
-  fixtureEls.group.disabled=true;updateFixtureMatches();return;
- }
+ if(!comp){fixtureEls.group.disabled=true;updateFixtureMatches();return;}
  const groups=Array.isArray(comp.groups)?comp.groups:[];
  if(!groups.length){
   fixtureOption(fixtureEls.group,'','Gironi non acquisiti',true);
@@ -1147,18 +1144,10 @@ function selectFixtureCommittee(committeeId,preferCompetition,preferGroup){
  }));
  fixtureEls.committee.value=committee.id;
  fixtureEls.competition.replaceChildren();
- if(committee.source==='sol-blazor-snapshot'){
-  fixtureOption(fixtureEls.competition,'','Seleziona un campionato tra quelli disponibili',true);
- }
- (committee.groups||[]).forEach(c=>fixtureOption(fixtureEls.competition,c.code||c.name,`${c.name}${c.phase?` · ${c.phase}`:''} · ${(c.groups||[]).length} gironi`));
- const defaultName='Prima Divisione Femminile';
- const defaultComp=preferCompetition||(
-  committee.source==='fipavonline'
-   ? ((committee.groups||[]).find(c=>(c.code||c.name)===defaultName)?defaultName:(committee.groups||[])[0]?.code||(committee.groups||[])[0]?.name)
-   : ''
- );
+ (committee.groups||[]).forEach(c=>fixtureOption(fixtureEls.competition,c.code||c.name,c.name+(c.phase?` · ${c.phase}`:'')));
+ const defaultName=committee.source==='sol-blazor-snapshot'?'1DF':'Prima Divisione Femminile';
+ const defaultComp=preferCompetition||((committee.groups||[]).find(c=>(c.code||c.name)===defaultName)?defaultName:(committee.groups||[])[0]?.code||(committee.groups||[])[0]?.name);
  if(defaultComp)fixtureEls.competition.value=defaultComp;
- else fixtureEls.competition.value='';
  updateFixtureGroups(preferGroup);
 }
 async function initFixturePicker(){
@@ -1178,9 +1167,7 @@ async function initFixturePicker(){
   }
   fixtureEls.committee.replaceChildren();
   fixtureCatalog.committees.forEach(c=>fixtureOption(fixtureEls.committee,c.id,c.name.replace('Comitato Territoriale ','C.T. ')));
-  // V11.3.2: il comitato richiesto dall'utente è selezionato all'apertura.
-  // Varese resta disponibile nel selettore, senza essere nascosto o rimosso.
-  selectFixtureCommittee('LM06');
+  selectFixtureCommittee('04020');
   fixtureEls.committee.addEventListener('change',()=>{
    try{selectFixtureCommittee(fixtureEls.committee.value);}
    catch(error){fixtureEls.status.textContent='Impossibile selezionare il comitato: '+error.message;}
@@ -1194,8 +1181,7 @@ async function initFixturePicker(){
   fixtureEls.match.addEventListener('change',renderFixturePreview);
   fixtureEls.includePlayed.addEventListener('change',filterFixtureGames);
   fixtureEls.importBtn.addEventListener('click',importSelectedFixture);
-  fixtureEls.count.textContent=`${fixtureCatalog.committees.length} comitati · ${activeFixtureCommittee.groups.length} campionati nel C.T. Milano-Monza-Lecco · ${(activeFixtureCommittee.groups||[]).reduce((n,c)=>n+(c.groups||[]).length,0)} gironi acquisiti.`;
-  fixtureEls.status.textContent='Milano-Monza-Lecco selezionato. Scegli campionato, girone e gara; Varese resta disponibile nel primo selettore.';
+  fixtureEls.status.textContent='Catalogo caricato. Seleziona Varese oppure Milano-Monza-Lecco, quindi campionato, girone e gara.';
  }catch(error){
   fixtureEls.count.textContent='Impossibile caricare il catalogo: '+(error.message||error);
   fixtureEls.status.textContent='Controlla che catalogo-fipav-v11.json sia presente nella stessa cartella di index.html.';
