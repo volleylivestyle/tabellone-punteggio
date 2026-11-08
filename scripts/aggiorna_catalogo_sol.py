@@ -32,6 +32,7 @@ SEASON_ROUTE = "2026"  # stagione 2026/2027, documentata nelle catture HAR del 0
 EXPECTED_COMPETITIONS = 18  # minimo atteso nel catalogo Milano 2026/2027
 NAV_TIMEOUT_MS = 60_000
 ELEMENT_TIMEOUT_MS = 35_000
+SOL_READY_TIMEOUT_MS = 90_000
 
 
 def clean(value: Any) -> str:
@@ -119,184 +120,105 @@ async def wait_for_rows(page) -> None:
     await page.wait_for_selector("tr.rz-data-row", state="visible", timeout=ELEMENT_TIMEOUT_MS)
 
 
-async def select_season_2026_2027(page) -> None:
-    """Seleziona la stagione 2026/2027 con il ciclo reale Radzen/Blazor.
+async def wait_for_selection_ready(page, websocket_state: dict[str, Any] | None = None) -> None:
+    """Attende il render *completo* del catalogo SOL 2026/2027.
 
-    SOL usa Radzen 8.7.5. Il click Blazor può provocare un nuovo render e
-    rigenerare GetId()/PopupID. Per questo il popup trovato prima del click
-    non è necessariamente quello ancora montato dopo il callback server.
+    Le catture HAR/SignalR mostrano il ciclo effettivo: il primo HTML SSR
+    contiene il placeholder "seleziona" e la griglia vuota; il server invia poi
+    ulteriori RenderBatch. Solo il batch finale valorizza il dropdown a
+    2026/2027 e inserisce tutte le 18 righe dei campionati. Contare i primi
+    cinque frame non è quindi un criterio di prontezza: può far interagire
+    Radzen mentre il catalogo è ancora in caricamento e il popup è vuoto.
 
-    Strategia:
-    1) click sul trigger visibile, così Blazor esegue l'eventuale callback Open;
-    2) rilettura del root e del popup *dopo* il round-trip Blazor;
-    3) chiamata idempotente a Radzen.openPopup sul popup corrente, usando
-       l'API JS effettivamente presente in Radzen.Blazor.js 8.7.5;
-    4) attesa delle opzioni realmente renderizzate prima di selezionare.
-
-    Non si usa togglePopup: se Blazor ha già aperto il vecchio popup, toggle
-    rischierebbe di richiuderlo. openPopup invece imposta display=block.
+    La stagione è già selezionata dal render completo: non si apre né si forza
+    il popup. Si procede solo quando etichetta e righe reali sono entrambe pronte.
     """
-    dropdown = page.locator("div.rz-dropdown:has(input#stagione)").first
-    await dropdown.wait_for(state="visible", timeout=ELEMENT_TIMEOUT_MS)
-    label_locator = dropdown.locator(".rz-dropdown-label").first
-    season_pattern = re.compile(r"2026\s*(?:/|-|–)\s*2027|2026\s*(?:/|-|–)\s*27", re.I)
-
-    current_label = clean(await label_locator.inner_text()) if await label_locator.count() else ""
-    if season_pattern.search(current_label):
-        print(f"SOL: stagione già selezionata: {current_label}", flush=True)
-        return
-
-    before = await page.evaluate("""() => {
-        const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
-        const p = d ? (document.getElementById(`popup-${d.id}`) || d.querySelector('.rz-dropdown-panel')) : null;
-        return {
-            rootId: d?.id || '', rootClass: d?.className || '',
-            label: d?.querySelector('.rz-dropdown-label')?.innerText || '',
-            trigger: !!d?.querySelector('.rz-dropdown-trigger'),
-            popupId: p?.id || '', popupDisplay: p?.style.display || '',
-            items: p?.querySelectorAll('.rz-dropdown-item,[role=option]').length || 0,
-            radzenOpenPopup: typeof window.Radzen?.openPopup === 'function'
-        };
-    }""")
-    print(f"SOL: dropdown stagione pronto; stato iniziale={before}", flush=True)
-
-    if not before.get("trigger"):
-        raise RuntimeError(f"SOL: trigger Radzen stagione non trovato. Stato DOM: {before}")
-    if not before.get("radzenOpenPopup"):
-        raise RuntimeError("SOL: Radzen.openPopup non disponibile; Radzen.Blazor.js 8.7.5 non inizializzato.")
-
-    # Il click sul trigger è il gesto utente previsto dal componente Radzen.
-    # Non cliccare l'input readonly (tabindex=-1) né il root sopra il suo centro.
-    trigger = dropdown.locator(".rz-dropdown-trigger").first
-    await trigger.click(timeout=15_000)
-
-    # Attendi il round-trip Blazor: la callback Open può rigenerare il root e
-    # il relativo PopupID. Non riutilizzare riferimenti DOM/ID precedenti.
+    await page.locator("input#stagione").wait_for(state="attached", timeout=ELEMENT_TIMEOUT_MS)
     try:
-        await page.wait_for_function("""(oldId) => {
-            const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
-            const p = d ? (document.getElementById(`popup-${d.id}`) || d.querySelector('.rz-dropdown-panel')) : null;
-            const n = p?.querySelectorAll('.rz-dropdown-item,[role=option]').length || 0;
-            return !!d && (d.id !== oldId || n > 0 || p?.style.display === 'block');
-        }""", arg=before.get("rootId", ""), timeout=10_000)
-    except PlaywrightTimeoutError:
-        # Non è ancora un errore definitivo: alcune pagine non cambiano GetId
-        # quando il callback termina. Proseguiamo rileggendo il DOM corrente.
-        pass
-
-    after_click = await page.evaluate("""() => {
-        const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
-        const p = d ? (document.getElementById(`popup-${d.id}`) || d.querySelector('.rz-dropdown-panel')) : null;
-        return {
-            rootId: d?.id || '', rootClass: d?.className || '',
-            label: d?.querySelector('.rz-dropdown-label')?.innerText || '',
-            popupId: p?.id || '', popupDisplay: p?.style.display || '',
-            popupClass: p?.className || '', popupParent: p?.parentElement?.tagName || '',
-            items: p?.querySelectorAll('.rz-dropdown-item,[role=option]').length || 0,
-            popupText: (p?.innerText || '').trim().slice(0, 300),
-            radzenOpenPopup: typeof window.Radzen?.openPopup === 'function'
-        };
-    }""")
-    print(
-        "SOL: dopo click Blazor; "
-        f"root prima={before.get('rootId')} root corrente={after_click.get('rootId')}; "
-        f"stato={after_click}",
-        flush=True,
-    )
-
-    # Recupera il popup ricreato dal render Blazor e aprilo con la funzione
-    # ufficiale Radzen 8.7.5. openPopup (non togglePopup) è intenzionalmente
-    # usato per rendere l'operazione idempotente.
-    opened = await page.evaluate("""() => {
-        const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
-        if (!d) return {ok:false, reason:'root stagione assente'};
-        const id = `popup-${d.id}`;
-        const p = document.getElementById(id) || d.querySelector('.rz-dropdown-panel') || document.querySelector('.rz-dropdown-panel');
-        if (!p) return {ok:false, reason:'pannello stagione assente', rootId:d.id};
-        if (typeof window.Radzen?.openPopup !== 'function')
-            return {ok:false, reason:'Radzen.openPopup non disponibile', rootId:d.id, popupId:p.id};
-        if (p.style.display !== 'block' && !p.classList.contains('rz-open')) {
-            window.Radzen.openPopup(d, p.id, true, null, null, null, null, null, true, false);
-        }
-        return {
-            ok: p.style.display === 'block' || p.classList.contains('rz-open'),
-            rootId:d.id, popupId:p.id, display:p.style.display || '',
-            className:p.className || '', parent:p.parentElement?.tagName || '',
-            items:p.querySelectorAll('.rz-dropdown-item,[role=option]').length || 0,
-            text:(p.innerText || '').trim().slice(0,300)
-        };
-    }""")
-    print(f"SOL: apertura diretta Radzen sul popup corrente: {opened}", flush=True)
-    if not opened.get("ok"):
-        raise RuntimeError(f"SOL: Radzen.openPopup non è riuscito ad aprire il popup corrente: {opened}")
-
-    # La callback Open del componente può popolare la lista lato server dopo
-    # il primo render. Aspettiamo gli item, non solo il pannello grafico.
-    try:
-        await page.wait_for_function("""() => {
-            const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
-            const p = d ? (document.getElementById(`popup-${d.id}`) || document.querySelector('.rz-dropdown-panel')) : null;
-            return !!p && (p.style.display === 'block' || p.classList.contains('rz-open')) &&
-                p.querySelectorAll('.rz-dropdown-item,[role=option]').length > 0;
-        }""", timeout=20_000)
+        await page.wait_for_function(
+            r"""expected => {
+                const input = document.querySelector('input#stagione');
+                const root = input?.closest('.rz-dropdown');
+                const label = (root?.querySelector('.rz-dropdown-label')?.innerText || '').trim();
+                const rows = Array.from(document.querySelectorAll(
+                    'table.rz-grid-table tbody tr.rz-data-row'
+                )).filter(row => row.getClientRects().length > 0);
+                const seasonReady = /2026\s*(?:\/|-|–)\s*2027/i.test(label);
+                return seasonReady && rows.length >= expected;
+            }""",
+            arg=EXPECTED_COMPETITIONS,
+            timeout=SOL_READY_TIMEOUT_MS,
+        )
     except PlaywrightTimeoutError as exc:
         details = await page.evaluate("""() => {
-            const d = document.querySelector('input#stagione')?.closest('.rz-dropdown');
-            const p = d ? (document.getElementById(`popup-${d.id}`) || document.querySelector('.rz-dropdown-panel')) : null;
+            const input = document.querySelector('input#stagione');
+            const root = input?.closest('.rz-dropdown');
+            const rows = Array.from(document.querySelectorAll(
+                'table.rz-grid-table tbody tr.rz-data-row'
+            )).filter(row => row.getClientRects().length > 0);
+            const visible = el => !!(el && el.getClientRects().length &&
+                getComputedStyle(el).visibility !== 'hidden' &&
+                getComputedStyle(el).display !== 'none');
             return {
-                rootId:d?.id || '', rootClass:d?.className || '',
-                label:d?.querySelector('.rz-dropdown-label')?.innerText || '',
-                expanded:d?.getAttribute('aria-expanded') || null,
-                popupId:p?.id || '', display:p?.style.display || '',
-                popupClass:p?.className || '', parent:p?.parentElement?.tagName || '',
-                html:p?.innerHTML?.slice(0,1800) || '',
-                items:p?.querySelectorAll('.rz-dropdown-item,[role=option]').length || 0,
-                radzen:typeof window.Radzen, ws:typeof window.Blazor
+                url: location.href,
+                readyState: document.readyState,
+                seasonValue: input?.value || '',
+                seasonLabel: root?.querySelector('.rz-dropdown-label')?.innerText?.trim() || '',
+                dropdownOptions: document.querySelectorAll(
+                    '.rz-dropdown-panel .rz-dropdown-item, .rz-dropdown-panel [role="option"]'
+                ).length,
+                competitionRows: rows.length,
+                visibleSpinners: Array.from(document.querySelectorAll('.spinner')).filter(visible).length,
+                gridHeaders: Array.from(document.querySelectorAll('table.rz-grid-table thead'))
+                    .map(x => (x.innerText || '').trim()).slice(0, 2),
+                pageText: (document.body.innerText || '').trim().slice(0, 1800)
             };
         }""")
         try:
-            await page.screenshot(path=str(ROOT / "sol-debug-season-items.png"), full_page=True)
-            (ROOT / "sol-debug-season-items.html").write_text(await page.content(), encoding="utf-8")
+            await page.screenshot(path=str(ROOT / "sol-debug-selection-not-ready.png"), full_page=True)
+            (ROOT / "sol-debug-selection-not-ready.html").write_text(
+                await page.content(), encoding="utf-8"
+            )
         except Exception:
             pass
+        frames = (websocket_state or {}).get("received", "n/d")
+        errors = (websocket_state or {}).get("errors", [])
         raise RuntimeError(
-            "SOL: popup Radzen aperto, ma il server Blazor non ha fornito opzioni stagione. "
-            f"Diagnostica DOM: {details}. Catalogo precedente conservato."
+            "SOL: il render Blazor del catalogo 2026/2027 non è terminato. "
+            f"Attesi almeno {EXPECTED_COMPETITIONS} campionati; frame WebSocket ricevuti={frames}; "
+            f"errori pagina={errors}; DOM={details}. Il catalogo precedente è conservato."
         ) from exc
 
-    options = page.locator("div.rz-dropdown-panel .rz-dropdown-item, div.rz-dropdown-panel [role='option']")
-    option_labels = [clean(x) for x in await options.all_inner_texts()]
-    print(f"SOL: opzioni stagione disponibili ({len(option_labels)}): {option_labels}", flush=True)
-
-    target_index = next((i for i, value in enumerate(option_labels) if season_pattern.search(value)), None)
-    if target_index is None:
-        target_index = next((i for i, value in enumerate(option_labels)
-                             if re.search(r"^\s*2026(?:\D|$)", value)), None)
-    if target_index is None:
-        raise RuntimeError(
-            "Stagione 2026/2027 non trovata nel menu SOL. "
-            f"Opzioni disponibili: {option_labels or 'nessuna'}. Catalogo precedente conservato."
-        )
-
-    await options.nth(target_index).click(timeout=15_000)
-    await page.wait_for_function(
-        """() => {
-            const d=document.querySelector('input#stagione')?.closest('.rz-dropdown');
-            const t=d?.querySelector('.rz-dropdown-label')?.innerText || '';
-            const rows=Array.from(document.querySelectorAll('tr.rz-data-row')).filter(r=>r.getClientRects().length);
-            return /2026/.test(t) && rows.length > 0;
-        }""",
-        timeout=ELEMENT_TIMEOUT_MS,
+    state = await page.evaluate("""() => {
+        const root = document.querySelector('input#stagione')?.closest('.rz-dropdown');
+        const label = root?.querySelector('.rz-dropdown-label')?.innerText?.trim() || '';
+        const rows = Array.from(document.querySelectorAll(
+            'table.rz-grid-table tbody tr.rz-data-row'
+        )).filter(row => row.getClientRects().length > 0);
+        return {season: label, competitions: rows.length};
+    }""")
+    frames = (websocket_state or {}).get("received")
+    suffix = f"; frame WebSocket ricevuti={frames}" if frames is not None else ""
+    print(
+        f"SOL: catalogo Blazor pronto: stagione {state['season']}, "
+        f"{state['competitions']} competizioni (menu stagione non aperto){suffix}.",
+        flush=True,
     )
-    selected_label = clean(await label_locator.inner_text()) if await label_locator.count() else option_labels[target_index]
-    print(f"SOL: stagione selezionata e griglia caricata: {selected_label}", flush=True)
+
+
+async def wait_for_competition_route_ready(page) -> None:
+    """Attende il render Blazor della pagina calendario, non il solo cambio URL."""
+    await page.wait_for_function("""() => {
+        const body = document.body?.innerText || '';
+        const tabs = Array.from(document.querySelectorAll('li[role="tab"]'));
+        const groups = tabs.filter(tab => /^[A-Z0-9]{1,3}$/i.test((tab.innerText || '').trim()));
+        return /Calendario Ufficiale/i.test(body) && groups.length > 0;
+    }""", timeout=SOL_READY_TIMEOUT_MS)
 
 
 async def open_selection_page(page) -> None:
     print("SOL: apertura elenco campionati...", flush=True)
-    # Registra il listener prima di goto: il WebSocket può aprirsi rapidamente.
-    ready = asyncio.Event()
-    state = {"seen": False, "received": 0}
+    state: dict[str, Any] = {"seen": False, "received": 0, "errors": []}
 
     def on_websocket(ws) -> None:
         if "/_blazor" not in ws.url:
@@ -305,33 +227,40 @@ async def open_selection_page(page) -> None:
 
         def on_frame(_payload) -> None:
             state["received"] += 1
-            if state["received"] >= 5:
-                ready.set()
 
         ws.on("framereceived", on_frame)
 
+    def on_page_error(error) -> None:
+        state["errors"].append(f"pageerror: {str(error)[:300]}")
+
+    def on_console(message) -> None:
+        if message.type == "error":
+            state["errors"].append(f"console: {message.text[:300]}")
+
     page.on("websocket", on_websocket)
+    page.on("pageerror", on_page_error)
+    page.on("console", on_console)
     try:
         await page.goto(SOL_URL, wait_until="domcontentloaded", timeout=NAV_TIMEOUT_MS)
-        await page.locator("input#stagione").wait_for(state="attached", timeout=ELEMENT_TIMEOUT_MS)
-        try:
-            await asyncio.wait_for(ready.wait(), timeout=45)
-        except asyncio.TimeoutError as exc:
-            raise RuntimeError(
-                "Circuito Blazor SOL non interattivo prima della selezione stagione "
-                f"(websocket={state['seen']}, frame ricevuti={state['received']})."
-            ) from exc
-        print(f"SOL: primo render Blazor completato ({state['received']} frame ricevuti)", flush=True)
+        await wait_for_selection_ready(page, state)
     finally:
         page.remove_listener("websocket", on_websocket)
+        page.remove_listener("pageerror", on_page_error)
+        page.remove_listener("console", on_console)
 
-    await select_season_2026_2027(page)
     await wait_for_rows(page)
-    await page.wait_for_function(
-        "() => document.querySelectorAll('tr.rz-data-row').length >= 10",
-        timeout=ELEMENT_TIMEOUT_MS,
+    row_count = await page.locator("table.rz-grid-table tbody tr.rz-data-row").count()
+    if row_count < EXPECTED_COMPETITIONS:
+        raise RuntimeError(
+            f"SOL: elenco competizioni incompleto dopo il render Blazor: "
+            f"{row_count}/{EXPECTED_COMPETITIONS} righe."
+        )
+    print(
+        f"SOL: elenco campionati pronto ({row_count} righe; "
+        f"WebSocket={'connesso' if state['seen'] else 'non rilevato'}, "
+        f"frame={state['received']}).",
+        flush=True,
     )
-    print(f"SOL: elenco campionati pronto ({await page.locator('tr.rz-data-row').count()} righe).", flush=True)
 
 
 async def read_competitions(page, existing: list[dict[str, Any]]) -> list[dict[str, str]]:
@@ -446,6 +375,7 @@ async def click_competition(page, code: str) -> tuple[str, str, str]:
         raise RuntimeError(f"SOL: route del calendario non riconosciuta dopo il click su {code}: {page.url}")
     competition_id, season = match.group(1), match.group(2)
     route_url = f"https://www.sol.milano.federvolley.it/calendarioris/{competition_id}/{season}"
+    await wait_for_competition_route_ready(page)
     return competition_id, season, route_url
 
 
@@ -516,6 +446,7 @@ async def open_group_calendar(page, route_url: str, group_letter: str) -> None:
     di stampa: NON va cliccato per accedere alle partite.
     """
     await page.goto(route_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT_MS)
+    await wait_for_competition_route_ready(page)
     tabs = page.locator('li[role="tab"]')
     await tabs.first.wait_for(state="visible", timeout=ELEMENT_TIMEOUT_MS)
 
@@ -846,7 +777,7 @@ def main() -> int:
         return 1
 
     catalog["snapshotDate"] = datetime.now(timezone.utc).date().isoformat()
-    catalog["version"] = "volley-live-v11.3.11-sol-all-milano-tabs-no-print-click"
+    catalog["version"] = "volley-live-v11.3.12-sol-wait-blazor-catalog-ready-all-milano"
     tmp_path = CATALOG_PATH.with_suffix(".json.tmp")
     tmp_path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     tmp_path.replace(CATALOG_PATH)
