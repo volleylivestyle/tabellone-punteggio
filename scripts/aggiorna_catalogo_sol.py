@@ -615,6 +615,7 @@ async def extract_roster_teams(page, group_letter: str) -> list[str]:
     return sorted(set(result), key=str.casefold)
 
 
+# HOTFIX SOL: accetta Calendario Provvisorio (AST V1)
 async def open_group_calendar(page, route_url: str, group_letter: str) -> None:
     """Seleziona la scheda del girone e attende il calendario già renderizzato.
 
@@ -671,9 +672,9 @@ async def open_group_calendar(page, route_url: str, group_letter: str) -> None:
         "     return cells.length >= 6 && /^\\s*\\d+\\s*$/.test(cells[0]?.innerText || '') && /\\d{1,2}\\/\\d{1,2}\\/\\d{4}/.test(cells[1]?.innerText || '');"
         "   });"
         "   const hasHeaders = head.includes('gara') && head.includes('data') && head.includes('squadre') && head.includes('campo');"
-        "   return hasRows && (hasHeaders || /calendario ufficiale/i.test(body));"
+        "   return hasRows && (hasHeaders || /(?:calendario ufficiale|calendario provvisorio)/i.test(body));"
         " });"
-        " return groupHeading && /calendario ufficiale/i.test(body) && ok;"
+        " return groupHeading && /(?:calendario ufficiale|calendario provvisorio)/i.test(body) && ok;"
         "}",
         arg=group_letter.upper(),
         timeout=ELEMENT_TIMEOUT_MS,
